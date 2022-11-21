@@ -1,15 +1,15 @@
 namespace AdventOfCode._2022.Day1;
 
-public interface IDay1Service
+public interface ISolutionService
 {
     public int Run(int input);
 }
 
-public class Day1Service : IDay1Service
+public class SolutionService : ISolutionService
 {
-    private readonly ILogger<Day1Service> _logger;
+    private readonly ILogger<SolutionService> _logger;
 
-    public Day1Service(ILogger<Day1Service> logger)
+    public SolutionService(ILogger<SolutionService> logger)
     {
         _logger = logger;
     }

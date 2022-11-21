@@ -10,7 +10,6 @@ internal static class Program
     private static void Main(string[] args)
     {
         var builder = new ConfigurationBuilder();
-        builder.AddCommandLine(args);
 
         Log.Logger = new LoggerConfiguration()
             .ReadFrom.Configuration(builder.Build())
@@ -19,13 +18,13 @@ internal static class Program
             .CreateLogger();
 
         var host = Host.CreateDefaultBuilder(args)
-            .ConfigureServices(((context, collection) => { collection.AddTransient<IDay1Service, Day1Service>(); }))
+            .ConfigureServices(((context, collection) => { collection.AddTransient<ISolutionService, SolutionService>(); }))
             .UseSerilog()
             .Build();
 
         Log.Logger.Information("args: {AllArguments}", string.Join(", ", args));
 
-        var svc = ActivatorUtilities.CreateInstance<Day1Service>(host.Services);
+        var svc = ActivatorUtilities.CreateInstance<SolutionService>(host.Services);
         var result = svc.Run(123);
 
         Log.Logger.Information("result: {Result}", result);

@@ -16,7 +16,7 @@ public class Day1Tests : TestBed<TestFixture>
     public void Test1()
     {
         // arrange
-        var service = _fixture.GetService<IDay1Service>(_testOutputHelper);
+        var service = _fixture.GetService<ISolutionService>(_testOutputHelper);
 
         // act
         var result = service!.Run(123);
