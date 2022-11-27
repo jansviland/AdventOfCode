@@ -4,6 +4,7 @@ public interface ISolutionService
 {
     public int Run(string[] input);
     public int RunPart2(string[] input);
+    public int GetSlidingWindow(string[] input, int index);
 }
 
 public class SolutionService : ISolutionService
@@ -35,6 +36,11 @@ public class SolutionService : ISolutionService
         }
 
         return count;
+    }
+
+    public int GetSlidingWindow(string[] input, int index)
+    {
+        return -1;
     }
 
     public int RunPart2(string[] input)
