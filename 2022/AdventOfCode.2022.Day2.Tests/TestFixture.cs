@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace AdventOfCode._2022.Day1.Tests;
+namespace AdventOfCode._2022.Day2.Tests;
 
 public class TestFixture : TestBedFixture
 {

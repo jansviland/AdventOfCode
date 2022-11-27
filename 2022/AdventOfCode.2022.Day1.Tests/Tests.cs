@@ -1,13 +1,10 @@
-using Xunit.Abstractions;
-using Xunit.Microsoft.DependencyInjection.Abstracts;
-
 namespace AdventOfCode._2022.Day1.Tests;
 
-public class Day1Tests : TestBed<TestFixture>
+public class Tests : TestBed<TestFixture>
 {
-    private readonly TestFixture _fixture;
+    private new readonly TestFixture _fixture;
 
-    public Day1Tests(ITestOutputHelper testOutputHelper, TestFixture fixture) : base(testOutputHelper, fixture)
+    public Tests(ITestOutputHelper testOutputHelper, TestFixture fixture) : base(testOutputHelper, fixture)
     {
         _fixture = fixture;
     }
@@ -19,6 +16,7 @@ public class Day1Tests : TestBed<TestFixture>
         var service = _fixture.GetService<ISolutionService>(_testOutputHelper);
 
         // act
+        _testOutputHelper.WriteLine("Running unit test 1");
         var result = service!.Run(123);
 
         // assert
