@@ -21,5 +21,6 @@ public class Tests : TestBed<TestFixture>
 
         // assert
         Assert.Equal(123, result);
+        
     }
 }
