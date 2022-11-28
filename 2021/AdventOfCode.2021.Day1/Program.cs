@@ -33,14 +33,14 @@ internal static class Program
         }
         else
         {
-            input = File.ReadAllLines("assets/input.txt");
+            input = File.ReadAllLines(args[0]);
         }
 
         var result = svc.Run(input);
         var result2 = svc.RunPart2(input);
 
         Log.Logger.Information("result: {Result}", result);
-        Log.Logger.Information("result part 2: {Result}", result);
+        Log.Logger.Information("result part 2: {Result}", result2);
     }
 
     private static void BuildConfiguration(IConfigurationBuilder builder)
