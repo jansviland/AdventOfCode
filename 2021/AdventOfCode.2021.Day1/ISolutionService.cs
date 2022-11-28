@@ -19,7 +19,7 @@ public class SolutionService : ISolutionService
     public int Run(string[] input)
     {
         _logger.LogInformation("Solving day 1");
-        _logger.LogInformation("input contains {Input} values", input.Length);
+        _logger.LogInformation("Input contains {Input} values", input.Length);
 
         var count = 0;
         var lastValue = int.Parse(input.First());
@@ -52,7 +52,7 @@ public class SolutionService : ISolutionService
     public int RunPart2(string[] input)
     {
         _logger.LogInformation("Solving day 1 part 2");
-        _logger.LogInformation("input contains {Input} values", input.Length);
+        _logger.LogInformation("Input contains {Input} values", input.Length);
 
         var count = 0;
         var lastValue = -1;
