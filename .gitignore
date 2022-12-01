@@ -34,3 +34,9 @@ packages/
 
 #Rider
 .idea/
+
+.vscode/
+coverage/
+
+src/.DS_Store
+.DS_Store
