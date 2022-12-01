@@ -25,7 +25,18 @@ internal static class Program
         Log.Logger.Information("args: {AllArguments}", string.Join(", ", args));
 
         var svc = ActivatorUtilities.CreateInstance<SolutionService>(host.Services);
-        var result = svc.Run(123);
+
+        string[] input;
+        if (args.Length == 0)
+        {
+            input = File.ReadAllLines("Assets/input.txt");
+        }
+        else
+        {
+            input = File.ReadAllLines(args[0]);
+        }
+
+        var result = svc.Run(input);
 
         Log.Logger.Information("result: {Result}", result);
     }
