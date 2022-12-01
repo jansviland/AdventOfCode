@@ -14,7 +14,6 @@ internal static class Program
         Log.Logger = new LoggerConfiguration()
             .ReadFrom.Configuration(BuildConfiguration(builder))
             .Enrich.FromLogContext()
-            .WriteTo.Console()
             .CreateLogger();
 
         var host = Host.CreateDefaultBuilder(args)
