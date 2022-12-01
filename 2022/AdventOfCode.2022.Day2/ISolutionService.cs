@@ -2,7 +2,7 @@ namespace AdventOfCode._2022.Day2;
 
 public interface ISolutionService
 {
-    public int Run(int input);
+    public int Run(string[] input);
 }
 
 public class SolutionService : ISolutionService
@@ -14,7 +14,7 @@ public class SolutionService : ISolutionService
         _logger = logger;
     }
 
-    public int Run(int input)
+    public int Run(string[] input)
     {
         _logger.LogInformation("Solving day 1 with input: {Input}", input);
 

@@ -12,9 +12,8 @@ internal static class Program
         var builder = new ConfigurationBuilder();
 
         Log.Logger = new LoggerConfiguration()
-            .ReadFrom.Configuration(builder.Build())
+            .ReadFrom.Configuration(BuildConfiguration(builder))
             .Enrich.FromLogContext()
-            .WriteTo.Console()
             .CreateLogger();
 
         var host = Host.CreateDefaultBuilder(args)
@@ -25,12 +24,22 @@ internal static class Program
         Log.Logger.Information("args: {AllArguments}", string.Join(", ", args));
 
         var svc = ActivatorUtilities.CreateInstance<SolutionService>(host.Services);
-        var result = svc.Run(123);
 
+        string[] input;
+        if (args.Length == 0)
+        {
+            input = File.ReadAllLines("Assets/input.txt");
+        }
+        else
+        {
+            input = File.ReadAllLines(args[0]);
+        }
+
+        var result = svc.Run(input);
         Log.Logger.Information("result: {Result}", result);
     }
 
-    private static void BuildConfiguration(IConfigurationBuilder builder)
+    private static IConfiguration BuildConfiguration(IConfigurationBuilder builder)
     {
         builder
             .SetBasePath(Directory.GetCurrentDirectory())
@@ -39,5 +48,7 @@ internal static class Program
             .AddEnvironmentVariables();
 
         var configuration = builder.Build();
+
+        return configuration;
     }
 }
