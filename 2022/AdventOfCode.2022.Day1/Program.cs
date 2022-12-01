@@ -12,7 +12,7 @@ internal static class Program
         var builder = new ConfigurationBuilder();
 
         Log.Logger = new LoggerConfiguration()
-            .ReadFrom.Configuration(builder.Build())
+            .ReadFrom.Configuration(BuildConfiguration(builder))
             .Enrich.FromLogContext()
             .WriteTo.Console()
             .CreateLogger();
@@ -37,11 +37,13 @@ internal static class Program
         }
 
         var result = svc.Run(input);
-
         Log.Logger.Information("result: {Result}", result);
+
+        var resultPart2 = svc.RunPart2(input);
+        Log.Logger.Information("result: {Result}", resultPart2);
     }
 
-    private static void BuildConfiguration(IConfigurationBuilder builder)
+    private static IConfiguration BuildConfiguration(IConfigurationBuilder builder)
     {
         builder
             .SetBasePath(Directory.GetCurrentDirectory())
@@ -50,5 +52,7 @@ internal static class Program
             .AddEnvironmentVariables();
 
         var configuration = builder.Build();
+
+        return configuration;
     }
 }

@@ -2,28 +2,27 @@ namespace AdventOfCode._2022.Day1.Tests;
 
 public class Tests : TestBed<TestFixture>
 {
-    private new readonly TestFixture _fixture;
+    private readonly ISolutionService _solutionService;
     private readonly string[] _input = new[] { "1000", "2000", "3000", "", "4000", "", "5000", "6000", "", "7000", "8000", "9000", "", "10000" };
 
     public Tests(ITestOutputHelper testOutputHelper, TestFixture fixture) : base(testOutputHelper, fixture)
     {
-        _fixture = fixture;
+        _solutionService = _fixture.GetService<ISolutionService>(_testOutputHelper)!;
     }
 
     [Fact]
     public void SolutionExampleTest()
     {
-        // arrange
-        var service = _fixture.GetService<ISolutionService>(_testOutputHelper);
-
-        // act
         _testOutputHelper.WriteLine("Running unit test 1");
 
-        var result = service!.Run(_input);
+        // arrange
+        // act
 
-        // assert
+        var result = _solutionService!.Run(_input);
+
         // Find the Elf carrying the most Calories. How many total Calories is that Elf carrying?
 
+        // assert
         Assert.Equal(24000, result);
     }
 
@@ -31,10 +30,8 @@ public class Tests : TestBed<TestFixture>
     public void GroupByElfTest()
     {
         // arrange
-        var service = _fixture.GetService<ISolutionService>(_testOutputHelper);
-
         // act
-        var result = service!.GroupByElf(_input);
+        var result = _solutionService!.GroupByElf(_input);
 
         // The first Elf is carrying food with 1000, 2000, and 3000 Calories, a total of 6000 Calories.
         // The second Elf is carrying one food item with 4000 Calories.
@@ -48,5 +45,16 @@ public class Tests : TestBed<TestFixture>
         Assert.Equal(11000, result[2]);
         Assert.Equal(24000, result[3]);
         Assert.Equal(10000, result[4]);
+    }
+
+    [Fact]
+    public void Part2Test()
+    {
+        // arrange
+        // act
+        var result = _solutionService!.RunPart2(_input);
+
+        // assert
+        Assert.Equal(45000, result);
     }
 }
