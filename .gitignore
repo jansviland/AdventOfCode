@@ -38,5 +38,7 @@ packages/
 .vscode/
 coverage/
 
-src/.DS_Store
-.DS_Store
+**/.DS_Store
+
+# Serilog files
+**/Logs/

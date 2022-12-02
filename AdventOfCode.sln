@@ -24,6 +24,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdventOfCode.2022.Day3", "2
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdventOfCode.2022.Day3.Tests", "2022\AdventOfCode.2022.Day3.Tests\AdventOfCode.2022.Day3.Tests.csproj", "{64CDE85D-C1E6-494A-AD6E-7E3705AB436F}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{86811C00-DC32-4B94-A43F-9AF825091B5E}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
