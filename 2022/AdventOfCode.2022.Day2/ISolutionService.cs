@@ -5,7 +5,9 @@ namespace AdventOfCode._2022.Day2;
 public interface ISolutionService
 {
     public int Run(string[] input);
-    public int CalculateRow(string input);
+    public int RunPart2(string[] input);
+    public int CalculateRowPart1(string input);
+    public int CalculateRowPart2(string input);
 }
 
 public enum HandShape
@@ -31,13 +33,18 @@ public class SolutionService : ISolutionService
         var sum = 0;
         for (int i = 0; i < input.Length; i++)
         {
-            sum += CalculateRow(input[i]);
+            sum += CalculateRowPart1(input[i]);
         }
 
         return sum;
     }
 
-    public int CalculateRow(string input)
+    public int RunPart2(string[] input)
+    {
+        throw new NotImplementedException();
+    }
+
+    public int CalculateRowPart1(string input)
     {
         var split = input.Split(' ');
         var opponent = GetHandShape(split[0]);
@@ -73,6 +80,11 @@ public class SolutionService : ISolutionService
             opponent, yourResponse, outcomePoints);
 
         return typePoints + outcomePoints;
+    }
+
+    public int CalculateRowPart2(string input)
+    {
+        throw new NotImplementedException();
     }
 
     private HandShape GetHandShape(string input)

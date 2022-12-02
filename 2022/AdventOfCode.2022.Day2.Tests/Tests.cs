@@ -12,9 +12,9 @@ public class Tests : TestBed<TestFixture>
     }
 
     [Fact]
-    public void FinalSolutionPart1Test()
+    public void SolutionPart1Test()
     {
-        _testOutputHelper.WriteLine("Running unit test: Final Solution");
+        _testOutputHelper.WriteLine("Running unit test: Solution Part 1");
 
         // arrange
         // act
@@ -25,15 +25,41 @@ public class Tests : TestBed<TestFixture>
     }
 
     [Fact]
-    public void CalculateRowTest()
+    public void SolutionPart2Test()
+    {
+        _testOutputHelper.WriteLine("Running unit test: Solution Part 2");
+
+        // arrange
+        // act
+        var result = _solutionService!.Run(_input);
+
+        // assert
+        Assert.Equal(12, result);
+    }
+
+    [Fact]
+    public void CalculateRowPart1Test()
     {
         _testOutputHelper.WriteLine("Running unit test: Calculate Row");
 
         // arrange
         // act
         // assert
-        Assert.Equal(8, _solutionService!.CalculateRow(_input[0]));
-        Assert.Equal(1, _solutionService!.CalculateRow(_input[1]));
-        Assert.Equal(6, _solutionService!.CalculateRow(_input[2]));
+        Assert.Equal(8, _solutionService!.CalculateRowPart1(_input[0]));
+        Assert.Equal(1, _solutionService!.CalculateRowPart1(_input[1]));
+        Assert.Equal(6, _solutionService!.CalculateRowPart1(_input[2]));
+    }
+
+    [Fact]
+    public void CalculateRowPart2Test()
+    {
+        _testOutputHelper.WriteLine("Running unit test: Calculate Row");
+
+        // arrange
+        // act
+        // assert
+        Assert.Equal(4, _solutionService!.CalculateRowPart2(_input[0]));
+        Assert.Equal(1, _solutionService!.CalculateRowPart2(_input[1]));
+        Assert.Equal(7, _solutionService!.CalculateRowPart2(_input[2]));
     }
 }
