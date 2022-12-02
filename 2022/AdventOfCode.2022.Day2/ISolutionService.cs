@@ -12,9 +12,16 @@ public interface ISolutionService
 
 public enum HandShape
 {
-    Rock = 1,
-    Paper = 2,
-    Scissors = 3
+    Rock,
+    Paper,
+    Scissors
+}
+
+public enum Outcome
+{
+    Lose,
+    Draw,
+    Win
 }
 
 public class SolutionService : ISolutionService
@@ -50,16 +57,17 @@ public class SolutionService : ISolutionService
         var opponent = GetHandShape(split[0]);
         var yourResponse = GetHandShape(split[1]);
 
-        // value from type
-        var typePoints = (yourResponse) switch
-        {
-            HandShape.Rock => 1,
-            HandShape.Paper => 2,
-            HandShape.Scissors => 3,
-            _ => throw new ArgumentOutOfRangeException(nameof(opponent), opponent, null)
-        };
+        // points for outcome
+        var outcomePoints = GetOutcomePoints(opponent, yourResponse);
 
-        // win, lose, draw
+        // points from handshape selected
+        var typePoints = GetTypePoints(yourResponse);
+
+        return typePoints + outcomePoints;
+    }
+
+    private int GetOutcomePoints(HandShape opponent, HandShape yourResponse)
+    {
         var outcomePoints = (opponent, yourResponse) switch
         {
             (HandShape.Rock, HandShape.Scissors) => 0,
@@ -79,12 +87,43 @@ public class SolutionService : ISolutionService
         _logger.LogInformation("Opponent choose {Opponent}, you respond with {YourResponse}, Outcome: {Outcome}",
             opponent, yourResponse, outcomePoints);
 
-        return typePoints + outcomePoints;
+        return outcomePoints;
+    }
+
+    private int GetTypePoints(HandShape handShape)
+    {
+        var typePoints = (handShape) switch
+        {
+            HandShape.Rock => 1,
+            HandShape.Paper => 2,
+            HandShape.Scissors => 3,
+            _ => throw new ArgumentOutOfRangeException(nameof(handShape), handShape, null)
+        };
+
+        return typePoints;
     }
 
     public int CalculateRowPart2(string input)
     {
+        var split = input.Split(' ');
+        var opponent = GetHandShape(split[0]);
+        var desiredOutcome = GetDesiredOutcome(split[1]);
+
+        _logger.LogInformation("Opponent choose {Opponent}, you want {DesiredOutcome}",
+            opponent, desiredOutcome);
+
         throw new NotImplementedException();
+    }
+
+    private Outcome GetDesiredOutcome(string input)
+    {
+        return input switch
+        {
+            "X" => Outcome.Lose,
+            "Y" => Outcome.Draw,
+            "Z" => Outcome.Win,
+            _ => throw new ArgumentOutOfRangeException(nameof(input), input, null)
+        };
     }
 
     private HandShape GetHandShape(string input)
