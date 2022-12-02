@@ -35,7 +35,8 @@ public class SolutionService : ISolutionService
 
     public int Run(string[] input)
     {
-        _logger.LogInformation("Solving day 1 with input: {Input}", input);
+        _logger.LogInformation("Solving day 2 - Part 1");
+        _logger.LogInformation("Input contains {Input} values", input.Length);
 
         var sum = 0;
         for (int i = 0; i < input.Length; i++)
@@ -48,7 +49,16 @@ public class SolutionService : ISolutionService
 
     public int RunPart2(string[] input)
     {
-        throw new NotImplementedException();
+        _logger.LogInformation("Solving day 2 - Part 2");
+        _logger.LogInformation("Input contains {Input} values", input.Length);
+
+        var sum = 0;
+        for (int i = 0; i < input.Length; i++)
+        {
+            sum += CalculateRowPart2(input[i]);
+        }
+
+        return sum;
     }
 
     public int CalculateRowPart1(string input)
@@ -112,7 +122,29 @@ public class SolutionService : ISolutionService
         _logger.LogInformation("Opponent choose {Opponent}, you want {DesiredOutcome}",
             opponent, desiredOutcome);
 
-        throw new NotImplementedException();
+        var yourResponse = (opponent, desiredOutcome) switch
+        {
+            (HandShape.Rock, Outcome.Lose) => HandShape.Scissors,
+            (HandShape.Rock, Outcome.Draw) => HandShape.Rock,
+            (HandShape.Rock, Outcome.Win) => HandShape.Paper,
+
+            (HandShape.Paper, Outcome.Lose) => HandShape.Rock,
+            (HandShape.Paper, Outcome.Draw) => HandShape.Paper,
+            (HandShape.Paper, Outcome.Win) => HandShape.Scissors,
+
+            (HandShape.Scissors, Outcome.Lose) => HandShape.Paper,
+            (HandShape.Scissors, Outcome.Draw) => HandShape.Scissors,
+            (HandShape.Scissors, Outcome.Win) => HandShape.Rock,
+            _ => throw new ArgumentOutOfRangeException()
+        };
+
+        // points for outcome
+        var outcomePoints = GetOutcomePoints(opponent, yourResponse);
+
+        // points from handshape selected
+        var typePoints = GetTypePoints(yourResponse);
+
+        return typePoints + outcomePoints;
     }
 
     private Outcome GetDesiredOutcome(string input)

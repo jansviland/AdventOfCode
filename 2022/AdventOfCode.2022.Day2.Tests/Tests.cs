@@ -31,7 +31,7 @@ public class Tests : TestBed<TestFixture>
 
         // arrange
         // act
-        var result = _solutionService!.Run(_input);
+        var result = _solutionService!.RunPart2(_input);
 
         // assert
         Assert.Equal(12, result);

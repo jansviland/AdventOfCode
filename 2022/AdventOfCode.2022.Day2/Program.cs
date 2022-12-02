@@ -37,6 +37,9 @@ internal static class Program
 
         var result = svc.Run(input);
         Log.Logger.Information("result: {Result}", result);
+
+        var result2 = svc.RunPart2(input);
+        Log.Logger.Information("result: {Result}", result2);
     }
 
     private static IConfiguration BuildConfiguration(IConfigurationBuilder builder)
