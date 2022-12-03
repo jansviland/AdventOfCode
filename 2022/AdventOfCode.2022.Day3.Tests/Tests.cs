@@ -26,10 +26,24 @@ public class Tests : TestBed<TestFixture>
 
         // arrange
         // act
-        var result = _solutionService!.Run(_input);
+        var result = _solutionService!.RunPart1(_input);
 
         // assert
         Assert.Equal(157, result);
+    }
+
+    [Fact]
+    public void ParseStringPart1Test()
+    {
+        // arrange
+        // act
+        // assert
+        Assert.Equal('p', _solutionService.ParseStringPart1(_input[0]));
+        Assert.Equal('L', _solutionService.ParseStringPart1(_input[1]));
+        Assert.Equal('P', _solutionService.ParseStringPart1(_input[2]));
+        Assert.Equal('v', _solutionService.ParseStringPart1(_input[3]));
+        Assert.Equal('t', _solutionService.ParseStringPart1(_input[4]));
+        Assert.Equal('s', _solutionService.ParseStringPart1(_input[5]));
     }
 
     [Fact]

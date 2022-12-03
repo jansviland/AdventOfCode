@@ -2,7 +2,8 @@ namespace AdventOfCode._2022.Day3;
 
 public interface ISolutionService
 {
-    public int Run(string[] input);
+    public int RunPart1(string[] input);
+    public char ParseStringPart1(string input);
     public int RunPart2(string[] input);
 }
 
@@ -15,10 +16,17 @@ public class SolutionService : ISolutionService
         _logger = logger;
     }
 
-    public int Run(string[] input)
+    public int RunPart1(string[] input)
     {
         _logger.LogInformation("Solving day 3");
         _logger.LogInformation("Input contains {Input} values", input.Length);
+
+        throw new NotImplementedException();
+    }
+
+    public char ParseStringPart1(string input)
+    {
+        _logger.LogInformation("Parsing {Input}", input);
 
         throw new NotImplementedException();
     }
