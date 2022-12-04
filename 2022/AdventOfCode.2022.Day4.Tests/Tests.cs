@@ -67,6 +67,33 @@ public class Tests : TestBed<TestFixture>
         var result = _solutionService!.RunPart2(_input);
 
         // assert
-        Assert.Equal(45000, result);
+        Assert.Equal(4, result);
+    }
+
+    [Fact]
+    public void FindOverlappingStringsTest1()
+    {
+        // arrange
+        // act
+        // assert
+        var result = _solutionService!.FindOverlappingStrings(_input[5]);
+
+        Assert.Equal("4", result[0]);
+        Assert.Equal("5", result[1]);
+        Assert.Equal("6", result[2]);
+    }
+
+    [Fact]
+    public void FindOverlappingStringsTest2()
+    {
+        // arrange
+        // act
+        // assert
+        Assert.Equal(0, _solutionService!.FindOverlappingStrings(_input[0]).Count());
+        Assert.Equal(0, _solutionService!.FindOverlappingStrings(_input[1]).Count());
+        Assert.Equal(1, _solutionService!.FindOverlappingStrings(_input[2]).Count());
+        Assert.Equal(5, _solutionService!.FindOverlappingStrings(_input[3]).Count());
+        Assert.Equal(1, _solutionService!.FindOverlappingStrings(_input[4]).Count());
+        Assert.Equal(3, _solutionService!.FindOverlappingStrings(_input[5]).Count());
     }
 }
