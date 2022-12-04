@@ -6,6 +6,7 @@ public interface ISolutionService
     public Rucksack ParseStringPart1(string input);
     public int GetPriority(char c);
     public int RunPart2(string[] input);
+    public char GetCommonChar(string[] input);
 }
 
 public class Rucksack
@@ -93,6 +94,44 @@ public class SolutionService : ISolutionService
         _logger.LogInformation("Solving day 3 - Part 2");
         _logger.LogInformation("Input contains {Input} values", input.Length);
 
-        throw new NotImplementedException();
+        // group array by 3
+        var grouped = input
+            .Select((x, i) => new { Index = i, Value = x })
+            .GroupBy(x => x.Index / 3)
+            .Select(x => x.Select(v => v.Value).ToArray())
+            .ToArray();
+
+        var sum = 0;
+        foreach (var g in grouped)
+        {
+            var commonChar = GetCommonChar(g);
+            var priority = GetPriority(commonChar);
+
+            sum += priority;
+        }
+
+        return sum;
+    }
+
+    public char GetCommonChar(string[] input)
+    {
+        var orderedByLength = input.OrderBy(x => x.Length).ToArray();
+
+        for (var i = 0; i < orderedByLength[0].Length; i++)
+        {
+            var lookFor = orderedByLength[0][i];
+            var existInArray2 = orderedByLength[1].Contains(lookFor);
+            var existInArray3 = orderedByLength[2].Contains(lookFor);
+
+            if (existInArray2 && existInArray3)
+            {
+                _logger.LogInformation("Found common char {Char}, in group: {X}, {Y}, {Z}",
+                    lookFor, orderedByLength[0], orderedByLength[1], orderedByLength[2]);
+
+                return lookFor;
+            }
+        }
+
+        throw new Exception();
     }
 }

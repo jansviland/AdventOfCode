@@ -31,7 +31,7 @@ public class Tests : TestBed<TestFixture>
         // assert
         Assert.Equal(157, result);
     }
-    
+
     [Fact]
     public void ShouldGetCorrectPriority()
     {
@@ -40,9 +40,9 @@ public class Tests : TestBed<TestFixture>
         // arrange
         // act
         // assert
-        // Assert.Equal(1, _solutionService!.GetPriority('a'));
-        // Assert.Equal(2, _solutionService!.GetPriority('b'));
-        // Assert.Equal(26, _solutionService!.GetPriority('z'));
+        Assert.Equal(1, _solutionService!.GetPriority('a'));
+        Assert.Equal(2, _solutionService!.GetPriority('b'));
+        Assert.Equal(26, _solutionService!.GetPriority('z'));
         Assert.Equal(27, _solutionService!.GetPriority('A'));
         Assert.Equal(52, _solutionService!.GetPriority('Z'));
     }
@@ -94,6 +94,32 @@ public class Tests : TestBed<TestFixture>
         var result = _solutionService!.RunPart2(_input);
 
         // assert
-        Assert.Equal(45000, result);
+        Assert.Equal(70, result);
+    }
+
+    [Fact]
+    public void GetOnlyCommonCharTest1()
+    {
+        // arrange
+        var group = new string[] { _input[0], _input[1], _input[2] };
+
+        // act
+        var result = _solutionService!.GetCommonChar(group);
+
+        // assert
+        Assert.Equal('r', result);
+    }
+
+    [Fact]
+    public void GetOnlyCommonCharTest2()
+    {
+        // arrange
+        var group = new string[] { _input[3], _input[4], _input[5] };
+
+        // act
+        var result = _solutionService!.GetCommonChar(group);
+
+        // assert
+        Assert.Equal('Z', result);
     }
 }
