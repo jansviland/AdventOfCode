@@ -4,6 +4,7 @@ public interface ISolutionService
 {
     public int RunPart1(string[] input);
     public Rucksack ParseStringPart1(string input);
+    public int GetPriority(char c);
     public int RunPart2(string[] input);
 }
 
@@ -34,7 +35,14 @@ public class SolutionService : ISolutionService
         _logger.LogInformation("Solving day 3");
         _logger.LogInformation("Input contains {Input} values", input.Length);
 
-        throw new NotImplementedException();
+        int count = 0;
+        for (int i = 0; i < input.Length; i++)
+        {
+            var rucksack = ParseStringPart1(input[i]);
+            count += rucksack.Priority;
+        }
+
+        return count;
     }
 
     public Rucksack ParseStringPart1(string input)
@@ -61,9 +69,23 @@ public class SolutionService : ISolutionService
             }
         }
 
+        result.Priority = GetPriority(result.WrongItem);
+
         _logger.LogInformation(result.ToString());
 
         return result;
+    }
+
+    public int GetPriority(char c)
+    {
+        if (char.IsUpper(c))
+        {
+            return (int)c - 38;
+        }
+        else
+        {
+            return (int)c - 96;
+        }
     }
 
     public int RunPart2(string[] input)
