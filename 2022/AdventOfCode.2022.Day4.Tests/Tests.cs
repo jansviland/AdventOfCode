@@ -38,12 +38,23 @@ public class Tests : TestBed<TestFixture>
         // arrange
         // act
         // assert
-        Assert.Equal(false, _solutionService!.StringsOverlap(_input[0]));
-        Assert.Equal(false, _solutionService!.StringsOverlap(_input[1]));
-        Assert.Equal(false, _solutionService!.StringsOverlap(_input[2]));
-        Assert.Equal(true, _solutionService!.StringsOverlap(_input[3]));
-        Assert.Equal(true, _solutionService!.StringsOverlap(_input[4]));
-        Assert.Equal(false, _solutionService!.StringsOverlap(_input[5]));
+        Assert.False(_solutionService!.StringsOverlap(_input[0]));
+        Assert.False(_solutionService!.StringsOverlap(_input[1]));
+        Assert.False(_solutionService!.StringsOverlap(_input[2]));
+        Assert.True(_solutionService!.StringsOverlap(_input[3]));
+        Assert.True(_solutionService!.StringsOverlap(_input[4]));
+        Assert.False(_solutionService!.StringsOverlap(_input[5]));
+    }
+
+    [Fact]
+    public void StringOverlapTest2()
+    {
+        // arrange
+        var input = "1-100,200-250";
+
+        // act
+        // assert
+        Assert.False(_solutionService!.StringsOverlap(input));
     }
 
     [Fact]

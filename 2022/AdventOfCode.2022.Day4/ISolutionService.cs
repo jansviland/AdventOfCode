@@ -23,36 +23,60 @@ public class SolutionService : ISolutionService
         _logger.LogInformation("Solving day 4");
         _logger.LogInformation("Input contains {Input} values", input.Length);
 
-        throw new NotImplementedException();
+        var sum = 0;
+        for (int i = 0; i < input.Length; i++)
+        {
+            sum += StringsOverlap(input[i]) ? 1 : 0;
+        }
+
+        return sum;
     }
 
     public bool StringsOverlap(string input)
     {
-        var part1 = ConvertToPrintableString(input.Substring(0, 3));
-        var part2 = ConvertToPrintableString(input.Substring(4));
+        var split = input.Split(',');
 
-        _logger.LogInformation("{Part1}   {Input}", part1, input.Substring(0, 3));
-        _logger.LogInformation("{Part2}   {Input}", part2, input.Substring(4));
+        // find max length
+        var part1MaxLength = int.Parse(split[0].Split("-").Last());
+        var part2MaxLength = int.Parse(split[1].Split("-").Last());
+        var maxLength = Math.Max(part1MaxLength, part2MaxLength);
 
-        throw new NotImplementedException();
+        var part1 = ConvertToPrintableString(split[0], maxLength);
+        var part2 = ConvertToPrintableString(split[1], maxLength);
+
+        _logger.LogInformation("{Part1}   {Input}", string.Join("", part1), split[0]);
+        _logger.LogInformation("{Part2}   {Input}", string.Join("", part2), split[1]);
+
+        // check if all values in part1 are in part2
+        var result = part1.All(part2.Contains) || part2.All(part1.Contains);
+
+        _logger.LogInformation("Overlap: {Result}", result);
+
+        return result;
     }
 
-    private string ConvertToPrintableString(string input)
+    private List<string> ConvertToPrintableString(string input, int length)
     {
-        var result = new char[8] { '.', '.', '.', '.', '.', '.', '.', '.' };
+        // TODO: find a better max value
+        var result = new List<string>(new string[length + 1]);
+        var split = input.Split('-');
 
-        var a = char.GetNumericValue(input[0]);
-        var b = char.GetNumericValue(input[2]);
+        var a = int.Parse(split[0]);
+        var b = int.Parse(split[1]);
 
-        for (var i = 1; i < 9; i++)
+        for (var i = 0; i < result.Count; i++)
         {
             if (i >= a && i <= b)
             {
-                result[i - 1] = (char)(i + 48);
+                result[i] = i.ToString();
+            }
+            else
+            {
+                result[i] = ".";
             }
         }
 
-        return new string(result);
+        return result;
     }
 
     public int RunPart2(string[] input)
