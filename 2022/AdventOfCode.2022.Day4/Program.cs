@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using System.Diagnostics;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
@@ -9,6 +10,9 @@ internal static class Program
 {
     private static void Main(string[] args)
     {
+        var stopWatch = new Stopwatch();
+        stopWatch.Start();
+
         var builder = new ConfigurationBuilder();
 
         Log.Logger = new LoggerConfiguration()
@@ -40,6 +44,9 @@ internal static class Program
 
         var resultPart2 = svc.RunPart2(input);
         Log.Logger.Information("result: {Result}", resultPart2);
+
+        stopWatch.Stop();
+        Log.Logger.Information("Elapsed time: {Elapsed} ms", stopWatch.ElapsedMilliseconds);
     }
 
     private static IConfiguration BuildConfiguration(IConfigurationBuilder builder)
