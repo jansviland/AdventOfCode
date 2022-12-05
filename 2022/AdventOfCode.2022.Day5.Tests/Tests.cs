@@ -69,6 +69,22 @@ public class Tests : TestBed<TestFixture>
     }
 
     [Fact]
+    public void CreatePrintableOutputTest()
+    {
+        // arrange
+        var stacks = _solutionService!.ParseInput(_input);
+
+        // act
+        var result = _solutionService.CreatePrintableOutput(stacks);
+
+        // assert
+        Assert.Equal(_input[0], result[0]);
+        Assert.Equal(_input[1], result[1]);
+        Assert.Equal(_input[2], result[2]);
+        Assert.Equal(_input[3], result[3]);
+    }
+
+    [Fact]
     public void Part2Test()
     {
         _testOutputHelper.WriteLine("Running unit test - Part 2");

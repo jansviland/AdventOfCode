@@ -3,12 +3,11 @@ namespace AdventOfCode._2022.Day2.Tests;
 public class Tests : TestBed<TestFixture>
 {
     private readonly ISolutionService _solutionService;
-    private readonly string[] _input;
+    private readonly string[] _input = new[] { "A Y", "B X", "C Z" };
 
     public Tests(ITestOutputHelper testOutputHelper, TestFixture fixture) : base(testOutputHelper, fixture)
     {
         _solutionService = _fixture.GetService<ISolutionService>(_testOutputHelper)!;
-        _input = new[] { "A Y", "B X", "C Z" };
     }
 
     [Fact]

@@ -5,6 +5,7 @@ public interface ISolutionService
     public string RunPart1(string[] input);
     public int RunPart2(string[] input);
     public List<Stack<Crate>> ParseInput(string[] input);
+    public List<string> CreatePrintableOutput(List<Stack<Crate>> stacks);
 }
 
 public class Crate
@@ -37,24 +38,59 @@ public class SolutionService : ISolutionService
         throw new NotImplementedException();
     }
 
-    private void PrintAllCrates(List<Stack<Crate>> stacks)
+    public List<string> CreatePrintableOutput(List<Stack<Crate>> stacks)
     {
-        foreach (var stack in stacks)
-        {
-            foreach (var crate in stack)
-            {
-                // TODO: print the same way as in the description
+        // TODO: find max stack size
+        var maxStackSize = stacks.Max(s => s.Count);
 
-                _logger.LogInformation("Crate {Crate} is in stack {Stack}", crate.Name, stacks.IndexOf(stack));
+        var output = new List<string>();
+        for (var i = maxStackSize - 1; i >= 0; i--)
+        {
+            var line = new StringBuilder();
+
+            for (var p = 0; p < stacks.Count; p++)
+            {
+                if (stacks[p].Count > i)
+                {
+                    // line.Append(stacks[p].ElementAt(i).Name);
+                    line.Append("[" + stacks[p].Pop().Name + "] ");
+                }
+                else
+                {
+                    line.Append("    ");
+                }
+
+                // remove last space
+                if (p == stacks.Count - 1)
+                {
+                    line.Remove(line.Length - 1, 1);
+                }
             }
+
+            output.Add(line.ToString());
         }
+
+        var sb = new StringBuilder();
+        for (var i = 0; i < stacks.Count; i++)
+        {
+            sb.Append(" " + (i + 1) + "  ");
+        }
+
+        output.Add(sb.Remove(sb.Length - 1, 1).ToString());
+
+        foreach (var s in output)
+        {
+            _logger.LogInformation(s);
+        }
+
+        return output;
     }
 
     public List<Stack<Crate>> ParseInput(string[] input)
     {
         // find where moves start in the input
         var startLine = 0;
-        for (int i = 0; i < input.Length; i++)
+        for (var i = 0; i < input.Length; i++)
         {
             if (input[i].Contains("move"))
             {
@@ -75,7 +111,7 @@ public class SolutionService : ISolutionService
             var line = input[i];
             var currentStack = 0;
 
-            for (int p = 0; p < line.Length; p += 4)
+            for (var p = 0; p < line.Length; p += 4)
             {
                 var crateName = line.Substring(p, 3);
                 if (!string.IsNullOrWhiteSpace(crateName))

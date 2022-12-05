@@ -1,5 +1,3 @@
-using System.Globalization;
-
 namespace AdventOfCode._2022.Day4;
 
 public interface ISolutionService
@@ -110,7 +108,7 @@ public class SolutionService : ISolutionService
         _logger.LogInformation("{Part2}   {Input}", string.Join("", part2), split[1]);
 
         var result = new List<string>();
-        for (int i = 0; i < part1.Count; i++)
+        for (var i = 0; i < part1.Count; i++)
         {
             if (part1[i] != "." && part1[i] == part2[i])
             {
