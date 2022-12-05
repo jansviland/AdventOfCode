@@ -6,12 +6,15 @@ public class Tests : TestBed<TestFixture>
 
     private readonly string[] _input = new[]
     {
-        "vJrwpWtwJgWrhcsFMMfFFhFp",
-        "jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL",
-        "PmmdzqPrVvPwwTWBwg",
-        "wMqvLMZHhHMvwLHjbvcjnnSBnvTQFn",
-        "ttgJtRGJQctTZtZT",
-        "CrZsJsPPZsGzwwsLwLmpwMDw"
+        "    [D]    ",
+        "[N] [C]    ",
+        "[Z] [M] [P]",
+        " 1   2   3 ",
+        "",
+        "move 1 from 2 to 1",
+        "move 3 from 1 to 3",
+        "move 2 from 2 to 1",
+        "move 1 from 1 to 2",
     };
 
     public Tests(ITestOutputHelper testOutputHelper, TestFixture fixture) : base(testOutputHelper, fixture)
@@ -29,7 +32,40 @@ public class Tests : TestBed<TestFixture>
         var result = _solutionService!.RunPart1(_input);
 
         // assert
-        Assert.Equal(157, result);
+        Assert.Equal("CMZ", result);
+    }
+
+    [Fact]
+    public void ParseInputTest()
+    {
+        // arrange
+        // act
+        var result = _solutionService!.ParseInput(_input);
+
+        // assert
+
+        // total stacks
+        Assert.Equal(3, result.Count);
+
+        // number of crates in each stack
+        Assert.Equal(2, result[0].Count);
+        Assert.Equal(3, result[1].Count);
+        Assert.Single(result[2]);
+
+        // correct crate at the top of each stack
+        Assert.Equal("N", result[0].Peek().Name);
+        Assert.Equal("D", result[1].Peek().Name);
+        Assert.Equal("P", result[2].Peek().Name);
+
+        // contains the correct crates
+        Assert.NotNull(result[0].FirstOrDefault(x => x.Name == "N"));
+        Assert.NotNull(result[0].FirstOrDefault(x => x.Name == "Z"));
+
+        Assert.NotNull(result[1].FirstOrDefault(x => x.Name == "D"));
+        Assert.NotNull(result[1].FirstOrDefault(x => x.Name == "C"));
+        Assert.NotNull(result[1].FirstOrDefault(x => x.Name == "M"));
+
+        Assert.NotNull(result[2].FirstOrDefault(x => x.Name == "P"));
     }
 
     [Fact]
