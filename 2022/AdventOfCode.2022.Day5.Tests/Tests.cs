@@ -85,6 +85,37 @@ public class Tests : TestBed<TestFixture>
     }
 
     [Fact]
+    public void MoveTest1()
+    {
+        // arrange
+        var originalStack = _solutionService!.ParseInput(_input);
+
+        // act
+        var move1Result = _solutionService.MoveCrate(originalStack, _input[5]);
+
+        // assert
+        Assert.Equal("D", move1Result[0].Peek().Name);
+        Assert.Equal("C", move1Result[1].Peek().Name);
+        Assert.Equal("P", move1Result[2].Peek().Name);
+    }
+
+    [Fact]
+    public void MoveTest2()
+    {
+        // arrange
+        var originalStack = _solutionService!.ParseInput(_input);
+
+        // act
+        var move1Result = _solutionService.MoveCrate(originalStack, _input[5]);
+        var move2Result = _solutionService.MoveCrate(move1Result, _input[6]);
+
+        // assert
+        Assert.Equal(null, move2Result[0].Peek().Name);
+        Assert.Equal("C", move2Result[1].Peek().Name);
+        Assert.Equal("Z", move2Result[2].Peek().Name);
+    }
+
+    [Fact]
     public void Part2Test()
     {
         _testOutputHelper.WriteLine("Running unit test - Part 2");

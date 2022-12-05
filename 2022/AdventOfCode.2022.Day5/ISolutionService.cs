@@ -6,6 +6,7 @@ public interface ISolutionService
     public int RunPart2(string[] input);
     public List<Stack<Crate>> ParseInput(string[] input);
     public List<string> CreatePrintableOutput(List<Stack<Crate>> stacks);
+    public List<Stack<Crate>> MoveCrate(List<Stack<Crate>> stacks, string move);
 }
 
 public class Crate
@@ -84,6 +85,11 @@ public class SolutionService : ISolutionService
         }
 
         return output;
+    }
+
+    public List<Stack<Crate>> MoveCrate(List<Stack<Crate>> stacks, string move)
+    {
+        throw new NotImplementedException();
     }
 
     public List<Stack<Crate>> ParseInput(string[] input)
