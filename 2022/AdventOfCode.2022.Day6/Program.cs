@@ -42,7 +42,7 @@ internal static class Program
         var result = svc.RunPart1(input[0]);
         Log.Logger.Information("result: {Result}", result);
 
-        var resultPart2 = svc.RunPart2(input);
+        var resultPart2 = svc.RunPart2(input[0]);
         Log.Logger.Information("result: {Result}", resultPart2);
 
         stopWatch.Stop();
