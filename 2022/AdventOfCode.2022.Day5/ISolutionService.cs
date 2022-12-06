@@ -28,6 +28,11 @@ public class SolutionService : ISolutionService
         _logger.LogInformation("Solving day 5");
         _logger.LogInformation("Input contains {Input} values", input.Length);
 
+        var stacks = ParseInput(input);
+        var output = CreatePrintableOutput(stacks);
+
+        // TODO: preform the moves
+
         throw new NotImplementedException();
     }
 
@@ -53,7 +58,6 @@ public class SolutionService : ISolutionService
             {
                 if (stacks[p].Count > i)
                 {
-                    // line.Append(stacks[p].ElementAt(i).Name);
                     line.Append("[" + stacks[p].Pop().Name + "] ");
                 }
                 else
@@ -89,6 +93,10 @@ public class SolutionService : ISolutionService
 
     public List<Stack<Crate>> MoveCrate(List<Stack<Crate>> stacks, string move)
     {
+        _logger.LogInformation("Preforming move: {Move}", move);
+
+        // TODO: print the stacks after move is preformed
+
         throw new NotImplementedException();
     }
 

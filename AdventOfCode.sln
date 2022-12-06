@@ -25,6 +25,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{86811C00-DC32-4B94-A43F-9AF825091B5E}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
+		generate-test-coverage-report.bat = generate-test-coverage-report.bat
+		generate-test-coverage-report.sh = generate-test-coverage-report.sh
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdventOfCode.2022.Day4", "2022\AdventOfCode.2022.Day4\AdventOfCode.2022.Day4.csproj", "{2541A94B-E1ED-4027-9539-4DB9381B4F43}"
