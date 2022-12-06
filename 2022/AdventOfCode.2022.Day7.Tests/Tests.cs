@@ -1,4 +1,4 @@
-namespace AdventOfCode._2022.Day6.Tests;
+namespace AdventOfCode._2022.Day7.Tests;
 
 public class Tests : TestBed<TestFixture>
 {
@@ -6,11 +6,12 @@ public class Tests : TestBed<TestFixture>
 
     private readonly string[] _input = new[]
     {
-        "mjqjpqmgbljsphdztnvjfqwrcgsmlb",
-        "bvwbjplbgvbhsrlpgdmjqwftvncz",
-        "nppdvjthqldpwncqszvftbrmjlhg",
-        "nznrnfrfntjfmvfwmzdfjlvtqnbhcprsg",
-        "zcfzfwzzqfrljwzlrfnpqdbhtmscgvjw",
+        "vJrwpWtwJgWrhcsFMMfFFhFp",
+        "jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL",
+        "PmmdzqPrVvPwwTWBwg",
+        "wMqvLMZHhHMvwLHjbvcjnnSBnvTQFn",
+        "ttgJtRGJQctTZtZT",
+        "CrZsJsPPZsGzwwsLwLmpwMDw"
     };
 
     public Tests(ITestOutputHelper testOutputHelper, TestFixture fixture) : base(testOutputHelper, fixture)
@@ -25,12 +26,10 @@ public class Tests : TestBed<TestFixture>
 
         // arrange
         // act
+        var result = _solutionService!.RunPart1(_input);
+
         // assert
-        Assert.Equal(7, _solutionService!.RunPart1(_input[0]));
-        Assert.Equal(5, _solutionService!.RunPart1(_input[1]));
-        Assert.Equal(6, _solutionService!.RunPart1(_input[2]));
-        Assert.Equal(10, _solutionService!.RunPart1(_input[3]));
-        Assert.Equal(11, _solutionService!.RunPart1(_input[4]));
+        Assert.Equal(157, result);
     }
 
     [Fact]

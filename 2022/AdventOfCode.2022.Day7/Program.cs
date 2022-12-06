@@ -4,7 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 
-namespace AdventOfCode._2022.Day6;
+namespace AdventOfCode._2022.Day7;
 
 internal static class Program
 {
@@ -39,7 +39,7 @@ internal static class Program
             input = File.ReadAllLines(args[0]);
         }
 
-        var result = svc.RunPart1(input[0]);
+        var result = svc.RunPart1(input);
         Log.Logger.Information("result: {Result}", result);
 
         var resultPart2 = svc.RunPart2(input);

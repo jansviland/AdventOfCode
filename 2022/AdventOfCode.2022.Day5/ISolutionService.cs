@@ -25,7 +25,7 @@ public class SolutionService : ISolutionService
 
     public string RunPart1(string[] input)
     {
-        _logger.LogInformation("Solving day 4");
+        _logger.LogInformation("Solving day 5");
         _logger.LogInformation("Input contains {Input} values", input.Length);
 
         throw new NotImplementedException();
@@ -33,7 +33,7 @@ public class SolutionService : ISolutionService
 
     public int RunPart2(string[] input)
     {
-        _logger.LogInformation("Solving day 4 - Part 2");
+        _logger.LogInformation("Solving day 5 - Part 2");
         _logger.LogInformation("Input contains {Input} values", input.Length);
 
         throw new NotImplementedException();
