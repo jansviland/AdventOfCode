@@ -1,4 +1,4 @@
-namespace AdventOfCode._2022.Day7;
+namespace AdventOfCode._2022.Day8;
 
 public interface ISolutionService
 {
@@ -17,7 +17,7 @@ public class SolutionService : ISolutionService
 
     public int RunPart1(string[] input)
     {
-        _logger.LogInformation("Solving day 7");
+        _logger.LogInformation("Solving day 8");
         _logger.LogInformation("Input contains {Input} values", input.Length);
 
         throw new NotImplementedException();
@@ -25,7 +25,7 @@ public class SolutionService : ISolutionService
 
     public int RunPart2(string[] input)
     {
-        _logger.LogInformation("Solving day 7 - Part 2");
+        _logger.LogInformation("Solving day 8 - Part 2");
         _logger.LogInformation("Input contains {Input} values", input.Length);
 
         throw new NotImplementedException();
