@@ -3,6 +3,7 @@ namespace AdventOfCode._2022.Day5.Tests;
 public class Tests : TestBed<TestFixture>
 {
     private readonly ISolutionService _solutionService;
+
     private readonly string[] _input = new[]
     {
         "    [D]    ",
@@ -90,12 +91,28 @@ public class Tests : TestBed<TestFixture>
         var originalStack = _solutionService.ParseInput(_input);
 
         // act
-        var move1Result = _solutionService.MoveCrate(originalStack, _input[5]);
+        var stackAfterMove1 = _solutionService.MoveCrate(originalStack, _input[5]); // "move 1 from 2 to 1"
 
         // assert
-        Assert.Equal("D", move1Result[0].Peek().Name);
-        Assert.Equal("C", move1Result[1].Peek().Name);
-        Assert.Equal("P", move1Result[2].Peek().Name);
+        // number of crates in each stack
+        Assert.Equal(3, stackAfterMove1[0].Count);
+        Assert.Equal(2, stackAfterMove1[1].Count);
+        Assert.Single(stackAfterMove1[2]);
+
+        // correct crate at the top of each stack
+        Assert.Equal("D", stackAfterMove1[0].Peek().Name);
+        Assert.Equal("C", stackAfterMove1[1].Peek().Name);
+        Assert.Equal("P", stackAfterMove1[2].Peek().Name);
+
+        // contains the correct crates
+        Assert.NotNull(stackAfterMove1[0].FirstOrDefault(x => x.Name == "D"));
+        Assert.NotNull(stackAfterMove1[0].FirstOrDefault(x => x.Name == "N"));
+        Assert.NotNull(stackAfterMove1[0].FirstOrDefault(x => x.Name == "Z"));
+
+        Assert.NotNull(stackAfterMove1[1].FirstOrDefault(x => x.Name == "C"));
+        Assert.NotNull(stackAfterMove1[1].FirstOrDefault(x => x.Name == "M"));
+
+        Assert.NotNull(stackAfterMove1[2].FirstOrDefault(x => x.Name == "P"));
     }
 
     [Fact]
@@ -105,13 +122,28 @@ public class Tests : TestBed<TestFixture>
         var originalStack = _solutionService.ParseInput(_input);
 
         // act
-        var move1Result = _solutionService.MoveCrate(originalStack, _input[5]);
-        var move2Result = _solutionService.MoveCrate(move1Result, _input[6]);
+        var stackAfterMove1 = _solutionService.MoveCrate(originalStack, _input[5]); // "move 1 from 2 to 1"
+        var stackAfterMove2 = _solutionService.MoveCrate(stackAfterMove1, _input[6]); // "move 3 from 1 to 3"
 
         // assert
-        Assert.Null(move2Result[0].Peek().Name);
-        Assert.Equal("C", move2Result[1].Peek().Name);
-        Assert.Equal("Z", move2Result[2].Peek().Name);
+        // number of crates in each stack
+        Assert.Empty(stackAfterMove2[0]);
+        Assert.Equal(2, stackAfterMove2[1].Count);
+        Assert.Equal(4, stackAfterMove2[2].Count);
+
+        // correct crate at the top of each stack
+        Assert.Null(stackAfterMove2[0].Peek());
+        Assert.Equal("C", stackAfterMove2[1].Peek().Name);
+        Assert.Equal("Z", stackAfterMove2[2].Peek().Name);
+
+        // contains the correct crates
+        Assert.NotNull(stackAfterMove2[1].FirstOrDefault(x => x.Name == "C"));
+        Assert.NotNull(stackAfterMove2[1].FirstOrDefault(x => x.Name == "M"));
+
+        Assert.NotNull(stackAfterMove2[2].FirstOrDefault(x => x.Name == "Z"));
+        Assert.NotNull(stackAfterMove2[2].FirstOrDefault(x => x.Name == "N"));
+        Assert.NotNull(stackAfterMove2[2].FirstOrDefault(x => x.Name == "D"));
+        Assert.NotNull(stackAfterMove1[2].FirstOrDefault(x => x.Name == "P"));
     }
 
     [Fact]
