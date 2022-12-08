@@ -53,12 +53,11 @@ public class SolutionService : ISolutionService
         for (var i = maxStackSize - 1; i >= 0; i--)
         {
             var line = new StringBuilder();
-
-            for (var p = 0; p < stacks.Count; p++)
+            foreach (var crates in stacks)
             {
-                if (stacks[p].Count > i)
+                if (crates.Count > i)
                 {
-                    line.Append("[" + stacks[p].Pop().Name + "] ");
+                    line.Append("[" + crates.Pop().Name + "] ");
                 }
                 else
                 {
@@ -94,6 +93,13 @@ public class SolutionService : ISolutionService
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// start from the bottom, and work your way up
+    /// each line has the same pattern 3 characters, 1 space, 3 characters, 1 space, 3 characters
+    /// so we can parse the first three characters
+    /// if it's an empty string, no crate is there, if we see [A-Z] then we have a crate,
+    /// then we add it to the top of the current stack, and move to the next stack
+    /// </summary>
     public List<Stack<Crate>> ParseInput(string[] input)
     {
         // find where moves start in the input
@@ -106,12 +112,6 @@ public class SolutionService : ISolutionService
                 break;
             }
         }
-
-        // start from the bottom, and work your way up
-        // each line has the same pattern 3 characters, 1 space, 3 characters, 1 space, 3 characters
-        // so we can parse the first three characters
-        // if its an empty string, no crate is there, if we see [A-Z] then we have a crate,
-        // then we add it to the top of the current stack, and move to the next stack
 
         var stacks = new List<Stack<Crate>>();
         for (var i = startLine; i >= 0; i--)
