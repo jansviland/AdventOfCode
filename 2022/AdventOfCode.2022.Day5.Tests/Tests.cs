@@ -57,14 +57,17 @@ public class Tests : TestBed<TestFixture>
         Assert.Equal("D", result[1].Peek().Name);
         Assert.Equal("P", result[2].Peek().Name);
 
-        // contains the correct crates
+        // stacks contains the correct crates
+        // stack 1
         Assert.NotNull(result[0].FirstOrDefault(x => x.Name == "N"));
         Assert.NotNull(result[0].FirstOrDefault(x => x.Name == "Z"));
 
+        // stack 2
         Assert.NotNull(result[1].FirstOrDefault(x => x.Name == "D"));
         Assert.NotNull(result[1].FirstOrDefault(x => x.Name == "C"));
         Assert.NotNull(result[1].FirstOrDefault(x => x.Name == "M"));
 
+        // stack 3
         Assert.NotNull(result[2].FirstOrDefault(x => x.Name == "P"));
     }
 
@@ -104,14 +107,17 @@ public class Tests : TestBed<TestFixture>
         Assert.Equal("C", stackAfterMove1[1].Peek().Name);
         Assert.Equal("P", stackAfterMove1[2].Peek().Name);
 
-        // contains the correct crates
+        // stacks contains the correct crates
+        // stack 1
         Assert.NotNull(stackAfterMove1[0].FirstOrDefault(x => x.Name == "D"));
         Assert.NotNull(stackAfterMove1[0].FirstOrDefault(x => x.Name == "N"));
         Assert.NotNull(stackAfterMove1[0].FirstOrDefault(x => x.Name == "Z"));
 
+        // stack 2
         Assert.NotNull(stackAfterMove1[1].FirstOrDefault(x => x.Name == "C"));
         Assert.NotNull(stackAfterMove1[1].FirstOrDefault(x => x.Name == "M"));
 
+        // stack 3
         Assert.NotNull(stackAfterMove1[2].FirstOrDefault(x => x.Name == "P"));
     }
 
@@ -136,10 +142,12 @@ public class Tests : TestBed<TestFixture>
         Assert.Equal("C", stackAfterMove2[1].Peek().Name);
         Assert.Equal("Z", stackAfterMove2[2].Peek().Name);
 
-        // contains the correct crates
+        // stacks contains the correct crates
+        // stack 2
         Assert.NotNull(stackAfterMove2[1].FirstOrDefault(x => x.Name == "C"));
         Assert.NotNull(stackAfterMove2[1].FirstOrDefault(x => x.Name == "M"));
 
+        // stack 3
         Assert.NotNull(stackAfterMove2[2].FirstOrDefault(x => x.Name == "Z"));
         Assert.NotNull(stackAfterMove2[2].FirstOrDefault(x => x.Name == "N"));
         Assert.NotNull(stackAfterMove2[2].FirstOrDefault(x => x.Name == "D"));
