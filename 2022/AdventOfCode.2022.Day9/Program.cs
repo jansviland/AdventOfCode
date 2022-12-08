@@ -4,7 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 
-namespace AdventOfCode._2022.Day7;
+namespace AdventOfCode._2022.Day9;
 
 internal static class Program
 {

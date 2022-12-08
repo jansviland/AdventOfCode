@@ -1,4 +1,4 @@
-namespace AdventOfCode._2022.Day7.Tests;
+namespace AdventOfCode._2022.Day9.Tests;
 
 public class Tests : TestBed<TestFixture>
 {

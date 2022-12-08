@@ -12,13 +12,13 @@ internal static class Program
         var builder = new ConfigurationBuilder();
 
         Log.Logger = new LoggerConfiguration()
-            .ReadFrom.Configuration(builder.Build())
+            .ReadFrom.Configuration(BuildConfiguration(builder))
             .Enrich.FromLogContext()
             .WriteTo.Console()
             .CreateLogger();
 
         var host = Host.CreateDefaultBuilder(args)
-            .ConfigureServices(((context, collection) => { collection.AddTransient<ISolutionService, SolutionService>(); }))
+            .ConfigureServices(((_, collection) => { collection.AddTransient<ISolutionService, SolutionService>(); }))
             .UseSerilog()
             .Build();
 
@@ -43,7 +43,7 @@ internal static class Program
         Log.Logger.Information("result part 2: {Result}", result2);
     }
 
-    private static void BuildConfiguration(IConfigurationBuilder builder)
+    private static IConfigurationRoot BuildConfiguration(IConfigurationBuilder builder)
     {
         builder
             .SetBasePath(Directory.GetCurrentDirectory())
@@ -52,5 +52,7 @@ internal static class Program
             .AddEnvironmentVariables();
 
         var configuration = builder.Build();
+
+        return configuration;
     }
 }

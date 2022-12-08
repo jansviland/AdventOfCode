@@ -3,7 +3,6 @@ namespace AdventOfCode._2022.Day5.Tests;
 public class Tests : TestBed<TestFixture>
 {
     private readonly ISolutionService _solutionService;
-
     private readonly string[] _input = new[]
     {
         "    [D]    ",
@@ -29,7 +28,7 @@ public class Tests : TestBed<TestFixture>
 
         // arrange
         // act
-        var result = _solutionService!.RunPart1(_input);
+        var result = _solutionService.RunPart1(_input);
 
         // assert
         Assert.Equal("CMZ", result);
@@ -40,7 +39,7 @@ public class Tests : TestBed<TestFixture>
     {
         // arrange
         // act
-        var result = _solutionService!.ParseInput(_input);
+        var result = _solutionService.ParseInput(_input);
 
         // assert
 
@@ -72,7 +71,7 @@ public class Tests : TestBed<TestFixture>
     public void CreatePrintableOutputTest()
     {
         // arrange
-        var stacks = _solutionService!.ParseInput(_input);
+        var stacks = _solutionService.ParseInput(_input);
 
         // act
         var result = _solutionService.CreatePrintableOutput(stacks);
@@ -88,7 +87,7 @@ public class Tests : TestBed<TestFixture>
     public void MoveTest1()
     {
         // arrange
-        var originalStack = _solutionService!.ParseInput(_input);
+        var originalStack = _solutionService.ParseInput(_input);
 
         // act
         var move1Result = _solutionService.MoveCrate(originalStack, _input[5]);
@@ -103,14 +102,14 @@ public class Tests : TestBed<TestFixture>
     public void MoveTest2()
     {
         // arrange
-        var originalStack = _solutionService!.ParseInput(_input);
+        var originalStack = _solutionService.ParseInput(_input);
 
         // act
         var move1Result = _solutionService.MoveCrate(originalStack, _input[5]);
         var move2Result = _solutionService.MoveCrate(move1Result, _input[6]);
 
         // assert
-        Assert.Equal(null, move2Result[0].Peek().Name);
+        Assert.Null(move2Result[0].Peek().Name);
         Assert.Equal("C", move2Result[1].Peek().Name);
         Assert.Equal("Z", move2Result[2].Peek().Name);
     }
@@ -122,9 +121,9 @@ public class Tests : TestBed<TestFixture>
 
         // arrange
         // act
-        var result = _solutionService!.RunPart2(_input);
+        var result = _solutionService.RunPart2(_input);
 
         // assert
-        Assert.Equal(45000, result);
+        Assert.Equal("abc", result);
     }
 }

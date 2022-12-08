@@ -17,7 +17,7 @@ public class Tests : TestBed<TestFixture>
 
         // arrange
         // act
-        var result = _solutionService!.Run(_input);
+        var result = _solutionService.Run(_input);
 
         // assert
         Assert.Equal(15, result);
@@ -30,7 +30,7 @@ public class Tests : TestBed<TestFixture>
 
         // arrange
         // act
-        var result = _solutionService!.RunPart2(_input);
+        var result = _solutionService.RunPart2(_input);
 
         // assert
         Assert.Equal(12, result);
@@ -44,9 +44,9 @@ public class Tests : TestBed<TestFixture>
         // arrange
         // act
         // assert
-        Assert.Equal(8, _solutionService!.CalculateRowPart1(_input[0]));
-        Assert.Equal(1, _solutionService!.CalculateRowPart1(_input[1]));
-        Assert.Equal(6, _solutionService!.CalculateRowPart1(_input[2]));
+        Assert.Equal(8, _solutionService.CalculateRowPart1(_input[0]));
+        Assert.Equal(1, _solutionService.CalculateRowPart1(_input[1]));
+        Assert.Equal(6, _solutionService.CalculateRowPart1(_input[2]));
     }
 
     [Fact]
@@ -57,8 +57,8 @@ public class Tests : TestBed<TestFixture>
         // arrange
         // act
         // assert
-        Assert.Equal(4, _solutionService!.CalculateRowPart2(_input[0]));
-        Assert.Equal(1, _solutionService!.CalculateRowPart2(_input[1]));
-        Assert.Equal(7, _solutionService!.CalculateRowPart2(_input[2]));
+        Assert.Equal(4, _solutionService.CalculateRowPart2(_input[0]));
+        Assert.Equal(1, _solutionService.CalculateRowPart2(_input[1]));
+        Assert.Equal(7, _solutionService.CalculateRowPart2(_input[2]));
     }
 }

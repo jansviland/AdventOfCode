@@ -3,7 +3,7 @@ namespace AdventOfCode._2022.Day5;
 public interface ISolutionService
 {
     public string RunPart1(string[] input);
-    public int RunPart2(string[] input);
+    public string RunPart2(string[] input);
     public List<Stack<Crate>> ParseInput(string[] input);
     public List<string> CreatePrintableOutput(List<Stack<Crate>> stacks);
     public List<Stack<Crate>> MoveCrate(List<Stack<Crate>> stacks, string move);
@@ -36,7 +36,7 @@ public class SolutionService : ISolutionService
         throw new NotImplementedException();
     }
 
-    public int RunPart2(string[] input)
+    public string RunPart2(string[] input)
     {
         _logger.LogInformation("Solving day 5 - Part 2");
         _logger.LogInformation("Input contains {Input} values", input.Length);
@@ -64,15 +64,9 @@ public class SolutionService : ISolutionService
                 {
                     line.Append("    ");
                 }
-
-                // remove last space
-                if (p == stacks.Count - 1)
-                {
-                    line.Remove(line.Length - 1, 1);
-                }
             }
 
-            output.Add(line.ToString());
+            output.Add(line.Remove(line.Length - 1, 1).ToString());
         }
 
         var sb = new StringBuilder();

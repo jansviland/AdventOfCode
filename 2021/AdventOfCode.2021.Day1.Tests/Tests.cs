@@ -36,15 +36,15 @@ public class Tests : TestBed<TestFixture>
 
         // assert
         Assert.Equal(-1, service!.GetSlidingWindow(input, 0));
-        Assert.Equal(-1, service!.GetSlidingWindow(input, 1));
-        Assert.Equal(607, service!.GetSlidingWindow(input, 2));
-        Assert.Equal(618, service!.GetSlidingWindow(input, 3));
-        Assert.Equal(618, service!.GetSlidingWindow(input, 4));
-        Assert.Equal(617, service!.GetSlidingWindow(input, 5));
-        Assert.Equal(647, service!.GetSlidingWindow(input, 6));
-        Assert.Equal(716, service!.GetSlidingWindow(input, 7));
-        Assert.Equal(769, service!.GetSlidingWindow(input, 8));
-        Assert.Equal(792, service!.GetSlidingWindow(input, 9));
+        Assert.Equal(-1, service.GetSlidingWindow(input, 1));
+        Assert.Equal(607, service.GetSlidingWindow(input, 2));
+        Assert.Equal(618, service.GetSlidingWindow(input, 3));
+        Assert.Equal(618, service.GetSlidingWindow(input, 4));
+        Assert.Equal(617, service.GetSlidingWindow(input, 5));
+        Assert.Equal(647, service.GetSlidingWindow(input, 6));
+        Assert.Equal(716, service.GetSlidingWindow(input, 7));
+        Assert.Equal(769, service.GetSlidingWindow(input, 8));
+        Assert.Equal(792, service.GetSlidingWindow(input, 9));
     }
 
     [Fact]

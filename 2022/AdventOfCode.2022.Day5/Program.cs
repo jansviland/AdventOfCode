@@ -20,7 +20,7 @@ internal static class Program
             .CreateLogger();
 
         var host = Host.CreateDefaultBuilder(args)
-            .ConfigureServices(((context, collection) => { collection.AddTransient<ISolutionService, SolutionService>(); }))
+            .ConfigureServices(((_, collection) => { collection.AddTransient<ISolutionService, SolutionService>(); }))
             .UseSerilog()
             .Build();
 

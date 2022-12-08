@@ -6,12 +6,11 @@ public class Tests : TestBed<TestFixture>
 
     private readonly string[] _input = new[]
     {
-        "vJrwpWtwJgWrhcsFMMfFFhFp",
-        "jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL",
-        "PmmdzqPrVvPwwTWBwg",
-        "wMqvLMZHhHMvwLHjbvcjnnSBnvTQFn",
-        "ttgJtRGJQctTZtZT",
-        "CrZsJsPPZsGzwwsLwLmpwMDw"
+        "30373",
+        "25512",
+        "65332",
+        "33549",
+        "35390",
     };
 
     public Tests(ITestOutputHelper testOutputHelper, TestFixture fixture) : base(testOutputHelper, fixture)
@@ -26,10 +25,10 @@ public class Tests : TestBed<TestFixture>
 
         // arrange
         // act
-        var result = _solutionService!.RunPart1(_input);
+        var result = _solutionService.RunPart1(_input);
 
         // assert
-        Assert.Equal(157, result);
+        Assert.Equal(21, result);
     }
 
     [Fact]
@@ -39,7 +38,7 @@ public class Tests : TestBed<TestFixture>
 
         // arrange
         // act
-        var result = _solutionService!.RunPart2(_input);
+        var result = _solutionService.RunPart2(_input);
 
         // assert
         Assert.Equal(45000, result);

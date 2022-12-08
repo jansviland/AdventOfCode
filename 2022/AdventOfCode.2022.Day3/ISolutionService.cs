@@ -13,8 +13,8 @@ public class Rucksack
 {
     public int Priority { get; set; }
     public char WrongItem { get; set; }
-    public string Compartment1 { get; set; }
-    public string Compartment2 { get; set; }
+    public string? Compartment1 { get; set; }
+    public string? Compartment2 { get; set; }
 
     public override string ToString()
     {
@@ -81,11 +81,11 @@ public class SolutionService : ISolutionService
     {
         if (char.IsUpper(c))
         {
-            return (int)c - 38;
+            return c - 38;
         }
         else
         {
-            return (int)c - 96;
+            return c - 96;
         }
     }
 

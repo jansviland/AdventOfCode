@@ -18,7 +18,7 @@ public class Tests : TestBed<TestFixture>
         // arrange
         // act
 
-        var result = _solutionService!.Run(_input);
+        var result = _solutionService.Run(_input);
 
         // Find the Elf carrying the most Calories. How many total Calories is that Elf carrying?
 
@@ -31,7 +31,7 @@ public class Tests : TestBed<TestFixture>
     {
         // arrange
         // act
-        var result = _solutionService!.GroupByElf(_input);
+        var result = _solutionService.GroupByElf(_input);
 
         // The first Elf is carrying food with 1000, 2000, and 3000 Calories, a total of 6000 Calories.
         // The second Elf is carrying one food item with 4000 Calories.
@@ -52,7 +52,7 @@ public class Tests : TestBed<TestFixture>
     {
         // arrange
         // act
-        var result = _solutionService!.RunPart2(_input);
+        var result = _solutionService.RunPart2(_input);
 
         // assert
         Assert.Equal(45000, result);

@@ -26,11 +26,11 @@ public class Tests : TestBed<TestFixture>
         // arrange
         // act
         // assert
-        Assert.Equal(7, _solutionService!.RunPart1(_input[0]));
-        Assert.Equal(5, _solutionService!.RunPart1(_input[1]));
-        Assert.Equal(6, _solutionService!.RunPart1(_input[2]));
-        Assert.Equal(10, _solutionService!.RunPart1(_input[3]));
-        Assert.Equal(11, _solutionService!.RunPart1(_input[4]));
+        Assert.Equal(7, _solutionService.RunPart1(_input[0]));
+        Assert.Equal(5, _solutionService.RunPart1(_input[1]));
+        Assert.Equal(6, _solutionService.RunPart1(_input[2]));
+        Assert.Equal(10, _solutionService.RunPart1(_input[3]));
+        Assert.Equal(11, _solutionService.RunPart1(_input[4]));
     }
 
     [Fact]
@@ -41,10 +41,10 @@ public class Tests : TestBed<TestFixture>
         // arrange
         // act
         // assert
-        Assert.Equal(19, _solutionService!.RunPart2(_input[0]));
-        Assert.Equal(23, _solutionService!.RunPart2(_input[1]));
-        Assert.Equal(23, _solutionService!.RunPart2(_input[2]));
-        Assert.Equal(29, _solutionService!.RunPart2(_input[3]));
-        Assert.Equal(26, _solutionService!.RunPart2(_input[4]));
+        Assert.Equal(19, _solutionService.RunPart2(_input[0]));
+        Assert.Equal(23, _solutionService.RunPart2(_input[1]));
+        Assert.Equal(23, _solutionService.RunPart2(_input[2]));
+        Assert.Equal(29, _solutionService.RunPart2(_input[3]));
+        Assert.Equal(26, _solutionService.RunPart2(_input[4]));
     }
 }

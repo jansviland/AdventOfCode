@@ -1,5 +1,3 @@
-using System.Diagnostics;
-
 namespace AdventOfCode._2022.Day2;
 
 public interface ISolutionService

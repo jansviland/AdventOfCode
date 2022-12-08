@@ -26,7 +26,7 @@ public class Tests : TestBed<TestFixture>
 
         // arrange
         // act
-        var result = _solutionService!.RunPart1(_input);
+        var result = _solutionService.RunPart1(_input);
 
         // assert
         Assert.Equal(2, result);
@@ -38,12 +38,12 @@ public class Tests : TestBed<TestFixture>
         // arrange
         // act
         // assert
-        Assert.False(_solutionService!.StringsOverlap(_input[0]));
-        Assert.False(_solutionService!.StringsOverlap(_input[1]));
-        Assert.False(_solutionService!.StringsOverlap(_input[2]));
-        Assert.True(_solutionService!.StringsOverlap(_input[3]));
-        Assert.True(_solutionService!.StringsOverlap(_input[4]));
-        Assert.False(_solutionService!.StringsOverlap(_input[5]));
+        Assert.False(_solutionService.StringsOverlap(_input[0]));
+        Assert.False(_solutionService.StringsOverlap(_input[1]));
+        Assert.False(_solutionService.StringsOverlap(_input[2]));
+        Assert.True(_solutionService.StringsOverlap(_input[3]));
+        Assert.True(_solutionService.StringsOverlap(_input[4]));
+        Assert.False(_solutionService.StringsOverlap(_input[5]));
     }
 
     [Fact]
@@ -54,7 +54,7 @@ public class Tests : TestBed<TestFixture>
 
         // act
         // assert
-        Assert.False(_solutionService!.StringsOverlap(input));
+        Assert.False(_solutionService.StringsOverlap(input));
     }
 
     [Fact]
@@ -64,7 +64,7 @@ public class Tests : TestBed<TestFixture>
 
         // arrange
         // act
-        var result = _solutionService!.RunPart2(_input);
+        var result = _solutionService.RunPart2(_input);
 
         // assert
         Assert.Equal(4, result);
@@ -76,7 +76,7 @@ public class Tests : TestBed<TestFixture>
         // arrange
         // act
         // assert
-        var result = _solutionService!.FindOverlappingStrings(_input[5]);
+        var result = _solutionService.FindOverlappingStrings(_input[5]);
 
         Assert.Equal("4", result[0]);
         Assert.Equal("5", result[1]);
@@ -89,11 +89,11 @@ public class Tests : TestBed<TestFixture>
         // arrange
         // act
         // assert
-        Assert.Equal(0, _solutionService!.FindOverlappingStrings(_input[0]).Count());
-        Assert.Equal(0, _solutionService!.FindOverlappingStrings(_input[1]).Count());
-        Assert.Equal(1, _solutionService!.FindOverlappingStrings(_input[2]).Count());
-        Assert.Equal(5, _solutionService!.FindOverlappingStrings(_input[3]).Count());
-        Assert.Equal(1, _solutionService!.FindOverlappingStrings(_input[4]).Count());
-        Assert.Equal(3, _solutionService!.FindOverlappingStrings(_input[5]).Count());
+        Assert.Empty(_solutionService.FindOverlappingStrings(_input[0]));
+        Assert.Empty(_solutionService.FindOverlappingStrings(_input[1]));
+        Assert.Single(_solutionService.FindOverlappingStrings(_input[2]));
+        Assert.Equal(5, _solutionService.FindOverlappingStrings(_input[3]).Count());
+        Assert.Single(_solutionService.FindOverlappingStrings(_input[4]));
+        Assert.Equal(3, _solutionService.FindOverlappingStrings(_input[5]).Count());
     }
 }
