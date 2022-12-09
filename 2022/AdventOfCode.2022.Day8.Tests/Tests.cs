@@ -58,6 +58,68 @@ public class Tests : TestBed<TestFixture>
     }
 
     [Fact]
+    public void IsVisibleTest()
+    {
+        // arrange
+        var grid = _solutionService.ParseInput(_input);
+
+        // act
+
+        // assert
+        // edges are always visible
+        Assert.True(_solutionService.IsVisible(grid, 0, 0, Direction.Left));
+        Assert.True(_solutionService.IsVisible(grid, 4, 4, Direction.Left));
+
+        // The top-left 5 is visible from the left and top.
+        Assert.True(_solutionService.IsVisible(grid, 1, 1, Direction.Left));
+        Assert.True(_solutionService.IsVisible(grid, 1, 1, Direction.Up));
+
+        // The top-middle 5 is visible from the top and right.
+        Assert.True(_solutionService.IsVisible(grid, 2, 1, Direction.Right));
+        Assert.True(_solutionService.IsVisible(grid, 2, 1, Direction.Up));
+
+        // The top-right 1 is not visible from any direction.
+        Assert.False(_solutionService.IsVisible(grid, 3, 1, Direction.Up));
+        Assert.False(_solutionService.IsVisible(grid, 3, 1, Direction.Down));
+        Assert.False(_solutionService.IsVisible(grid, 3, 1, Direction.Left));
+        Assert.False(_solutionService.IsVisible(grid, 3, 1, Direction.Right));
+
+        // The left-middle 5 is visible, but only from the right.
+        Assert.False(_solutionService.IsVisible(grid, 1, 2, Direction.Up));
+        Assert.False(_solutionService.IsVisible(grid, 1, 2, Direction.Down));
+        Assert.False(_solutionService.IsVisible(grid, 1, 2, Direction.Left));
+        Assert.True(_solutionService.IsVisible(grid, 1, 2, Direction.Right));
+
+        // The center 3 is not visible from any direction;
+        Assert.False(_solutionService.IsVisible(grid, 2, 2, Direction.Up));
+        Assert.False(_solutionService.IsVisible(grid, 2, 2, Direction.Down));
+        Assert.False(_solutionService.IsVisible(grid, 2, 2, Direction.Left));
+        Assert.False(_solutionService.IsVisible(grid, 2, 2, Direction.Right));
+
+        // The right-middle 3 is visible from the right.
+        Assert.False(_solutionService.IsVisible(grid, 3, 2, Direction.Up));
+        Assert.False(_solutionService.IsVisible(grid, 3, 2, Direction.Down));
+        Assert.False(_solutionService.IsVisible(grid, 3, 2, Direction.Left));
+        Assert.True(_solutionService.IsVisible(grid, 3, 2, Direction.Right));
+
+        // In the bottom row, the middle 5 is visible, but the 3 and 4 are not.
+        Assert.False(_solutionService.IsVisible(grid, 1, 3, Direction.Up));
+        Assert.False(_solutionService.IsVisible(grid, 1, 3, Direction.Down));
+        Assert.False(_solutionService.IsVisible(grid, 1, 3, Direction.Left));
+        Assert.False(_solutionService.IsVisible(grid, 1, 3, Direction.Right));
+
+        Assert.False(_solutionService.IsVisible(grid, 2, 3, Direction.Up));
+        Assert.True(_solutionService.IsVisible(grid, 2, 3, Direction.Down));
+        Assert.True(_solutionService.IsVisible(grid, 2, 3, Direction.Left));
+        Assert.False(_solutionService.IsVisible(grid, 2, 3, Direction.Right));
+
+        Assert.False(_solutionService.IsVisible(grid, 3, 3, Direction.Up));
+        Assert.False(_solutionService.IsVisible(grid, 3, 3, Direction.Down));
+        Assert.False(_solutionService.IsVisible(grid, 3, 3, Direction.Left));
+        Assert.False(_solutionService.IsVisible(grid, 3, 3, Direction.Right));
+    }
+
+    [Fact]
     public void Part2Test()
     {
         _testOutputHelper.WriteLine("Running unit test - Part 2");
