@@ -138,7 +138,6 @@ public class Tests : TestBed<TestFixture>
         Assert.Equal(4, stackAfterMove2[2].Count);
 
         // correct crate at the top of each stack
-        Assert.Null(stackAfterMove2[0].Peek());
         Assert.Equal("C", stackAfterMove2[1].Peek().Name);
         Assert.Equal("Z", stackAfterMove2[2].Peek().Name);
 

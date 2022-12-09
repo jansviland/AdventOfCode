@@ -29,11 +29,29 @@ public class SolutionService : ISolutionService
         _logger.LogInformation("Input contains {Input} values", input.Length);
 
         var stacks = ParseInput(input);
-        var output = CreatePrintableOutput(stacks);
 
-        // TODO: preform the moves
+        _logger.LogInformation("Initial stack");
+        CreatePrintableOutput(stacks);
 
-        throw new NotImplementedException();
+        var startLine = 0;
+        for (var i = 0; i < input.Length; i++)
+        {
+            if (input[i].Contains("move"))
+            {
+                startLine = i;
+                break;
+            }
+        }
+
+        for (var i = startLine; i < input.Length; i++)
+        {
+            stacks = MoveCrate(stacks, input[i]);
+        }
+
+        // get top of each stack
+        return stacks
+            .Select(s => s.Peek().Name)
+            .Aggregate((a, b) => a + b);
     }
 
     public string RunPart2(string[] input)
@@ -46,18 +64,18 @@ public class SolutionService : ISolutionService
 
     public List<string> CreatePrintableOutput(List<Stack<Crate>> stacks)
     {
-        // TODO: find max stack size
         var maxStackSize = stacks.Max(s => s.Count);
 
         var output = new List<string>();
         for (var i = maxStackSize - 1; i >= 0; i--)
         {
             var line = new StringBuilder();
-            foreach (var crates in stacks)
+            foreach (var s in stacks)
             {
-                if (crates.Count > i)
+                if (s.Count > i)
                 {
-                    line.Append("[" + crates.Pop().Name + "] ");
+                    var index = s.Count - i - 1;
+                    line.Append("[" + s.ElementAt(index).Name + "] ");
                 }
                 else
                 {
@@ -86,11 +104,22 @@ public class SolutionService : ISolutionService
 
     public List<Stack<Crate>> MoveCrate(List<Stack<Crate>> stacks, string move)
     {
-        _logger.LogInformation("Preforming move: {Move}", move);
+        var split = move.Split(" ");
+        var amount = int.Parse(split[1]);
+        var from = int.Parse(split[3]);
+        var to = int.Parse(split[5]);
 
-        // TODO: print the stacks after move is preformed
+        for (var i = 0; i < amount; i++)
+        {
+            var crate = stacks[from - 1].Pop();
+            stacks[to - 1].Push(crate);
+        }
 
-        throw new NotImplementedException();
+        _logger.LogInformation(move);
+
+        CreatePrintableOutput(stacks);
+
+        return stacks;
     }
 
     /// <summary>
@@ -102,7 +131,6 @@ public class SolutionService : ISolutionService
     /// </summary>
     public List<Stack<Crate>> ParseInput(string[] input)
     {
-        // find where moves start in the input
         var startLine = 0;
         for (var i = 0; i < input.Length; i++)
         {
@@ -131,7 +159,6 @@ public class SolutionService : ISolutionService
 
                     stacks[currentStack].Push(new Crate
                     {
-                        // remove [ and ] from the name
                         Name = crateName.Substring(1, crateName.Length - 2)
                     });
                 }
