@@ -88,69 +88,121 @@ public class Tests : TestBed<TestFixture>
     }
 
     [Fact]
-    public void MoveTest1()
+    public void MoveCratesOneAtATimeTest1()
     {
         // arrange
         var originalStack = _solutionService.ParseInput(_input);
 
         // act
-        var stackAfterMove1 = _solutionService.MoveCrate(originalStack, _input[5]); // "move 1 from 2 to 1"
+        var stack = _solutionService.MoveCratesOneAtATime(originalStack, _input[5]); // "move 1 from 2 to 1"
 
         // assert
         // number of crates in each stack
-        Assert.Equal(3, stackAfterMove1[0].Count);
-        Assert.Equal(2, stackAfterMove1[1].Count);
-        Assert.Single(stackAfterMove1[2]);
+        Assert.Equal(3, stack[0].Count);
+        Assert.Equal(2, stack[1].Count);
+        Assert.Single(stack[2]);
 
         // correct crate at the top of each stack
-        Assert.Equal("D", stackAfterMove1[0].Peek().Name);
-        Assert.Equal("C", stackAfterMove1[1].Peek().Name);
-        Assert.Equal("P", stackAfterMove1[2].Peek().Name);
+        Assert.Equal("D", stack[0].Peek().Name);
+        Assert.Equal("C", stack[1].Peek().Name);
+        Assert.Equal("P", stack[2].Peek().Name);
 
         // stacks contains the correct crates
         // stack 1
-        Assert.NotNull(stackAfterMove1[0].FirstOrDefault(x => x.Name == "D"));
-        Assert.NotNull(stackAfterMove1[0].FirstOrDefault(x => x.Name == "N"));
-        Assert.NotNull(stackAfterMove1[0].FirstOrDefault(x => x.Name == "Z"));
+        Assert.NotNull(stack[0].FirstOrDefault(x => x.Name == "D"));
+        Assert.NotNull(stack[0].FirstOrDefault(x => x.Name == "N"));
+        Assert.NotNull(stack[0].FirstOrDefault(x => x.Name == "Z"));
 
         // stack 2
-        Assert.NotNull(stackAfterMove1[1].FirstOrDefault(x => x.Name == "C"));
-        Assert.NotNull(stackAfterMove1[1].FirstOrDefault(x => x.Name == "M"));
+        Assert.NotNull(stack[1].FirstOrDefault(x => x.Name == "C"));
+        Assert.NotNull(stack[1].FirstOrDefault(x => x.Name == "M"));
 
         // stack 3
-        Assert.NotNull(stackAfterMove1[2].FirstOrDefault(x => x.Name == "P"));
+        Assert.NotNull(stack[2].FirstOrDefault(x => x.Name == "P"));
     }
 
     [Fact]
-    public void MoveTest2()
+    public void MoveCratesOneAtATimeTest2()
     {
         // arrange
         var originalStack = _solutionService.ParseInput(_input);
 
         // act
-        var stackAfterMove1 = _solutionService.MoveCrate(originalStack, _input[5]); // "move 1 from 2 to 1"
-        var stackAfterMove2 = _solutionService.MoveCrate(stackAfterMove1, _input[6]); // "move 3 from 1 to 3"
+        var stack = _solutionService.MoveCratesOneAtATime(originalStack, _input[5]); // "move 1 from 2 to 1"
+        _solutionService.MoveCratesOneAtATime(stack, _input[6]); // "move 3 from 1 to 3"
 
         // assert
         // number of crates in each stack
-        Assert.Empty(stackAfterMove2[0]);
-        Assert.Equal(2, stackAfterMove2[1].Count);
-        Assert.Equal(4, stackAfterMove2[2].Count);
+        Assert.Empty(stack[0]);
+        Assert.Equal(2, stack[1].Count);
+        Assert.Equal(4, stack[2].Count);
 
         // correct crate at the top of each stack
-        Assert.Equal("C", stackAfterMove2[1].Peek().Name);
-        Assert.Equal("Z", stackAfterMove2[2].Peek().Name);
+        Assert.Equal("C", stack[1].Peek().Name);
+        Assert.Equal("Z", stack[2].Peek().Name);
 
         // stacks contains the correct crates
         // stack 2
-        Assert.NotNull(stackAfterMove2[1].FirstOrDefault(x => x.Name == "C"));
-        Assert.NotNull(stackAfterMove2[1].FirstOrDefault(x => x.Name == "M"));
+        Assert.NotNull(stack[1].FirstOrDefault(x => x.Name == "C"));
+        Assert.NotNull(stack[1].FirstOrDefault(x => x.Name == "M"));
 
         // stack 3
-        Assert.NotNull(stackAfterMove2[2].FirstOrDefault(x => x.Name == "Z"));
-        Assert.NotNull(stackAfterMove2[2].FirstOrDefault(x => x.Name == "N"));
-        Assert.NotNull(stackAfterMove2[2].FirstOrDefault(x => x.Name == "D"));
-        Assert.NotNull(stackAfterMove1[2].FirstOrDefault(x => x.Name == "P"));
+        Assert.NotNull(stack[2].FirstOrDefault(x => x.Name == "Z"));
+        Assert.NotNull(stack[2].FirstOrDefault(x => x.Name == "N"));
+        Assert.NotNull(stack[2].FirstOrDefault(x => x.Name == "D"));
+        Assert.NotNull(stack[2].FirstOrDefault(x => x.Name == "P"));
+    }
+
+    [Fact]
+    public void MoveCratesMultipleAtATimeTest1()
+    {
+        // arrange
+        var originalStack = _solutionService.ParseInput(_input);
+
+        // act
+        var stack = _solutionService.MoveCratesMultipleAtATime(originalStack, _input[5]); // "move 1 from 2 to 1"
+        _solutionService.MoveCratesMultipleAtATime(stack, _input[6]); // "move 3 from 1 to 3"
+
+        // assert
+        // correct crate at the top of each stack
+        Assert.Equal("C", stack[1].Peek().Name);
+        Assert.Equal("D", stack[2].Peek().Name);
+    }
+
+    [Fact]
+    public void MoveCratesMultipleAtATimeTest2()
+    {
+        // arrange
+        var originalStack = _solutionService.ParseInput(_input);
+
+        // act
+        var stack = _solutionService.MoveCratesMultipleAtATime(originalStack, _input[5]); // "move 1 from 2 to 1"
+        _solutionService.MoveCratesMultipleAtATime(stack, _input[6]); // "move 3 from 1 to 3"
+        _solutionService.MoveCratesMultipleAtATime(stack, _input[7]); // "move 2 from 2 to 1"
+
+        // assert
+        // correct crate at the top of each stack
+        Assert.Equal("C", stack[0].Peek().Name);
+        Assert.Equal("D", stack[2].Peek().Name);
+    }
+
+    [Fact]
+    public void MoveCratesMultipleAtATimeTest3()
+    {
+        // arrange
+        var originalStack = _solutionService.ParseInput(_input);
+
+        // act
+        var stack = _solutionService.MoveCratesMultipleAtATime(originalStack, _input[5]); // "move 1 from 2 to 1"
+        _solutionService.MoveCratesMultipleAtATime(stack, _input[6]); // "move 3 from 1 to 3"
+        _solutionService.MoveCratesMultipleAtATime(stack, _input[7]); // "move 2 from 2 to 1"
+        _solutionService.MoveCratesMultipleAtATime(stack, _input[8]); // "move 1 from 1 to 2"
+
+        // assert
+        // correct crate at the top of each stack
+        Assert.Equal("M", stack[0].Peek().Name);
+        Assert.Equal("C", stack[1].Peek().Name);
+        Assert.Equal("D", stack[2].Peek().Name);
     }
 
     [Fact]
@@ -163,6 +215,6 @@ public class Tests : TestBed<TestFixture>
         var result = _solutionService.RunPart2(_input);
 
         // assert
-        Assert.Equal("abc", result);
+        Assert.Equal("MCD", result);
     }
 }

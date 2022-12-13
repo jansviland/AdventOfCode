@@ -6,7 +6,8 @@ public interface ISolutionService
     public string RunPart2(string[] input);
     public List<Stack<Crate>> ParseInput(string[] input);
     public List<string> CreatePrintableOutput(List<Stack<Crate>> stacks);
-    public List<Stack<Crate>> MoveCrate(List<Stack<Crate>> stacks, string move);
+    public List<Stack<Crate>> MoveCratesOneAtATime(List<Stack<Crate>> stacks, string move);
+    public List<Stack<Crate>> MoveCratesMultipleAtATime(List<Stack<Crate>> stacks, string move);
 }
 
 public class Crate
@@ -45,7 +46,7 @@ public class SolutionService : ISolutionService
 
         for (var i = startLine; i < input.Length; i++)
         {
-            stacks = MoveCrate(stacks, input[i]);
+            stacks = MoveCratesOneAtATime(stacks, input[i]);
         }
 
         // get top of each stack
@@ -59,7 +60,30 @@ public class SolutionService : ISolutionService
         _logger.LogInformation("Solving day 5 - Part 2");
         _logger.LogInformation("Input contains {Input} values", input.Length);
 
-        throw new NotImplementedException();
+        var stacks = ParseInput(input);
+
+        _logger.LogInformation("Initial stack");
+        CreatePrintableOutput(stacks);
+
+        var startLine = 0;
+        for (var i = 0; i < input.Length; i++)
+        {
+            if (input[i].Contains("move"))
+            {
+                startLine = i;
+                break;
+            }
+        }
+
+        for (var i = startLine; i < input.Length; i++)
+        {
+            stacks = MoveCratesMultipleAtATime(stacks, input[i]);
+        }
+
+        // get top of each stack
+        return stacks
+            .Select(s => s.Peek().Name)
+            .Aggregate((a, b) => a + b);
     }
 
     public List<string> CreatePrintableOutput(List<Stack<Crate>> stacks)
@@ -102,7 +126,7 @@ public class SolutionService : ISolutionService
         return output;
     }
 
-    public List<Stack<Crate>> MoveCrate(List<Stack<Crate>> stacks, string move)
+    public List<Stack<Crate>> MoveCratesOneAtATime(List<Stack<Crate>> stacks, string move)
     {
         var split = move.Split(" ");
         var amount = int.Parse(split[1]);
@@ -113,6 +137,31 @@ public class SolutionService : ISolutionService
         {
             var crate = stacks[from - 1].Pop();
             stacks[to - 1].Push(crate);
+        }
+
+        _logger.LogInformation(move);
+
+        CreatePrintableOutput(stacks);
+
+        return stacks;
+    }
+
+    public List<Stack<Crate>> MoveCratesMultipleAtATime(List<Stack<Crate>> stacks, string move)
+    {
+        var split = move.Split(" ");
+        var amount = int.Parse(split[1]);
+        var from = int.Parse(split[3]);
+        var to = int.Parse(split[5]);
+
+        var temp = new Stack<Crate>();
+        for (var i = 0; i < amount; i++)
+        {
+            temp.Push(stacks[from - 1].Pop());
+        }
+
+        for (var i = 0; i < amount; i++)
+        {
+            stacks[to - 1].Push(temp.ElementAt(i));
         }
 
         _logger.LogInformation(move);
