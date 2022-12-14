@@ -39,14 +39,30 @@ internal static class Program
             input = File.ReadAllLines(args[0]);
         }
 
-        var result = svc.RunPart1(input);
-        Log.Logger.Information("result: {Result}", result);
+        // var result = svc.RunPart1(input);
+        // Log.Logger.Information("result: {Result}", result);
+        //
+        // var resultPart2 = svc.RunPart2(input);
+        // Log.Logger.Information("result: {Result}", resultPart2);
+        //
+        // stopWatch.Stop();
+        // Log.Logger.Information("Elapsed time: {Elapsed} ms", stopWatch.ElapsedMilliseconds);
 
-        var resultPart2 = svc.RunPart2(input);
-        Log.Logger.Information("result: {Result}", resultPart2);
+        var spinner = new ConsoleAnimation
+        {
+            Delay = 300
+        };
 
-        stopWatch.Stop();
-        Log.Logger.Information("Elapsed time: {Elapsed} ms", stopWatch.ElapsedMilliseconds);
+        for (var i = 0; i < 5; i++)
+        {
+            var startTime = DateTime.Now;
+            var endTime = startTime.AddSeconds(5);
+
+            while (DateTime.Now < endTime)
+            {
+                spinner.Turn();
+            }
+        }
     }
 
     private static IConfiguration BuildConfiguration(IConfigurationBuilder builder)
@@ -60,5 +76,70 @@ internal static class Program
         var configuration = builder.Build();
 
         return configuration;
+    }
+
+    private class ConsoleAnimation
+    {
+        readonly List<string[,]> _sequence = new List<string[,]>();
+
+        public int Delay { get; set; } = 200;
+
+        int _counter;
+
+        public ConsoleAnimation()
+        {
+            Console.CursorVisible = false;
+            // Console.SetBufferSize(200, 200);
+
+            _sequence.Add(new string[,]
+            {
+                { "X", " " },
+                { " ", " " },
+            });
+            _sequence.Add(new string[,]
+            {
+                { " ", "X" },
+                { " ", " " },
+            });
+            _sequence.Add(new string[,]
+            {
+                { " ", " " },
+                { " ", "X" },
+            });
+            _sequence.Add(new string[,]
+            {
+                { " ", " " },
+                { "X", " " },
+            });
+        }
+
+        public void Turn()
+        {
+            _counter++;
+
+            Thread.Sleep(Delay);
+
+            var step = _counter % _sequence.Count();
+
+            Console.WriteLine("Turn {0}", step);
+            Console.WriteLine("");
+
+            for (var x = 0; x < 2; x++)
+            {
+                for (var y = 0; y < 2; y++)
+                {
+                    Console.Write(_sequence[step][x, y]);
+                }
+
+                Console.WriteLine();
+            }
+
+            Console.SetCursorPosition(0, Console.CursorTop - 4);
+
+
+            // Console.Write(fullMessage);
+
+            // Console.SetCursorPosition(Console.CursorLeft - msglength, Console.CursorTop);
+        }
     }
 }

@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace AdventOfCode._2022.Day12.Tests;
 
-public abstract class TestFixture : TestBedFixture
+public class TestFixture : TestBedFixture
 {
     protected override void AddServices(IServiceCollection services, IConfiguration? configuration)
         => services
