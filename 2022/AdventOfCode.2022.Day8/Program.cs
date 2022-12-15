@@ -25,6 +25,8 @@ internal static class Program
             .UseSerilog()
             .Build();
 
+        Log.Logger.Information("Usage: AdventOfCode.2022.Day8.exe <input text file> <debug leve>");
+        Log.Logger.Information("Example: AdventOfCode.2022.Day8.exe ./input.txt 1");
         Log.Logger.Information("args: {AllArguments}", string.Join(", ", args));
 
         var svc = ActivatorUtilities.CreateInstance<SolutionService>(host.Services);
@@ -39,10 +41,16 @@ internal static class Program
             input = File.ReadAllLines(args[0]);
         }
 
+        var debugLevel = 0;
+        if (args.Length > 1)
+        {
+            debugLevel = int.Parse(args[1]);
+        }
+
         var result = svc.RunPart1(input);
         Log.Logger.Information("result: {Result}", result);
 
-        var resultPart2 = svc.RunPart2(input);
+        var resultPart2 = svc.RunPart2(input, debugLevel);
         Log.Logger.Information("result: {Result}", resultPart2);
 
         stopWatch.Stop();

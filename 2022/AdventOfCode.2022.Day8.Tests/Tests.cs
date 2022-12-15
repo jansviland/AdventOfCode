@@ -120,6 +120,51 @@ public class Tests : TestBed<TestFixture>
     }
 
     [Fact]
+    public void NumberOfVisibleTreesTest1()
+    {
+        // arrange
+        var grid = _solutionService.ParseInput(_input);
+
+        // act
+        // assert
+
+        // Looking up, its view is not blocked; it can see 1 tree (of height 3).
+        Assert.Equal(1, _solutionService.NumberOfVisibleTrees(grid, 2, 1, Direction.Up));
+
+        // Looking left, its view is blocked immediately; it can see only 1 tree (of height 5, right next to it).
+        Assert.Equal(1, _solutionService.NumberOfVisibleTrees(grid, 2, 1, Direction.Left));
+
+        // Looking right, its view is not blocked; it can see 2 trees.
+        Assert.Equal(2, _solutionService.NumberOfVisibleTrees(grid, 2, 1, Direction.Right));
+
+        // Looking down, its view is blocked eventually; it can see 2 trees
+        Assert.Equal(2, _solutionService.NumberOfVisibleTrees(grid, 2, 1, Direction.Down));
+    }
+
+
+    [Fact]
+    public void NumberOfVisibleTreesTest2()
+    {
+        // arrange
+        var grid = _solutionService.ParseInput(_input);
+
+        // act
+        // assert
+
+        // Looking up, its view is blocked at 2 trees (by another tree with a height of 5).
+        Assert.Equal(2, _solutionService.NumberOfVisibleTrees(grid, 2, 3, Direction.Up));
+
+        // Looking left, its view is not blocked; it can see 2 trees.
+        Assert.Equal(2, _solutionService.NumberOfVisibleTrees(grid, 2, 3, Direction.Left));
+
+        // Looking right, its view is blocked at 2 trees (by a massive tree of height 9).
+        Assert.Equal(2, _solutionService.NumberOfVisibleTrees(grid, 2, 3, Direction.Right));
+
+        // Looking down, its view is also not blocked; it can see 1 tree.
+        Assert.Equal(1, _solutionService.NumberOfVisibleTrees(grid, 2, 3, Direction.Down));
+    }
+
+    [Fact]
     public void Part2Test()
     {
         _testOutputHelper.WriteLine("Running unit test - Part 2");
@@ -129,6 +174,6 @@ public class Tests : TestBed<TestFixture>
         var result = _solutionService.RunPart2(_input);
 
         // assert
-        Assert.Equal(45000, result);
+        Assert.Equal(8, result);
     }
 }
