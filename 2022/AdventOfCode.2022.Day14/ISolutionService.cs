@@ -21,10 +21,6 @@ public class Grid
     public int YMax;
 
     public string[,] values;
-
-    public Grid()
-    {
-    }
 }
 
 public class SolutionService : ISolutionService
@@ -50,7 +46,8 @@ public class SolutionService : ISolutionService
         {
             XMin = int.MaxValue,
             XMax = int.MinValue,
-            YMin = int.MaxValue,
+            // YMin = int.MaxValue,
+            YMin = 0,
             YMax = int.MinValue,
         };
 
@@ -60,10 +57,13 @@ public class SolutionService : ISolutionService
         {
             var coordinates = input[i].Split('-', StringSplitOptions.TrimEntries);
 
-            // TODO: start at line position 0, then get coordinates for next point on the line, 
+            // TODO: start at line position 0, then get coordinates for next point on the line,
             // compare to previous point, and move in a straight line until the next point is reached,
             // add X, Y coordinates along the way, to list, the temp list represents the line of rocks.
             // when done. Add X,Y of each rock to the grid.
+
+            // sand starting point
+            temp.Add((x: 500, y: 0, value: "+"));
 
             for (var linePosition = 0; linePosition < coordinates.Length; linePosition++)
             {
@@ -74,6 +74,7 @@ public class SolutionService : ISolutionService
                 var y = int.Parse(split.Last().Replace(">", ""));
 
                 // TODO: draw line of rocks between coordinates and add to grid
+                temp.Add((x, y, "#"));
 
                 if (x < result.XMin)
                 {
@@ -86,7 +87,7 @@ public class SolutionService : ISolutionService
 
                 if (y < result.YMin)
                 {
-                    result.YMin = y;
+                    // result.YMin = y;
                 }
                 else if (y > result.YMax)
                 {
@@ -94,6 +95,28 @@ public class SolutionService : ISolutionService
                 }
             }
         }
+
+        // TODO: add all the rocks to the grid from temp list
+
+        // result.XMin -= 1;
+        // result.XMax += 1;
+        // result.YMin -= 1;
+        // result.YMax += 1;
+
+        result.values = new string[result.XMax - result.XMin + 1, result.YMax - result.YMin + 1];
+
+        foreach (var t in temp)
+        {
+            result.values[t.x - result.XMin, t.y - result.YMin] = t.value;
+        }
+
+        // for (var x = result.XMin; x <= result.XMax; x++)
+        // {
+        //     for (var y = result.YMin; y <= result.YMax; y++)
+        //     {
+        //         result.values[x - result.XMin, y - result.YMin] = ".";
+        //     }
+        // }
 
         return result;
     }

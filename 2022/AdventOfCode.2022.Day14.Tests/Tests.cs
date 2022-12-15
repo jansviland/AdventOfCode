@@ -21,7 +21,7 @@ public class Tests : TestBed<TestFixture>
         var result = _solutionService.ParseInput(_input);
         Assert.Equal(494, result.XMin);
         Assert.Equal(503, result.XMax);
-        Assert.Equal(4, result.YMin);
+        Assert.Equal(0, result.YMin);
         Assert.Equal(9, result.YMax);
 
         // get first row
@@ -37,7 +37,31 @@ public class Tests : TestBed<TestFixture>
             // }
         }
 
-        Assert.Equal(new[] { ".", ".", ".", ".", ".", ".", "+", ".", ".", "." }, firstRow);
+        Assert.Equal(new[] { null, null, null, null, null, null, "+", null, null, null }, firstRow);
+
+        // TODO: test second row
+    }
+
+    [Fact]
+    public void CreatePrintableOutputTest()
+    {
+        // arrange
+        var grid = _solutionService.ParseInput(_input);
+
+        // act
+        var result = _solutionService.CreatePrintableOutput(grid);
+
+        // assert
+        Assert.Equal(_input[0], result[0]);
+        Assert.Equal(_input[1], result[1]);
+        Assert.Equal(_input[2], result[2]);
+        Assert.Equal(_input[3], result[3]);
+        Assert.Equal(_input[4], result[4]);
+        Assert.Equal(_input[5], result[5]);
+        Assert.Equal(_input[6], result[6]);
+        Assert.Equal(_input[7], result[7]);
+        Assert.Equal(_input[8], result[8]);
+        Assert.Equal(_input[9], result[9]);
     }
 
     [Fact]

@@ -12,7 +12,7 @@ public interface ISolutionService
 
 public class Crate
 {
-    public string Name { get; set; }
+    public string Name { get; set; } = null!;
 }
 
 public class SolutionService : ISolutionService
@@ -161,7 +161,7 @@ public class SolutionService : ISolutionService
 
         for (var i = 0; i < amount; i++)
         {
-            stacks[to - 1].Push(temp.ElementAt(i));
+            stacks[to - 1].Push(temp.Pop());
         }
 
         _logger.LogInformation(move);

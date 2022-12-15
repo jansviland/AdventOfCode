@@ -30,7 +30,6 @@ public class Tests : TestBed<TestFixture>
 
         // assert
         Assert.Equal(157, result);
-        
     }
 
     [Fact]

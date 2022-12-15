@@ -84,7 +84,7 @@ public class SolutionService : ISolutionService
                 break;
             }
 
-            _logger.LogInformation("Direction {Direction}:: Compare {Value} at {X},{Y} To {Value} at {X},{Y}", direction, grid[startX, startY], startX, startY, grid[x, y], x, y);
+            _logger.LogInformation("Direction {Direction}:: Compare {Value} at {X},{Y} To {Value2} at {X2},{Y2}", direction, grid[startX, startY], startX, startY, grid[x, y], x, y);
 
             if (grid[x, y] >= grid[startX, startY])
             {
