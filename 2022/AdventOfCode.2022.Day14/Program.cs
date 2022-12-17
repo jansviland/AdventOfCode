@@ -91,26 +91,46 @@ internal static class Program
             Console.CursorVisible = false;
             // Console.SetBufferSize(200, 200);
 
-            _sequence.Add(new string[,]
+            _sequence.Add(new string?[,]
             {
-                { "X", " " },
-                { " ", " " },
-            });
-            _sequence.Add(new string[,]
+                { null, null, null, null, null, null, "+", null, null, null },
+                { null, null, null, null, null, null, null, null, null, null },
+                { null, null, null, null, null, null, null, null, null, null },
+                { null, null, null, null, "#", null, null, null, "#", "#" },
+                { null, null, null, null, "#", null, null, null, "#", null }
+            }!);
+            _sequence.Add(new string?[,]
             {
-                { " ", "X" },
-                { " ", " " },
-            });
-            _sequence.Add(new string[,]
+                { null, null, null, null, null, null, "+", null, null, null },
+                { null, null, null, null, null, null, "o", null, null, null },
+                { null, null, null, null, null, null, null, null, null, null },
+                { null, null, null, null, "#", null, null, null, "#", "#" },
+                { null, null, null, null, "#", null, null, null, "#", null }
+            }!);
+            _sequence.Add(new string?[,]
             {
-                { " ", " " },
-                { " ", "X" },
-            });
-            _sequence.Add(new string[,]
+                { null, null, null, null, null, null, "+", null, null, null },
+                { null, null, null, null, null, null, null, null, null, null },
+                { null, null, null, null, null, null, "o", null, null, null },
+                { null, null, null, null, "#", null, null, null, "#", "#" },
+                { null, null, null, null, "#", null, null, null, "#", null }
+            }!);
+            _sequence.Add(new string?[,]
             {
-                { " ", " " },
-                { "X", " " },
-            });
+                { null, null, null, null, null, null, "+", null, null, null },
+                { null, null, null, null, null, null, null, null, null, null },
+                { null, null, null, null, null, null, null, null, null, null },
+                { null, null, null, null, "#", null, "o", null, "#", "#" },
+                { null, null, null, null, "#", null, null, null, "#", null }
+            }!);
+            _sequence.Add(new string?[,]
+            {
+                { null, null, null, null, null, null, "+", null, null, null },
+                { null, null, null, null, null, null, null, null, null, null },
+                { null, null, null, null, null, null, null, null, null, null },
+                { null, null, null, null, "#", null, null, null, "#", "#" },
+                { null, null, null, null, "#", null, "o", null, "#", null }
+            }!);
         }
 
         public void Turn()
@@ -124,17 +144,24 @@ internal static class Program
             Console.WriteLine("Turn {0}", step);
             Console.WriteLine("");
 
-            for (var x = 0; x < 2; x++)
+            for (var y = 0; y < _sequence[0].GetLength(0); y++)
             {
-                for (var y = 0; y < 2; y++)
+                for (var x = 0; x < _sequence[0].GetLength(1); x++)
                 {
-                    Console.Write(_sequence[step][x, y]);
+                    if (string.IsNullOrEmpty(_sequence[step][y, x]))
+                    {
+                        Console.Write(".");
+                    }
+                    else
+                    {
+                        Console.Write(_sequence[step][y, x]);
+                    }
                 }
 
                 Console.WriteLine();
             }
 
-            Console.SetCursorPosition(0, Console.CursorTop - 4);
+            Console.SetCursorPosition(0, Console.CursorTop - 7);
 
 
             // Console.Write(fullMessage);

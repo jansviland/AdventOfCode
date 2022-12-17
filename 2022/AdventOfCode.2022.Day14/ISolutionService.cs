@@ -9,11 +9,15 @@ public interface ISolutionService
     // TODO: for each "step" where sand moves, save the resuting output as a "frame" in a sequence of animations
     // TODO: then play the animation in the console
     public List<string> CreatePrintableOutput(Grid grid);
+    public List<Grid> CreateSequence(Grid grid);
     public int RunPart2(string[] input);
+    List<string?[]> ConvertToStrings(Grid grid);
 }
 
 public class Grid
 {
+    private int snowballCount = 0;
+
     public int XMin;
     public int XMax;
 
@@ -126,11 +130,37 @@ public class SolutionService : ISolutionService
         throw new NotImplementedException();
     }
 
+    public List<Grid> CreateSequence(Grid grid)
+    {
+        throw new NotImplementedException();
+    }
+
     public int RunPart2(string[] input)
     {
         _logger.LogInformation("Solving day 14 - Part 2");
         _logger.LogInformation("Input contains {Input} values", input.Length);
 
         throw new NotImplementedException();
+    }
+ 
+    public List<string?[]> ConvertToStrings(Grid grid)
+    {
+        // get first row
+        var width = grid.XMax - grid.XMin + 1;
+        var heigth = grid.YMax - grid.YMin + 1;
+
+        List<string?[]> rows = new();
+        for (var y = 0; y < heigth; y++)
+        {
+            var row = new string?[width];
+            for (var x = 0; x < width; x++)
+            {
+                row[x] = grid.values[x, y];
+            }
+
+            rows.Add(row);
+        }
+
+        return rows;
     }
 }
