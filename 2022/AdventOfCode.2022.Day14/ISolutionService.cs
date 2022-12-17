@@ -3,20 +3,24 @@ namespace AdventOfCode._2022.Day14;
 public interface ISolutionService
 {
     public int RunPart1(string[] input);
-    public Grid ParseInput(string[] input);
+    public Frame ParseInput(string[] input);
+    List<string?[]> CreatePrintableOutput(Frame frame);
 
     // TODO: Use this method to create an animation of sand filling the grid
     // TODO: for each "step" where sand moves, save the resuting output as a "frame" in a sequence of animations
     // TODO: then play the animation in the console
-    public List<string> CreatePrintableOutput(Grid grid);
-    public List<Grid> CreateSequence(Grid grid);
+    public List<Frame> CreateSequence(Frame frame);
     public int RunPart2(string[] input);
-    List<string?[]> ConvertToStrings(Grid grid);
 }
 
-public class Grid
+public class Frame
 {
-    private int snowballCount = 0;
+    // for each movement of the sand, increase the step counter
+    public int Step = 0;
+
+    // for each "sand" that we add increase the counter, when sand has come to rest.
+    // increase sand counter and start a new animation sequence, also set step to 0
+    public int SandCount = 0;
 
     public int XMin;
     public int XMax;
@@ -24,7 +28,7 @@ public class Grid
     public int YMin;
     public int YMax;
 
-    public string?[,] values;
+    public string?[,] Grid;
 }
 
 public class SolutionService : ISolutionService
@@ -54,9 +58,9 @@ public class SolutionService : ISolutionService
         return (x, y);
     }
 
-    public Grid ParseInput(string[] input)
+    public Frame ParseInput(string[] input)
     {
-        var result = new Grid()
+        var result = new Frame()
         {
             XMin = int.MaxValue,
             XMax = int.MinValue,
@@ -130,25 +134,58 @@ public class SolutionService : ISolutionService
 
                     temp.Add((previousPoint.Item1, previousPoint.Item2, "#"));
                 }
+
+                while (point.Item2 != previousPoint.Item2)
+                {
+                    if (point.Item2 > previousPoint.Item2)
+                    {
+                        previousPoint.Item2++;
+                    }
+                    else
+                    {
+                        previousPoint.Item2--;
+                    }
+
+                    temp.Add((previousPoint.Item1, previousPoint.Item2, "#"));
+                }
+
+                previousPoint = point;
             }
         }
 
         // add all items to grid
-        result.values = new string[result.XMax - result.XMin + 1, result.YMax - result.YMin + 1];
+        result.Grid = new string[result.XMax - result.XMin + 1, result.YMax - result.YMin + 1];
         foreach (var coordinate in temp)
         {
-            result.values[coordinate.x - result.XMin, coordinate.y - result.YMin] = coordinate.value;
+            result.Grid[coordinate.x - result.XMin, coordinate.y - result.YMin] = coordinate.value;
+        }
+
+        // print result
+        var print = CreatePrintableOutput(result);
+        foreach (var line in print)
+        {
+            var sb = new StringBuilder();
+            foreach (var c in line)
+            {
+                if (c == null)
+                {
+                    sb.Append('.');
+                }
+                else
+                {
+                    sb.Append(c);
+                }
+
+                sb.Append(' ');
+            }
+
+            _logger.LogInformation(sb.ToString());
         }
 
         return result;
     }
 
-    public List<string> CreatePrintableOutput(Grid grid)
-    {
-        throw new NotImplementedException();
-    }
-
-    public List<Grid> CreateSequence(Grid grid)
+    public List<Frame> CreateSequence(Frame frame)
     {
         throw new NotImplementedException();
     }
@@ -161,10 +198,10 @@ public class SolutionService : ISolutionService
         throw new NotImplementedException();
     }
 
-    public List<string?[]> ConvertToStrings(Grid grid)
+    public List<string?[]> CreatePrintableOutput(Frame frame)
     {
-        var width = grid.XMax - grid.XMin + 1;
-        var heigth = grid.YMax - grid.YMin + 1;
+        var width = frame.XMax - frame.XMin + 1;
+        var heigth = frame.YMax - frame.YMin + 1;
 
         List<string?[]> rows = new();
         for (var y = 0; y < heigth; y++)
@@ -172,7 +209,7 @@ public class SolutionService : ISolutionService
             var row = new string?[width];
             for (var x = 0; x < width; x++)
             {
-                row[x] = grid.values[x, y];
+                row[x] = frame.Grid[x, y];
             }
 
             rows.Add(row);
