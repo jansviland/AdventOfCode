@@ -13,7 +13,7 @@ public interface ISolutionService
     public int RunPart2(string[] input);
 }
 
-public class Frame
+public class Frame : ICloneable
 {
     // for each movement of the sand, increase the step counter
     public int Step = 0;
@@ -29,6 +29,22 @@ public class Frame
     public int YMax;
 
     public string?[,] Grid;
+
+    public object Clone()
+    {
+        var clone = new Frame
+        {
+            Step = Step,
+            SandCount = SandCount,
+            XMin = XMin,
+            XMax = XMax,
+            YMin = YMin,
+            YMax = YMax,
+            Grid = (string?[,])Grid.Clone()
+        };
+
+        return clone;
+    }
 }
 
 public class SolutionService : ISolutionService
@@ -161,33 +177,54 @@ public class SolutionService : ISolutionService
         }
 
         // print result
-        var print = CreatePrintableOutput(result);
-        foreach (var line in print)
-        {
-            var sb = new StringBuilder();
-            foreach (var c in line)
-            {
-                if (c == null)
-                {
-                    sb.Append('.');
-                }
-                else
-                {
-                    sb.Append(c);
-                }
-
-                sb.Append(' ');
-            }
-
-            _logger.LogInformation(sb.ToString());
-        }
+        // CreatePrintableOutput(result);
 
         return result;
     }
 
     public List<Frame> CreateSequence(Frame frame)
     {
-        throw new NotImplementedException();
+        var step = 0;
+        // var sandCount = 0;
+        var position = (500, 0);
+
+        var result = new List<Frame>();
+
+        var x = position.Item1 - frame.XMin;
+        var y = position.Item2 - frame.YMin;
+
+        while (frame.Grid[x, y] != "#")
+        {
+            var newFrame = (Frame)frame.Clone();
+            newFrame.Step = step;
+            // newFrame.SandCount = sandCount++;
+
+            // set previous position to empty
+            if (y > 0 && newFrame.Grid[x, y - 1] != "+")
+            {
+                newFrame.Grid[x, y - 1] = null;
+            }
+
+            if (y > 0)
+            {
+                newFrame.Grid[x, y] = "o";
+            }
+
+            // set new position to sand
+
+            // set previous position to empty
+            // newFrame.Grid[x, y] = null;
+
+            // move sand down as long as there is no rock in the way
+            y++;
+            step++;
+
+            result.Add(newFrame);
+
+            // CreatePrintableOutput(newFrame);
+        }
+
+        return result;
     }
 
     public int RunPart2(string[] input)
@@ -213,6 +250,30 @@ public class SolutionService : ISolutionService
             }
 
             rows.Add(row);
+        }
+
+        _logger.LogInformation("--------------------");
+        _logger.LogInformation("Step {0}, sand {1} -----", frame.Step, frame.SandCount);
+        _logger.LogInformation("--------------------");
+
+        foreach (var line in rows)
+        {
+            var sb = new StringBuilder();
+            foreach (var c in line)
+            {
+                if (c == null)
+                {
+                    sb.Append('.');
+                }
+                else
+                {
+                    sb.Append(c);
+                }
+
+                sb.Append(' ');
+            }
+
+            _logger.LogInformation(sb.ToString());
         }
 
         return rows;

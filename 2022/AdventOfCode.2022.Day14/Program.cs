@@ -48,7 +48,7 @@ internal static class Program
         // stopWatch.Stop();
         // Log.Logger.Information("Elapsed time: {Elapsed} ms", stopWatch.ElapsedMilliseconds);
 
-        var spinner = new ConsoleAnimation
+        var spinner = new ConsoleAnimation(svc, input)
         {
             Delay = 300
         };
@@ -64,6 +64,8 @@ internal static class Program
             }
         }
 
+        // set fontsize to 8
+        
         // set cursor position back again
         Console.SetCursorPosition(0, Console.CursorTop + spinner.PrintedLinesHeight);
 
@@ -85,59 +87,65 @@ internal static class Program
 
     private class ConsoleAnimation
     {
-        readonly List<string[,]> _sequence = new List<string[,]>();
+        // private readonly ISolutionService _solutionService;
+        readonly List<Frame> _frames = new List<Frame>();
 
         public int Delay { get; set; } = 200;
         public int PrintedLinesHeight = 0;
 
         int _counter;
 
-        public ConsoleAnimation()
+        public ConsoleAnimation(ISolutionService solutionService, string[] input)
         {
+            // _solutionService = solutionService;
+
+            var startGrid = solutionService.ParseInput(input);
+            _frames = solutionService.CreateSequence(startGrid);
+
             Console.CursorVisible = false;
 
-            _sequence.Add(new string?[,]
-            {
-                { null, null, null, null, null, null, "+", null, null, null },
-                { null, null, null, null, null, null, null, null, null, null },
-                { null, null, null, null, null, null, null, null, null, null },
-                { null, null, null, null, "#", null, null, null, "#", "#" },
-                { null, null, null, null, "#", null, null, null, "#", null }
-            }!);
-            _sequence.Add(new string?[,]
-            {
-                { null, null, null, null, null, null, "+", null, null, null },
-                { null, null, null, null, null, null, "o", null, null, null },
-                { null, null, null, null, null, null, null, null, null, null },
-                { null, null, null, null, "#", null, null, null, "#", "#" },
-                { null, null, null, null, "#", null, null, null, "#", null }
-            }!);
-            _sequence.Add(new string?[,]
-            {
-                { null, null, null, null, null, null, "+", null, null, null },
-                { null, null, null, null, null, null, null, null, null, null },
-                { null, null, null, null, null, null, "o", null, null, null },
-                { null, null, null, null, "#", null, null, null, "#", "#" },
-                { null, null, null, null, "#", null, null, null, "#", null }
-            }!);
-            _sequence.Add(new string?[,]
-            {
-                { null, null, null, null, null, null, "+", null, null, null },
-                { null, null, null, null, null, null, null, null, null, null },
-                { null, null, null, null, null, null, null, null, null, null },
-                { null, null, null, null, "#", null, "o", null, "#", "#" },
-                { null, null, null, null, "#", null, null, null, "#", null }
-            }!);
-            _sequence.Add(new string?[,]
-            {
-                { null, null, null, null, null, null, "+", null, null, null },
-                { null, null, null, null, null, null, null, null, null, null },
-                { null, null, null, null, null, null, null, null, null, null },
-                { null, null, null, null, "#", null, null, null, "#", "#" },
-                { null, null, null, null, "#", null, "o", null, "#", null }
-            }!);
+            // _sequence.Add(new string?[,]
+            // {
+            //     { null, null, null, null, null, null, "+", null, null, null },
+            //     { null, null, null, null, null, null, null, null, null, null },
+            //     { null, null, null, null, null, null, null, null, null, null },
+            //     { null, null, null, null, "#", null, null, null, "#", "#" },
+            //     { null, null, null, null, "#", null, null, null, "#", null }
+            // }!);
+            // _sequence.Add(new string?[,]
+            // {
+            //     { null, null, null, null, null, null, "+", null, null, null },
+            //     { null, null, null, null, null, null, "o", null, null, null },
+            //     { null, null, null, null, null, null, null, null, null, null },
+            //     { null, null, null, null, "#", null, null, null, "#", "#" },
+            //     { null, null, null, null, "#", null, null, null, "#", null }
+            // }!);
+            // _sequence.Add(new string?[,]
+            // {
+            //     { null, null, null, null, null, null, "+", null, null, null },
+            //     { null, null, null, null, null, null, null, null, null, null },
+            //     { null, null, null, null, null, null, "o", null, null, null },
+            //     { null, null, null, null, "#", null, null, null, "#", "#" },
+            //     { null, null, null, null, "#", null, null, null, "#", null }
+            // }!);
+            // _sequence.Add(new string?[,]
+            // {
+            //     { null, null, null, null, null, null, "+", null, null, null },
+            //     { null, null, null, null, null, null, null, null, null, null },
+            //     { null, null, null, null, null, null, null, null, null, null },
+            //     { null, null, null, null, "#", null, "o", null, "#", "#" },
+            //     { null, null, null, null, "#", null, null, null, "#", null }
+            // }!);
+            // _sequence.Add(new string?[,]
+            // {
+            //     { null, null, null, null, null, null, "+", null, null, null },
+            //     { null, null, null, null, null, null, null, null, null, null },
+            //     { null, null, null, null, null, null, null, null, null, null },
+            //     { null, null, null, null, "#", null, null, null, "#", "#" },
+            //     { null, null, null, null, "#", null, "o", null, "#", null }
+            // }!);
 
-            PrintedLinesHeight = _sequence[0].GetLength(0) + 2;
+            PrintedLinesHeight = _frames[0].Grid.GetLength(1) + 2;
         }
 
         public void Turn()
@@ -146,22 +154,22 @@ internal static class Program
 
             Thread.Sleep(Delay);
 
-            var step = _counter % _sequence.Count;
+            var step = _counter % _frames.Count;
 
             Console.WriteLine("Turn {0}, snowball {1}", step, 1);
             Console.WriteLine("");
 
-            for (var y = 0; y < _sequence[0].GetLength(0); y++)
+            for (var y = 0; y < _frames[0].Grid.GetLength(1); y++)
             {
-                for (var x = 0; x < _sequence[0].GetLength(1); x++)
+                for (var x = 0; x < _frames[0].Grid.GetLength(0); x++)
                 {
-                    if (string.IsNullOrEmpty(_sequence[step][y, x]))
+                    if (string.IsNullOrEmpty(_frames[step].Grid[x, y]))
                     {
                         Console.Write(".");
                     }
                     else
                     {
-                        Console.Write(_sequence[step][y, x]);
+                        Console.Write(_frames[step].Grid[x, y]);
                     }
                 }
 
