@@ -20,7 +20,7 @@ public class Grid
     public int YMin;
     public int YMax;
 
-    public string[,] values;
+    public string?[,] values;
 }
 
 public class SolutionService : ISolutionService
@@ -51,7 +51,7 @@ public class SolutionService : ISolutionService
             YMax = int.MinValue,
         };
 
-        var temp = new List<(int x, int y, string value)>();
+        var temp = new List<(int x, int y, string? value)>();
 
         for (var i = 0; i < input.Length; i++)
         {

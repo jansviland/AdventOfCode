@@ -25,21 +25,30 @@ public class Tests : TestBed<TestFixture>
         Assert.Equal(9, result.YMax);
 
         // get first row
-        var length = result.XMax - result.XMin + 1;
+        var width = result.XMax - result.XMin + 1;
+        var heigth = result.YMax - result.YMin + 1;
 
-        string[] firstRow = new string[length];
-        for (var i = 0; i < length; i++)
+        List<string?[]> rows = new();
+        for (var y = 0; y < heigth; y++)
         {
-            firstRow[i] = result.values[i, 0];
-            // for (var j = 0; j < result.GetLength(1); j++)
-            // {
-            //     firstRow[j] = result[i, j];
-            // }
+            string?[] row = new string?[width];
+            for (var x = 0; x < width; x++)
+            {
+                row[x] = result.values[x, y];
+            }
+
+            rows.Add(row);
         }
 
-        Assert.Equal(new[] { null, null, null, null, null, null, "+", null, null, null }, firstRow);
-
-        // TODO: test second row
+        Assert.Equal(new string?[] { null, null, null, null, null, null, "+", null, null, null }, rows[0]);
+        Assert.Equal(new string?[] { null, null, null, null, null, null, null, null, null, null }, rows[1]);
+        Assert.Equal(new string?[] { null, null, null, null, null, null, null, null, null, null }, rows[2]);
+        Assert.Equal(new string?[] { null, null, null, null, "#" , null, null, null, "#" , "#" }, rows[3]);
+        Assert.Equal(new string?[] { null, null, null, null, "#" , null, null, null, "#" , null }, rows[4]);
+        Assert.Equal(new string?[] { null, null, "#" , "#" , "#" , null, null, null, "#" , null }, rows[5]);
+        Assert.Equal(new string?[] { null, null, null, null, null, null, null, null, "#" , null }, rows[6]);
+        Assert.Equal(new string?[] { null, null, null, null, null, null, null, null, "#" , null }, rows[7]);
+        Assert.Equal(new string?[] { "#" , "#" , "#" , "#" , "#" , "#" , "#" , "#" , "#" , null }, rows[8]);
     }
 
     [Fact]
