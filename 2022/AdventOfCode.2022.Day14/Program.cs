@@ -53,7 +53,7 @@ internal static class Program
             Delay = 300
         };
 
-        for (var i = 0; i < 5; i++)
+        for (var i = 0; i < 10; i++)
         {
             var startTime = DateTime.Now;
             var endTime = startTime.AddSeconds(5);
@@ -63,6 +63,11 @@ internal static class Program
                 spinner.Turn();
             }
         }
+
+        // set cursor position back again
+        Console.SetCursorPosition(0, Console.CursorTop + spinner.PrintedLinesHeight);
+
+        Log.Logger.Information("Done");
     }
 
     private static IConfiguration BuildConfiguration(IConfigurationBuilder builder)
@@ -83,13 +88,13 @@ internal static class Program
         readonly List<string[,]> _sequence = new List<string[,]>();
 
         public int Delay { get; set; } = 200;
+        public int PrintedLinesHeight = 0;
 
         int _counter;
 
         public ConsoleAnimation()
         {
             Console.CursorVisible = false;
-            // Console.SetBufferSize(200, 200);
 
             _sequence.Add(new string?[,]
             {
@@ -131,6 +136,8 @@ internal static class Program
                 { null, null, null, null, "#", null, null, null, "#", "#" },
                 { null, null, null, null, "#", null, "o", null, "#", null }
             }!);
+
+            PrintedLinesHeight = _sequence[0].GetLength(0) + 2;
         }
 
         public void Turn()
@@ -139,9 +146,9 @@ internal static class Program
 
             Thread.Sleep(Delay);
 
-            var step = _counter % _sequence.Count();
+            var step = _counter % _sequence.Count;
 
-            Console.WriteLine("Turn {0}", step);
+            Console.WriteLine("Turn {0}, snowball {1}", step, 1);
             Console.WriteLine("");
 
             for (var y = 0; y < _sequence[0].GetLength(0); y++)
@@ -161,12 +168,7 @@ internal static class Program
                 Console.WriteLine();
             }
 
-            Console.SetCursorPosition(0, Console.CursorTop - 7);
-
-
-            // Console.Write(fullMessage);
-
-            // Console.SetCursorPosition(Console.CursorLeft - msglength, Console.CursorTop);
+            Console.SetCursorPosition(0, Console.CursorTop - PrintedLinesHeight);
         }
     }
 }

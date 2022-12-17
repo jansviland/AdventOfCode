@@ -44,17 +44,55 @@ public class SolutionService : ISolutionService
         throw new NotImplementedException();
     }
 
+    private (int, int) GetCoordinates(string input)
+    {
+        var split = input.Split(',', StringSplitOptions.TrimEntries);
+
+        var x = int.Parse(split.First().Replace(">", ""));
+        var y = int.Parse(split.Last().Replace(">", ""));
+
+        return (x, y);
+    }
+
     public Grid ParseInput(string[] input)
     {
         var result = new Grid()
         {
             XMin = int.MaxValue,
             XMax = int.MinValue,
-            // YMin = int.MaxValue,
             YMin = 0,
             YMax = int.MinValue,
         };
 
+        // find min and max values
+        foreach (var i in input)
+        {
+            var coordinates = i.Split('-', StringSplitOptions.TrimEntries);
+            for (var linePosition = 0; linePosition < coordinates.Length; linePosition++)
+            {
+                var point = GetCoordinates(coordinates[linePosition]);
+
+                if (point.Item1 < result.XMin)
+                {
+                    result.XMin = point.Item1;
+                }
+                else if (point.Item1 > result.XMax)
+                {
+                    result.XMax = point.Item1;
+                }
+
+                if (point.Item2 < result.YMin)
+                {
+                    // result.YMin = point.Item2;
+                }
+                else if (point.Item2 > result.YMax)
+                {
+                    result.YMax = point.Item2;
+                }
+            }
+        }
+
+        // find all rocks and add to grid
         var temp = new List<(int x, int y, string? value)>();
 
         for (var i = 0; i < input.Length; i++)
@@ -69,58 +107,38 @@ public class SolutionService : ISolutionService
             // sand starting point
             temp.Add((x: 500, y: 0, value: "+"));
 
-            for (var linePosition = 0; linePosition < coordinates.Length; linePosition++)
-            {
-                var coordinate = coordinates[linePosition];
-                var split = coordinate.Split(',', StringSplitOptions.TrimEntries);
+            var previousPoint = GetCoordinates(coordinates[0]);
+            temp.Add((x: previousPoint.Item1, y: previousPoint.Item2, value: "#"));
 
-                var x = int.Parse(split.First().Replace(">", ""));
-                var y = int.Parse(split.Last().Replace(">", ""));
+            for (var linePosition = 1; linePosition < coordinates.Length; linePosition++)
+            {
+                var point = GetCoordinates(coordinates[linePosition]);
 
                 // TODO: draw line of rocks between coordinates and add to grid
-                temp.Add((x, y, "#"));
+                temp.Add((point.Item1, point.Item2, "#"));
 
-                if (x < result.XMin)
+                while (point.Item1 != previousPoint.Item1)
                 {
-                    result.XMin = x;
-                }
-                else if (x > result.XMax)
-                {
-                    result.XMax = x;
-                }
+                    if (point.Item1 > previousPoint.Item1)
+                    {
+                        previousPoint.Item1++;
+                    }
+                    else
+                    {
+                        previousPoint.Item1--;
+                    }
 
-                if (y < result.YMin)
-                {
-                    // result.YMin = y;
-                }
-                else if (y > result.YMax)
-                {
-                    result.YMax = y;
+                    temp.Add((previousPoint.Item1, previousPoint.Item2, "#"));
                 }
             }
         }
 
-        // TODO: add all the rocks to the grid from temp list
-
-        // result.XMin -= 1;
-        // result.XMax += 1;
-        // result.YMin -= 1;
-        // result.YMax += 1;
-
+        // add all items to grid
         result.values = new string[result.XMax - result.XMin + 1, result.YMax - result.YMin + 1];
-
-        foreach (var t in temp)
+        foreach (var coordinate in temp)
         {
-            result.values[t.x - result.XMin, t.y - result.YMin] = t.value;
+            result.values[coordinate.x - result.XMin, coordinate.y - result.YMin] = coordinate.value;
         }
-
-        // for (var x = result.XMin; x <= result.XMax; x++)
-        // {
-        //     for (var y = result.YMin; y <= result.YMax; y++)
-        //     {
-        //         result.values[x - result.XMin, y - result.YMin] = ".";
-        //     }
-        // }
 
         return result;
     }
@@ -142,10 +160,9 @@ public class SolutionService : ISolutionService
 
         throw new NotImplementedException();
     }
- 
+
     public List<string?[]> ConvertToStrings(Grid grid)
     {
-        // get first row
         var width = grid.XMax - grid.XMin + 1;
         var heigth = grid.YMax - grid.YMin + 1;
 
