@@ -50,7 +50,7 @@ internal static class Program
 
         var spinner = new ConsoleAnimation(svc, input)
         {
-            Delay = 300
+            Delay = 500
         };
 
         for (var i = 0; i < 10; i++)
@@ -65,7 +65,7 @@ internal static class Program
         }
 
         // set fontsize to 8
-        
+
         // set cursor position back again
         Console.SetCursorPosition(0, Console.CursorTop + spinner.PrintedLinesHeight);
 
@@ -97,53 +97,11 @@ internal static class Program
 
         public ConsoleAnimation(ISolutionService solutionService, string[] input)
         {
-            // _solutionService = solutionService;
-
             var startGrid = solutionService.ParseInput(input);
             _frames = solutionService.CreateSequence(startGrid);
 
             Console.CursorVisible = false;
-
-            // _sequence.Add(new string?[,]
-            // {
-            //     { null, null, null, null, null, null, "+", null, null, null },
-            //     { null, null, null, null, null, null, null, null, null, null },
-            //     { null, null, null, null, null, null, null, null, null, null },
-            //     { null, null, null, null, "#", null, null, null, "#", "#" },
-            //     { null, null, null, null, "#", null, null, null, "#", null }
-            // }!);
-            // _sequence.Add(new string?[,]
-            // {
-            //     { null, null, null, null, null, null, "+", null, null, null },
-            //     { null, null, null, null, null, null, "o", null, null, null },
-            //     { null, null, null, null, null, null, null, null, null, null },
-            //     { null, null, null, null, "#", null, null, null, "#", "#" },
-            //     { null, null, null, null, "#", null, null, null, "#", null }
-            // }!);
-            // _sequence.Add(new string?[,]
-            // {
-            //     { null, null, null, null, null, null, "+", null, null, null },
-            //     { null, null, null, null, null, null, null, null, null, null },
-            //     { null, null, null, null, null, null, "o", null, null, null },
-            //     { null, null, null, null, "#", null, null, null, "#", "#" },
-            //     { null, null, null, null, "#", null, null, null, "#", null }
-            // }!);
-            // _sequence.Add(new string?[,]
-            // {
-            //     { null, null, null, null, null, null, "+", null, null, null },
-            //     { null, null, null, null, null, null, null, null, null, null },
-            //     { null, null, null, null, null, null, null, null, null, null },
-            //     { null, null, null, null, "#", null, "o", null, "#", "#" },
-            //     { null, null, null, null, "#", null, null, null, "#", null }
-            // }!);
-            // _sequence.Add(new string?[,]
-            // {
-            //     { null, null, null, null, null, null, "+", null, null, null },
-            //     { null, null, null, null, null, null, null, null, null, null },
-            //     { null, null, null, null, null, null, null, null, null, null },
-            //     { null, null, null, null, "#", null, null, null, "#", "#" },
-            //     { null, null, null, null, "#", null, "o", null, "#", null }
-            // }!);
+            // Console.SetBufferSize(Console.BufferWidth, 32766);
 
             PrintedLinesHeight = _frames[0].Grid.GetLength(1) + 2;
         }
@@ -159,21 +117,28 @@ internal static class Program
             Console.WriteLine("Turn {0}, snowball {1}", step, 1);
             Console.WriteLine("");
 
+            var sb = new StringBuilder();
+
             for (var y = 0; y < _frames[0].Grid.GetLength(1); y++)
             {
+                sb.Clear();
                 for (var x = 0; x < _frames[0].Grid.GetLength(0); x++)
                 {
                     if (string.IsNullOrEmpty(_frames[step].Grid[x, y]))
                     {
-                        Console.Write(".");
+                        sb.Append(".");
+                        // Console.Write(".");
                     }
                     else
                     {
-                        Console.Write(_frames[step].Grid[x, y]);
+                        sb.Append(_frames[step].Grid[x, y]);
+                        // Console.Write(_frames[step].Grid[x, y]);
                     }
+
                 }
 
-                Console.WriteLine();
+                Console.WriteLine(sb.ToString());
+                // Console.WriteLine();
             }
 
             Console.SetCursorPosition(0, Console.CursorTop - PrintedLinesHeight);
