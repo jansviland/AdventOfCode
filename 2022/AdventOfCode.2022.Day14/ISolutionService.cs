@@ -5,19 +5,12 @@ public interface ISolutionService
     public int RunPart1(string[] input);
     public Frame ParseInput(string[] input);
     List<string?[]> CreatePrintableOutput(Frame frame);
-
-    // TODO: Use this method to create an animation of sand filling the grid
-    // TODO: for each "step" where sand moves, save the resuting output as a "frame" in a sequence of animations
-    // TODO: then play the animation in the console
     public List<Frame> CreateSequence(Frame frame);
     public int RunPart2(string[] input);
 }
 
 public class Frame : ICloneable
 {
-    // for each movement of the sand, increase the step counter
-    public int Step = 0;
-
     // for each "sand" that we add increase the counter, when sand has come to rest.
     // increase sand counter and start a new animation sequence, also set step to 0
     public int SandCount = 0;
@@ -28,18 +21,22 @@ public class Frame : ICloneable
     public int YMin;
     public int YMax;
 
+    public int SandX;
+    public int SandY;
+
     public string?[,] Grid;
 
     public object Clone()
     {
         var clone = new Frame
         {
-            Step = Step,
             SandCount = SandCount,
             XMin = XMin,
             XMax = XMax,
             YMin = YMin,
             YMax = YMax,
+            SandX = SandX,
+            SandY = SandY,
             Grid = (string?[,])Grid.Clone()
         };
 
@@ -82,6 +79,8 @@ public class SolutionService : ISolutionService
             XMax = int.MinValue,
             YMin = 0,
             YMax = int.MinValue,
+            SandX = 0,
+            SandY = 0,
         };
 
         // find min and max values
@@ -184,25 +183,54 @@ public class SolutionService : ISolutionService
 
     public List<Frame> CreateSequence(Frame frame)
     {
-        var step = 0;
+        // var step = 0;
         // var sandCount = 0;
         var position = (500, 0);
 
         var result = new List<Frame>();
 
+        // add first frame to result
+        result.Add((Frame)frame.Clone());
+
         var x = position.Item1 - frame.XMin;
         var y = position.Item2 - frame.YMin;
 
-        while (frame.Grid[x, y] != "#")
+        while (y < frame.YMax && x > 0)
         {
-            var newFrame = (Frame)frame.Clone();
-            newFrame.Step = step;
-            // newFrame.SandCount = sandCount++;
+            // continue on last frame
+            var newFrame = (Frame)result.Last().Clone();
+
+            var tempX = x;
+            var tempY = y;
+
+            // move sand down as long as there is no rock in the way
+            if (newFrame.Grid[x, y + 1] == null)
+            {
+                y++;
+            }
+            else if (newFrame.Grid[x - 1, y + 1] == null)
+            {
+                y++;
+                x--;
+            }
+            else if (newFrame.Grid[x + 1, y + 1] == null)
+            {
+                y++;
+                x++;
+            }
+            else
+            {
+                // reset
+                x = position.Item1 - frame.XMin;
+                y = position.Item2 - frame.YMin;
+
+                newFrame.SandCount++;
+            }
 
             // set previous position to empty
             if (y > 0 && newFrame.Grid[x, y - 1] != "+")
             {
-                newFrame.Grid[x, y - 1] = null;
+                newFrame.Grid[tempX, tempY] = null;
             }
 
             if (y > 0)
@@ -210,14 +238,8 @@ public class SolutionService : ISolutionService
                 newFrame.Grid[x, y] = "o";
             }
 
-            // set new position to sand
-
-            // set previous position to empty
-            // newFrame.Grid[x, y] = null;
-
-            // move sand down as long as there is no rock in the way
-            y++;
-            step++;
+            newFrame.SandX = x;
+            newFrame.SandY = y;
 
             result.Add(newFrame);
 
@@ -252,9 +274,9 @@ public class SolutionService : ISolutionService
             rows.Add(row);
         }
 
-        _logger.LogInformation("--------------------");
-        _logger.LogInformation("Step {0}, sand {1} -----", frame.Step, frame.SandCount);
-        _logger.LogInformation("--------------------");
+        // _logger.LogInformation("--------------------");
+        // _logger.LogInformation("Step {0}, sand {1} -----", frame., frame.SandCount);
+        // _logger.LogInformation("--------------------");
 
         foreach (var line in rows)
         {
@@ -273,7 +295,7 @@ public class SolutionService : ISolutionService
                 sb.Append(' ');
             }
 
-            _logger.LogInformation(sb.ToString());
+            // _logger.LogInformation(sb.ToString());
         }
 
         return rows;

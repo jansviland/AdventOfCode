@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Net.Http.Headers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -27,49 +28,75 @@ internal static class Program
 
         Log.Logger.Information("args: {AllArguments}", string.Join(", ", args));
 
-        var svc = ActivatorUtilities.CreateInstance<SolutionService>(host.Services);
+        var solutionService = ActivatorUtilities.CreateInstance<SolutionService>(host.Services);
 
         string[] input;
         if (args.Length == 0)
         {
             input = File.ReadAllLines("Assets/input.txt");
+            // input = File.ReadAllLines("Assets/test-input.txt");
         }
         else
         {
             input = File.ReadAllLines(args[0]);
         }
 
-        // var result = svc.RunPart1(input);
+        // var result = solutionService.RunPart1(input);
         // Log.Logger.Information("result: {Result}", result);
         //
-        // var resultPart2 = svc.RunPart2(input);
+        // var resultPart2 = solutionService.RunPart2(input);
         // Log.Logger.Information("result: {Result}", resultPart2);
         //
         // stopWatch.Stop();
         // Log.Logger.Information("Elapsed time: {Elapsed} ms", stopWatch.ElapsedMilliseconds);
 
-        var spinner = new ConsoleAnimation(svc, input)
-        {
-            Delay = 500
-        };
+        var startGrid = solutionService.ParseInput(input);
+        var frames = solutionService.CreateSequence(startGrid);
 
-        for (var i = 0; i < 10; i++)
-        {
-            var startTime = DateTime.Now;
-            var endTime = startTime.AddSeconds(5);
+        var lastFrame = frames.Last();
+        Log.Logger.Information("Total sand count: {SandCount}", lastFrame.SandCount);
 
-            while (DateTime.Now < endTime)
-            {
-                spinner.Turn();
-            }
+        // BUG: only prints 95 lines not 162
+        // PrintFrame(frames, frames.Count - 1);
+
+        Console.CursorVisible = false;
+        for (var i = 0; i < frames.Count; i++)
+        {
+            PrintFrame(frames, i);
+            Thread.Sleep(200);
+            Console.SetCursorPosition(0, Console.CursorTop - frames[0].Grid.GetLength(1) - 2);
         }
 
-        // set fontsize to 8
+        Console.CursorVisible = true;
+
+        // TODO: Print final frame
+        // Log.Logger.Information("Final result:");
+        //
+        // var print = solutionService.CreatePrintableOutput(lastFrame);
+        // foreach (var line in print)
+        // {
+        //     Log.Logger.Information(line.Join(""));
+        // }
+
+        // var spinner = new ConsoleAnimation(frames)
+        // {
+        //     Delay = 50
+        // };
+
+        // PrintFrame(frames);
+
+        // BUG: make it run until the end
+        // var startTime = DateTime.Now;
+        // var endTime = startTime.AddMinutes(30);
+        //
+        // while (DateTime.Now < endTime)
+        // {
+        //     spinner.Turn();
+        // }
 
         // set cursor position back again
-        Console.SetCursorPosition(0, Console.CursorTop + spinner.PrintedLinesHeight);
-
-        Log.Logger.Information("Done");
+        // Console.SetCursorPosition(0, startGrid.YMax + 1);
+        // Console.SetCursorPosition(0, Console.CursorTop + frames[0].Grid.GetLength(1) - 2);
     }
 
     private static IConfiguration BuildConfiguration(IConfigurationBuilder builder)
@@ -85,63 +112,41 @@ internal static class Program
         return configuration;
     }
 
-    private class ConsoleAnimation
+    private static void PrintFrame(List<Frame> frames, int frameIndex)
     {
-        // private readonly ISolutionService _solutionService;
-        readonly List<Frame> _frames = new List<Frame>();
+        StringBuilder sb = new();
 
-        public int Delay { get; set; } = 200;
-        public int PrintedLinesHeight = 0;
+        Console.WriteLine("Turn: {0}, sand count: {1}, Sand position: ({2}, {3}), YMax: {4}    ",
+            frameIndex, frames[frameIndex].SandCount, frames[frameIndex].SandX, frames[frameIndex].SandY, frames[frameIndex].YMax);
 
-        int _counter;
+        Console.WriteLine("");
 
-        public ConsoleAnimation(ISolutionService solutionService, string[] input)
+        for (var y = 0; y < frames[0].Grid.GetLength(1); y++)
         {
-            var startGrid = solutionService.ParseInput(input);
-            _frames = solutionService.CreateSequence(startGrid);
-
-            Console.CursorVisible = false;
-            // Console.SetBufferSize(Console.BufferWidth, 32766);
-
-            PrintedLinesHeight = _frames[0].Grid.GetLength(1) + 2;
-        }
-
-        public void Turn()
-        {
-            _counter++;
-
-            Thread.Sleep(Delay);
-
-            var step = _counter % _frames.Count;
-
-            Console.WriteLine("Turn {0}, snowball {1}", step, 1);
-            Console.WriteLine("");
-
-            var sb = new StringBuilder();
-
-            for (var y = 0; y < _frames[0].Grid.GetLength(1); y++)
+            for (var x = 0; x < frames[0].Grid.GetLength(0); x++)
             {
-                sb.Clear();
-                for (var x = 0; x < _frames[0].Grid.GetLength(0); x++)
+                if (string.IsNullOrEmpty(frames[frameIndex].Grid[x, y]))
                 {
-                    if (string.IsNullOrEmpty(_frames[step].Grid[x, y]))
-                    {
-                        sb.Append(".");
-                        // Console.Write(".");
-                    }
-                    else
-                    {
-                        sb.Append(_frames[step].Grid[x, y]);
-                        // Console.Write(_frames[step].Grid[x, y]);
-                    }
-
+                    sb.Append(".");
+                }
+                else
+                {
+                    sb.Append(frames[frameIndex].Grid[x, y]);
                 }
 
-                Console.WriteLine(sb.ToString());
-                // Console.WriteLine();
+                if (x == frames[0].Grid.GetLength(0) - 1)
+                {
+                    sb.Append("   " + y);
+                }
             }
 
-            Console.SetCursorPosition(0, Console.CursorTop - PrintedLinesHeight);
+            // add new line
+            sb.Append(Environment.NewLine);
         }
+
+        Console.Write(sb.ToString());
+        sb.Clear();
+
+        
     }
 }
