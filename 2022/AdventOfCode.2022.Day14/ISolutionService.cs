@@ -58,7 +58,10 @@ public class SolutionService : ISolutionService
         _logger.LogInformation("Solving day 14");
         _logger.LogInformation("Input contains {Input} values", input.Length);
 
-        throw new NotImplementedException();
+        var startGrid = ParseInput(input);
+        var frames = CreateSequence(startGrid);
+
+        return frames.Last().SandCount;
     }
 
     private (int, int) GetCoordinates(string input)
@@ -181,24 +184,24 @@ public class SolutionService : ISolutionService
         return result;
     }
 
+    // TODO: add an option that only adds a new frame when sand has come to rest, not all steps
     public List<Frame> CreateSequence(Frame frame)
     {
-        // var step = 0;
-        // var sandCount = 0;
+        // start point
         var position = (500, 0);
 
         var result = new List<Frame>();
 
-        // add first frame to result
-        result.Add((Frame)frame.Clone());
-
         var x = position.Item1 - frame.XMin;
         var y = position.Item2 - frame.YMin;
 
+        var lastFrame = (Frame)frame.Clone();
+        result.Add(lastFrame);
+
         while (y < frame.YMax && x > 0)
         {
-            // continue on last frame
-            var newFrame = (Frame)result.Last().Clone();
+            // copy last frame and modify it
+            var newFrame = (Frame)lastFrame.Clone();
 
             var tempX = x;
             var tempY = y;
@@ -241,6 +244,9 @@ public class SolutionService : ISolutionService
             newFrame.SandX = x;
             newFrame.SandY = y;
 
+            lastFrame = newFrame;
+
+            // TODO: only add frame when sand has come to rest
             result.Add(newFrame);
 
             // CreatePrintableOutput(newFrame);

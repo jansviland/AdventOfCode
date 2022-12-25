@@ -135,7 +135,7 @@ public class Tests : TestBed<TestFixture>
         var startGrid = _solutionService.ParseInput(_input);
         var frames = _solutionService.CreateSequence(startGrid);
 
-        Assert.Equal(1, frames[0].SandCount);
+        Assert.Equal(0, frames[0].SandCount);
 
         var strings = _solutionService.CreatePrintableOutput(frames[17]);
 
@@ -179,14 +179,11 @@ public class Tests : TestBed<TestFixture>
         Assert.Equal(new string?[] { null, null, null, null, "#" , null, null, null, "#" , "#"  }, strings[4]);
         Assert.Equal(new string?[] { null, null, null, null, "#" , null, null, null, "#" , null }, strings[5]);
         Assert.Equal(new string?[] { null, null, "#" , "#" , "#" , null, null, null, "#" , null }, strings[6]);
-        Assert.Equal(new string?[] { null, null, null, null, null, null, "o ", null, "#" , null }, strings[7]);
+        Assert.Equal(new string?[] { null, null, null, null, null, null, "o" , null, "#" , null }, strings[7]);
         Assert.Equal(new string?[] { null, null, null, null, null, "o" , "o" , "o" , "#" , null }, strings[8]);
         Assert.Equal(new string?[] { "#" , "#" , "#" , "#" , "#" , "#" , "#" , "#" , "#" , null }, strings[9]);
 
         strings = _solutionService.CreatePrintableOutput(frames[43]);
-
-        // Assert.Equal(1, frames[3].SandCount);
-        // Assert.Equal(3, frames[3].Step);
 
         // do not format this
         Assert.Equal(new string?[] { null, null, null, null, null, null, "+" , null, null, null }, strings[0]);
@@ -196,8 +193,8 @@ public class Tests : TestBed<TestFixture>
         Assert.Equal(new string?[] { null, null, null, null, "#" , null, null, null, "#" , "#"  }, strings[4]);
         Assert.Equal(new string?[] { null, null, null, null, "#" , null, null, null, "#" , null }, strings[5]);
         Assert.Equal(new string?[] { null, null, "#" , "#" , "#" , null, null, null, "#" , null }, strings[6]);
-        Assert.Equal(new string?[] { null, null, null, null, null, null, "o ", null, "#" , null }, strings[7]);
-        Assert.Equal(new string?[] { null, null, null, null, "o ", "o" , "o" , "o" , "#" , null }, strings[8]);
+        Assert.Equal(new string?[] { null, null, null, null, null, null, "o" , null, "#" , null }, strings[7]);
+        Assert.Equal(new string?[] { null, null, null, null, "o" , "o" , "o" , "o" , "#" , null }, strings[8]);
         Assert.Equal(new string?[] { "#" , "#" , "#" , "#" , "#" , "#" , "#" , "#" , "#" , null }, strings[9]);
 
         strings = _solutionService.CreatePrintableOutput(frames[8]);
