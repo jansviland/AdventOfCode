@@ -271,11 +271,31 @@ public class SolutionService : ISolutionService
             }
 
             lastFrame = newFrame;
-
-            // CreatePrintableOutput(newFrame);
         }
 
         return result;
+    }
+
+    private string?[,] IncreaseGridSize(string?[,] grid, bool shiftRight)
+    {
+        var newGrid = new string?[grid.GetLength(0) + 1, grid.GetLength(1)];
+
+        for (var y = 0; y < grid.GetLength(1); y++)
+        {
+            for (var x = 0; x < grid.GetLength(0); x++)
+            {
+                if (shiftRight)
+                {
+                    newGrid[x + 1, y] = grid[x, y];
+                }
+                else
+                {
+                    newGrid[x, y] = grid[x, y];
+                }
+            }
+        }
+
+        return newGrid;
     }
 
     public List<Frame> CreateSequencePart2(Frame frame, bool showallsteps = true)
@@ -291,12 +311,95 @@ public class SolutionService : ISolutionService
         var lastFrame = (Frame)frame.Clone();
         result.Add(lastFrame);
 
-        throw new NotImplementedException();
+        // throw new NotImplementedException();
 
-        while (y < frame.YMax)
+        while (y < frame.YMax && result.Count() < 100)
         {
-            // TODO: if x is out of bounds, increase the width of the grid
+            var newFrame = (Frame)lastFrame.Clone();
+
+            var tempX = x;
+            var tempY = y;
+            
+            // if sand is back at starting point, stop
+            // if (x == 500 - frame.XMin && y == 0 && lastFrame.SandCount > 0)
+            // {
+            //     break;
+            // }
+
+            // if moving to the left is out of bounds, increase size of grid and add rock to bottom
+            if (x == 0)
+            {
+                newFrame.XMin--;
+                newFrame.Grid = IncreaseGridSize(newFrame.Grid, true);
+                newFrame.Grid[0, newFrame.Grid.GetLength(1) - 1] = "#";
+
+                x++;
+            }
+            else if (newFrame.Grid.GetLength(0) - 1 == x)
+            {
+                newFrame.XMax++;
+                newFrame.Grid = IncreaseGridSize(newFrame.Grid, false);
+                newFrame.Grid[newFrame.Grid.GetLength(0) - 1, newFrame.Grid.GetLength(1) - 1] = "#";
+            }
+
+            // move down, left or right
+            if (newFrame.Grid[x, y + 1] == null)
+            {
+                y++;
+            }
+            else if (newFrame.Grid[x - 1, y + 1] == null)
+            {
+                x--;
+                y++;
+            }
+            else if (newFrame.Grid[x + 1, y + 1] == null)
+            {
+                x++;
+                y++;
+            }
+            else if (newFrame.Grid[x, y + 1] != null && newFrame.Grid[x - 1, y + 1] != null && newFrame.Grid[x + 1, y + 1] != null && y == 0)
+            {
+                break;
+            }
+            else
+            {
+                // reset
+                x = position.Item1 - newFrame.XMin;
+                y = position.Item2 - newFrame.YMin;
+
+                newFrame.SandCount++;
+            }
+
+            // set previous position to empty
+            if (y > 0 && newFrame.Grid[x, y - 1] != "+")
+            {
+                newFrame.Grid[tempX, tempY] = null;
+            }
+
+            if (y > 0)
+            {
+                newFrame.Grid[x, y] = "o";
+            }
+
+            newFrame.SandX = x;
+            newFrame.SandY = y;
+
+            if (showallsteps)
+            {
+                result.Add(newFrame);
+            }
+            else
+            {
+                if (newFrame.SandCount > lastFrame.SandCount)
+                {
+                    result.Add(newFrame);
+                }
+            }
+
+            lastFrame = newFrame;
         }
+
+        return result;
     }
 
     public int RunPart2(string[] input)
@@ -327,10 +430,6 @@ public class SolutionService : ISolutionService
             rows.Add(row);
         }
 
-        // _logger.LogInformation("--------------------");
-        // _logger.LogInformation("Step {0}, sand {1} -----", frame., frame.SandCount);
-        // _logger.LogInformation("--------------------");
-
         foreach (var line in rows)
         {
             var sb = new StringBuilder();
@@ -347,8 +446,6 @@ public class SolutionService : ISolutionService
 
                 sb.Append(' ');
             }
-
-            // _logger.LogInformation(sb.ToString());
         }
 
         return rows;

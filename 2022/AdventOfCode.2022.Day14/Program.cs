@@ -51,7 +51,7 @@ internal static class Program
         // Log.Logger.Information("Elapsed time: {Elapsed} ms", stopWatch.ElapsedMilliseconds);
 
         var startGrid = solutionService.ParseInputPart2(input);
-        var frames = solutionService.CreateSequence(startGrid, false);
+        var frames = solutionService.CreateSequencePart2(startGrid, false);
 
         var lastFrame = frames.Last();
         Log.Logger.Information("Total sand count: {SandCount}", lastFrame.SandCount);
@@ -121,9 +121,9 @@ internal static class Program
 
         Console.WriteLine("");
 
-        for (var y = 0; y < frames[0].Grid.GetLength(1); y++)
+        for (var y = 0; y < frames[frameIndex].Grid.GetLength(1); y++)
         {
-            for (var x = 0; x < frames[0].Grid.GetLength(0); x++)
+            for (var x = 0; x < frames[frameIndex].Grid.GetLength(0); x++)
             {
                 if (string.IsNullOrEmpty(frames[frameIndex].Grid[x, y]))
                 {
@@ -134,7 +134,7 @@ internal static class Program
                     sb.Append(frames[frameIndex].Grid[x, y]);
                 }
 
-                if (x == frames[0].Grid.GetLength(0) - 1)
+                if (x == frames[frameIndex].Grid.GetLength(0) - 1)
                 {
                     sb.Append("   " + y);
                 }
@@ -146,7 +146,5 @@ internal static class Program
 
         Console.Write(sb.ToString());
         sb.Clear();
-
-        
     }
 }
