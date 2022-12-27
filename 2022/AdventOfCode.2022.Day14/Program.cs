@@ -33,8 +33,8 @@ internal static class Program
         string[] input;
         if (args.Length == 0)
         {
-            // input = File.ReadAllLines("Assets/input.txt");
-            input = File.ReadAllLines("Assets/test-input.txt");
+            input = File.ReadAllLines("Assets/input.txt");
+            // input = File.ReadAllLines("Assets/test-input.txt");
         }
         else
         {
@@ -54,20 +54,20 @@ internal static class Program
         var frames = solutionService.CreateSequencePart2(startGrid, false);
 
         var lastFrame = frames.Last();
-        Log.Logger.Information("Total sand count: {SandCount}", lastFrame.SandCount);
+        // Log.Logger.Information("Total sand count: {SandCount}", lastFrame.SandCount);
 
         // BUG: only prints 95 lines not 162
-        // PrintFrame(frames, frames.Count - 1);
+        solutionService.PrintFrame(lastFrame);
 
-        Console.CursorVisible = false;
-        for (var i = 0; i < frames.Count; i++)
-        {
-            PrintFrame(frames, i);
-            Thread.Sleep(200);
-            Console.SetCursorPosition(0, Console.CursorTop - frames[0].Grid.GetLength(1) - 2);
-        }
-
-        Console.CursorVisible = true;
+        // Console.CursorVisible = false;
+        // for (var i = 0; i < frames.Count; i++)
+        // {
+        //     PrintFrames(frames, i);
+        //     Thread.Sleep(200);
+        //     Console.SetCursorPosition(0, Console.CursorTop - frames[0].Grid.GetLength(1) - 2);
+        // }
+        //
+        // Console.CursorVisible = true;
 
         // TODO: Print final frame
         // Log.Logger.Information("Final result:");
@@ -112,7 +112,7 @@ internal static class Program
         return configuration;
     }
 
-    private static void PrintFrame(List<Frame> frames, int frameIndex)
+    private static void PrintFrames(List<Frame> frames, int frameIndex)
     {
         StringBuilder sb = new();
 

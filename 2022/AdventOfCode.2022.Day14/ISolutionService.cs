@@ -7,7 +7,17 @@ public interface ISolutionService
     public Frame ParseInputPart2(string[] input);
     List<string?[]> CreatePrintableOutput(Frame frame);
     public List<Frame> CreateSequence(Frame frame, bool showallsteps = true);
-    public List<Frame> CreateSequencePart2(Frame frame, bool showallsteps = true);
+
+    /// <summary>
+    /// TODO: add a debug int option:
+    /// 0 = only final result
+    /// 1 = show only every new sand added
+    /// 2 = show all steps
+    /// </summary>
+    /// <returns>final frame</returns>
+    public List<Frame> CreateSequencePart2(Frame frame, bool showallsteps = true); // TODO: add option to not print at all, only show final result
+
+    public void PrintFrame(Frame frame);
     public int RunPart2(string[] input);
 }
 
@@ -66,7 +76,7 @@ public class SolutionService : ISolutionService
         return frames.Last().SandCount;
     }
 
-    private (int, int) GetCoordinates(string input)
+    private static (int, int) GetCoordinates(string input)
     {
         var split = input.Split(',', StringSplitOptions.TrimEntries);
 
@@ -198,7 +208,6 @@ public class SolutionService : ISolutionService
         return ParseInput(inputWithAddedRocks.ToArray());
     }
 
-    // TODO: add an option that only adds a new frame when sand has come to rest, not all steps
     public List<Frame> CreateSequence(Frame frame, bool showallsteps = true)
     {
         // start point
@@ -276,28 +285,42 @@ public class SolutionService : ISolutionService
         return result;
     }
 
-    private string?[,] IncreaseGridSize(string?[,] grid, bool shiftRight)
+    private static Frame IncreaseGridSize(Frame frame, bool shiftRight)
     {
-        var newGrid = new string?[grid.GetLength(0) + 1, grid.GetLength(1)];
+        var newGrid = new string?[frame.Grid.GetLength(0) + 1, frame.Grid.GetLength(1)];
 
-        for (var y = 0; y < grid.GetLength(1); y++)
+        for (var y = 0; y < frame.Grid.GetLength(1); y++)
         {
-            for (var x = 0; x < grid.GetLength(0); x++)
+            for (var x = 0; x < frame.Grid.GetLength(0); x++)
             {
                 if (shiftRight)
                 {
-                    newGrid[x + 1, y] = grid[x, y];
+                    newGrid[x + 1, y] = frame.Grid[x, y];
                 }
                 else
                 {
-                    newGrid[x, y] = grid[x, y];
+                    newGrid[x, y] = frame.Grid[x, y];
                 }
             }
         }
 
-        return newGrid;
+        if (shiftRight)
+        {
+            newGrid[0, newGrid.GetLength(1) - 1] = "#";
+            frame.XMin--;
+        }
+        else
+        {
+            newGrid[newGrid.GetLength(0) - 1, newGrid.GetLength(1) - 1] = "#";
+            frame.XMax++;
+        }
+
+        frame.Grid = newGrid;
+
+        return frame;
     }
 
+    /// <returns>Returns final frame of sequence</returns>
     public List<Frame> CreateSequencePart2(Frame frame, bool showallsteps = true)
     {
         // start point
@@ -308,38 +331,25 @@ public class SolutionService : ISolutionService
         var x = position.Item1 - frame.XMin;
         var y = position.Item2 - frame.YMin;
 
-        var lastFrame = (Frame)frame.Clone();
-        result.Add(lastFrame);
+        var previousFrame = (Frame)frame.Clone();
 
-        // throw new NotImplementedException();
-
-        while (y < frame.YMax && result.Count() < 100)
+        while (y < frame.YMax)
         {
-            var newFrame = (Frame)lastFrame.Clone();
+            var newFrame = (Frame)previousFrame.Clone();
 
             var tempX = x;
             var tempY = y;
-            
-            // if sand is back at starting point, stop
-            // if (x == 500 - frame.XMin && y == 0 && lastFrame.SandCount > 0)
-            // {
-            //     break;
-            // }
 
             // if moving to the left is out of bounds, increase size of grid and add rock to bottom
             if (x == 0)
             {
-                newFrame.XMin--;
-                newFrame.Grid = IncreaseGridSize(newFrame.Grid, true);
-                newFrame.Grid[0, newFrame.Grid.GetLength(1) - 1] = "#";
-
+                newFrame = IncreaseGridSize(newFrame, true);
+                newFrame = IncreaseGridSize(newFrame, true);
                 x++;
             }
             else if (newFrame.Grid.GetLength(0) - 1 == x)
             {
-                newFrame.XMax++;
-                newFrame.Grid = IncreaseGridSize(newFrame.Grid, false);
-                newFrame.Grid[newFrame.Grid.GetLength(0) - 1, newFrame.Grid.GetLength(1) - 1] = "#";
+                newFrame = IncreaseGridSize(newFrame, false);
             }
 
             // move down, left or right
@@ -357,8 +367,12 @@ public class SolutionService : ISolutionService
                 x++;
                 y++;
             }
+            // can't move down, left or right, so it's the final sand
             else if (newFrame.Grid[x, y + 1] != null && newFrame.Grid[x - 1, y + 1] != null && newFrame.Grid[x + 1, y + 1] != null && y == 0)
             {
+                newFrame.Grid[x, y] = "o";
+                newFrame.SandCount++;
+                // result.Add(newFrame);
                 break;
             }
             else
@@ -371,7 +385,7 @@ public class SolutionService : ISolutionService
             }
 
             // set previous position to empty
-            if (y > 0 && newFrame.Grid[x, y - 1] != "+")
+            if (y > 0 && newFrame.Grid[tempX, tempY] != "+")
             {
                 newFrame.Grid[tempX, tempY] = null;
             }
@@ -386,18 +400,24 @@ public class SolutionService : ISolutionService
 
             if (showallsteps)
             {
-                result.Add(newFrame);
+                // result.Add(newFrame);
+                PrintFrame(newFrame);
             }
             else
             {
-                if (newFrame.SandCount > lastFrame.SandCount)
+                if (newFrame.SandCount > previousFrame.SandCount)
                 {
-                    result.Add(newFrame);
+                    // result.Add(newFrame);
+                    PrintFrame(newFrame);
                 }
             }
 
-            lastFrame = newFrame;
+            previousFrame = newFrame;
         }
+
+        _logger.LogInformation("Total sand count: {SandCount}", previousFrame.SandCount);
+
+        result.Add(previousFrame);
 
         return result;
     }
@@ -449,5 +469,45 @@ public class SolutionService : ISolutionService
         }
 
         return rows;
+    }
+
+    public void PrintFrame(Frame frame)
+    {
+        StringBuilder sb = new();
+
+        // print to console
+        Console.WriteLine("Turn: {0}, sand count: {1}, Sand position: ({2}, {3}), YMax: {4}    ",
+            frame, frame.SandCount, frame.SandX, frame.SandY, frame.YMax);
+
+        Console.WriteLine("");
+
+        for (var y = 0; y < frame.Grid.GetLength(1); y++)
+        {
+            for (var x = 0; x < frame.Grid.GetLength(0); x++)
+            {
+                if (string.IsNullOrEmpty(frame.Grid[x, y]))
+                {
+                    sb.Append(".");
+                }
+                else
+                {
+                    sb.Append(frame.Grid[x, y]);
+                }
+
+                if (x == frame.Grid.GetLength(0) - 1)
+                {
+                    sb.Append("   " + y);
+                }
+            }
+
+            // add new line
+            sb.Append(Environment.NewLine);
+        }
+
+        Console.Write(sb.ToString());
+        sb.Clear();
+
+        Thread.Sleep(30);
+        Console.SetCursorPosition(0, Console.CursorTop - frame.Grid.GetLength(1) - 2);
     }
 }
