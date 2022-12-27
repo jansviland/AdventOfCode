@@ -4,8 +4,10 @@ public interface ISolutionService
 {
     public int RunPart1(string[] input);
     public Frame ParseInput(string[] input);
+    public Frame ParseInputPart2(string[] input);
     List<string?[]> CreatePrintableOutput(Frame frame);
-    public List<Frame> CreateSequence(Frame frame);
+    public List<Frame> CreateSequence(Frame frame, bool showallsteps = true);
+    public List<Frame> CreateSequencePart2(Frame frame, bool showallsteps = true);
     public int RunPart2(string[] input);
 }
 
@@ -184,8 +186,13 @@ public class SolutionService : ISolutionService
         return result;
     }
 
+    public Frame ParseInputPart2(string[] input)
+    {
+        throw new NotImplementedException();
+    }
+
     // TODO: add an option that only adds a new frame when sand has come to rest, not all steps
-    public List<Frame> CreateSequence(Frame frame)
+    public List<Frame> CreateSequence(Frame frame, bool showallsteps = true)
     {
         // start point
         var position = (500, 0);
@@ -244,15 +251,29 @@ public class SolutionService : ISolutionService
             newFrame.SandX = x;
             newFrame.SandY = y;
 
-            lastFrame = newFrame;
+            if (showallsteps)
+            {
+                result.Add(newFrame);
+            }
+            else
+            {
+                if (newFrame.SandCount > lastFrame.SandCount)
+                {
+                    result.Add(newFrame);
+                }
+            }
 
-            // TODO: only add frame when sand has come to rest
-            result.Add(newFrame);
+            lastFrame = newFrame;
 
             // CreatePrintableOutput(newFrame);
         }
 
         return result;
+    }
+
+    public List<Frame> CreateSequencePart2(Frame frame, bool showallsteps = true)
+    {
+        throw new NotImplementedException();
     }
 
     public int RunPart2(string[] input)

@@ -33,8 +33,8 @@ internal static class Program
         string[] input;
         if (args.Length == 0)
         {
-            input = File.ReadAllLines("Assets/input.txt");
-            // input = File.ReadAllLines("Assets/test-input.txt");
+            // input = File.ReadAllLines("Assets/input.txt");
+            input = File.ReadAllLines("Assets/test-input.txt");
         }
         else
         {
@@ -51,7 +51,7 @@ internal static class Program
         // Log.Logger.Information("Elapsed time: {Elapsed} ms", stopWatch.ElapsedMilliseconds);
 
         var startGrid = solutionService.ParseInput(input);
-        var frames = solutionService.CreateSequence(startGrid);
+        var frames = solutionService.CreateSequence(startGrid, false);
 
         var lastFrame = frames.Last();
         Log.Logger.Information("Total sand count: {SandCount}", lastFrame.SandCount);
