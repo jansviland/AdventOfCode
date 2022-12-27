@@ -15,7 +15,7 @@ public interface ISolutionService
     /// 2 = show all steps
     /// </summary>
     /// <returns>final frame</returns>
-    public List<Frame> CreateSequencePart2(Frame frame, bool showallsteps = true); // TODO: add option to not print at all, only show final result
+    public List<Frame> CreateSequencePart2(Frame frame, int debugLevel = 0); // TODO: add option to not print at all, only show final result
 
     public void PrintFrame(Frame frame);
     public int RunPart2(string[] input);
@@ -190,9 +190,6 @@ public class SolutionService : ISolutionService
             result.Grid[coordinate.x - result.XMin, coordinate.y - result.YMin] = coordinate.value;
         }
 
-        // print result
-        // CreatePrintableOutput(result);
-
         return result;
     }
 
@@ -321,7 +318,7 @@ public class SolutionService : ISolutionService
     }
 
     /// <returns>Returns final frame of sequence</returns>
-    public List<Frame> CreateSequencePart2(Frame frame, bool showallsteps = true)
+    public List<Frame> CreateSequencePart2(Frame frame, int debugLevel)
     {
         // start point
         var position = (500, 0);
@@ -332,6 +329,7 @@ public class SolutionService : ISolutionService
         var y = position.Item2 - frame.YMin;
 
         var previousFrame = (Frame)frame.Clone();
+        previousFrame.SandCount = 1;
 
         while (y < frame.YMax)
         {
@@ -372,8 +370,10 @@ public class SolutionService : ISolutionService
             {
                 newFrame.Grid[x, y] = "o";
                 newFrame.SandCount++;
-                // result.Add(newFrame);
-                break;
+
+                result.Add(newFrame);
+
+                return result;
             }
             else
             {
@@ -398,14 +398,23 @@ public class SolutionService : ISolutionService
             newFrame.SandX = x;
             newFrame.SandY = y;
 
-            if (showallsteps)
+            if (debugLevel == 1)
+            {
+                if (newFrame.SandCount > previousFrame.SandCount)
+                {
+                    // result.Add(newFrame);
+                    PrintFrame(newFrame);
+                }
+            }
+            else if (debugLevel == 2)
             {
                 // result.Add(newFrame);
                 PrintFrame(newFrame);
             }
-            else
+            else if (debugLevel == 3)
             {
-                if (newFrame.SandCount > previousFrame.SandCount)
+                // print every 1000 sand
+                if (newFrame.SandCount % 1009 == 0)
                 {
                     // result.Add(newFrame);
                     PrintFrame(newFrame);
@@ -428,7 +437,7 @@ public class SolutionService : ISolutionService
         _logger.LogInformation("Input contains {Input} values", input.Length);
 
         var startGrid = ParseInputPart2(input);
-        var frames = CreateSequencePart2(startGrid, false);
+        var frames = CreateSequencePart2(startGrid, 0);
 
         return frames.Last().SandCount;
     }
@@ -476,8 +485,8 @@ public class SolutionService : ISolutionService
         StringBuilder sb = new();
 
         // print to console
-        Console.WriteLine("Turn: {0}, sand count: {1}, Sand position: ({2}, {3}), YMax: {4}    ",
-            frame, frame.SandCount, frame.SandX, frame.SandY, frame.YMax);
+        Console.WriteLine("Sand count: {0}, Sand position: ({1}, {2}), YMax: {3}    ",
+            frame.SandCount, frame.SandX, frame.SandY, frame.YMax);
 
         Console.WriteLine("");
 

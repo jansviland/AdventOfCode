@@ -46,57 +46,33 @@ internal static class Program
         //
         // var resultPart2 = solutionService.RunPart2(input);
         // Log.Logger.Information("result: {Result}", resultPart2);
-        //
-        // stopWatch.Stop();
-        // Log.Logger.Information("Elapsed time: {Elapsed} ms", stopWatch.ElapsedMilliseconds);
 
-        var startGrid = solutionService.ParseInputPart2(input);
-        var frames = solutionService.CreateSequencePart2(startGrid, false);
+        // part 1
+
+        Log.Logger.Information("PART 1");
+
+        var startGrid = solutionService.ParseInput(input);
+        var frames = solutionService.CreateSequence(startGrid, false);
 
         var lastFrame = frames.Last();
-        // Log.Logger.Information("Total sand count: {SandCount}", lastFrame.SandCount);
-
-        // BUG: only prints 95 lines not 162
         solutionService.PrintFrame(lastFrame);
 
-        // Console.CursorVisible = false;
-        // for (var i = 0; i < frames.Count; i++)
-        // {
-        //     PrintFrames(frames, i);
-        //     Thread.Sleep(200);
-        //     Console.SetCursorPosition(0, Console.CursorTop - frames[0].Grid.GetLength(1) - 2);
-        // }
-        //
-        // Console.CursorVisible = true;
+        Console.SetCursorPosition(0, Console.CursorTop + lastFrame.Grid.GetLength(1) + 2);
 
-        // TODO: Print final frame
-        // Log.Logger.Information("Final result:");
-        //
-        // var print = solutionService.CreatePrintableOutput(lastFrame);
-        // foreach (var line in print)
-        // {
-        //     Log.Logger.Information(line.Join(""));
-        // }
+        // part 2
+        Log.Logger.Information("PART 2");
 
-        // var spinner = new ConsoleAnimation(frames)
-        // {
-        //     Delay = 50
-        // };
+        startGrid = solutionService.ParseInputPart2(input);
+        frames = solutionService.CreateSequencePart2(startGrid, 3);
 
-        // PrintFrame(frames);
+        lastFrame = frames.Last();
 
-        // BUG: make it run until the end
-        // var startTime = DateTime.Now;
-        // var endTime = startTime.AddMinutes(30);
-        //
-        // while (DateTime.Now < endTime)
-        // {
-        //     spinner.Turn();
-        // }
+        solutionService.PrintFrame(lastFrame);
 
-        // set cursor position back again
-        // Console.SetCursorPosition(0, startGrid.YMax + 1);
-        // Console.SetCursorPosition(0, Console.CursorTop + frames[0].Grid.GetLength(1) - 2);
+        Console.SetCursorPosition(0, Console.CursorTop + lastFrame.Grid.GetLength(1) + 2);
+
+        stopWatch.Stop();
+        Log.Logger.Information("Elapsed time: {Elapsed} ms", stopWatch.ElapsedMilliseconds);
     }
 
     private static IConfiguration BuildConfiguration(IConfigurationBuilder builder)

@@ -12,7 +12,11 @@ terminal.
 
 You can find the description here: [2022 / Day 14 / Description](./2022/AdventOfCode.2022.Day14/Description.md)
 
+### Part 1
 ![gif](./wiki/2022-day14-part-1-solution2.gif)
+
+### Part 2
+![gif](./wiki/2022-day14-solution.gif)
 
 ### How to run the 2022 - Day 14 application
 
