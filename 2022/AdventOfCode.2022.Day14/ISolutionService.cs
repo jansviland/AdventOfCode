@@ -61,7 +61,7 @@ public class SolutionService : ISolutionService
         _logger.LogInformation("Input contains {Input} values", input.Length);
 
         var startGrid = ParseInput(input);
-        var frames = CreateSequence(startGrid);
+        var frames = CreateSequence(startGrid, false);
 
         return frames.Last().SandCount;
     }
@@ -188,7 +188,14 @@ public class SolutionService : ISolutionService
 
     public Frame ParseInputPart2(string[] input)
     {
-        throw new NotImplementedException();
+        var grid = ParseInput(input);
+
+        var inputWithAddedRocks = input.ToList();
+        var newLine = $"{grid.XMin},{grid.YMax + 2} -> {grid.XMax},{grid.YMax + 2}";
+
+        inputWithAddedRocks.Add(newLine);
+
+        return ParseInput(inputWithAddedRocks.ToArray());
     }
 
     // TODO: add an option that only adds a new frame when sand has come to rest, not all steps
@@ -273,7 +280,23 @@ public class SolutionService : ISolutionService
 
     public List<Frame> CreateSequencePart2(Frame frame, bool showallsteps = true)
     {
+        // start point
+        var position = (500, 0);
+
+        var result = new List<Frame>();
+
+        var x = position.Item1 - frame.XMin;
+        var y = position.Item2 - frame.YMin;
+
+        var lastFrame = (Frame)frame.Clone();
+        result.Add(lastFrame);
+
         throw new NotImplementedException();
+
+        while (y < frame.YMax)
+        {
+            // TODO: if x is out of bounds, increase the width of the grid
+        }
     }
 
     public int RunPart2(string[] input)
@@ -281,7 +304,10 @@ public class SolutionService : ISolutionService
         _logger.LogInformation("Solving day 14 - Part 2");
         _logger.LogInformation("Input contains {Input} values", input.Length);
 
-        throw new NotImplementedException();
+        var startGrid = ParseInputPart2(input);
+        var frames = CreateSequencePart2(startGrid, false);
+
+        return frames.Last().SandCount;
     }
 
     public List<string?[]> CreatePrintableOutput(Frame frame)

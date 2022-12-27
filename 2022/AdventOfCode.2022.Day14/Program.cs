@@ -50,7 +50,7 @@ internal static class Program
         // stopWatch.Stop();
         // Log.Logger.Information("Elapsed time: {Elapsed} ms", stopWatch.ElapsedMilliseconds);
 
-        var startGrid = solutionService.ParseInput(input);
+        var startGrid = solutionService.ParseInputPart2(input);
         var frames = solutionService.CreateSequence(startGrid, false);
 
         var lastFrame = frames.Last();
