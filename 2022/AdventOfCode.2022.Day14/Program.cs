@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using System.Net.Http.Headers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -48,8 +47,9 @@ internal static class Program
         // Log.Logger.Information("result: {Result}", resultPart2);
 
         // part 1
-
         Log.Logger.Information("PART 1");
+
+        Console.CursorVisible = false;
 
         var startGrid = solutionService.ParseInput(input);
         var frames = solutionService.CreateSequence(startGrid, false);
@@ -86,41 +86,5 @@ internal static class Program
         var configuration = builder.Build();
 
         return configuration;
-    }
-
-    private static void PrintFrames(List<Frame> frames, int frameIndex)
-    {
-        StringBuilder sb = new();
-
-        Console.WriteLine("Turn: {0}, sand count: {1}, Sand position: ({2}, {3}), YMax: {4}    ",
-            frameIndex, frames[frameIndex].SandCount, frames[frameIndex].SandX, frames[frameIndex].SandY, frames[frameIndex].YMax);
-
-        Console.WriteLine("");
-
-        for (var y = 0; y < frames[frameIndex].Grid.GetLength(1); y++)
-        {
-            for (var x = 0; x < frames[frameIndex].Grid.GetLength(0); x++)
-            {
-                if (string.IsNullOrEmpty(frames[frameIndex].Grid[x, y]))
-                {
-                    sb.Append(".");
-                }
-                else
-                {
-                    sb.Append(frames[frameIndex].Grid[x, y]);
-                }
-
-                if (x == frames[frameIndex].Grid.GetLength(0) - 1)
-                {
-                    sb.Append("   " + y);
-                }
-            }
-
-            // add new line
-            sb.Append(Environment.NewLine);
-        }
-
-        Console.Write(sb.ToString());
-        sb.Clear();
     }
 }

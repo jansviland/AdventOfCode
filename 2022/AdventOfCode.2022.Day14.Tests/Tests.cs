@@ -1,5 +1,8 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace AdventOfCode._2022.Day14.Tests;
 
+[SuppressMessage("ReSharper", "RedundantExplicitArrayCreation")]
 public class Tests : TestBed<TestFixture>
 {
     private readonly ISolutionService _solutionService;
