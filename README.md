@@ -28,6 +28,9 @@ dotnet run
 Here is an example of the solution for day 5. It will print out all the move operations and the results along
 the way.
 
+I have written an in-depth description of the solution here:
+https://medium.com/systek/test-drevet-adventskalender-c12ee26909eb (Norwegian)
+
 ![gif](./wiki/2022-day5-solution.gif)
 
 You can find the description here: [2022 / Day 5 / Description](./2022/AdventOfCode.2022.Day5/Description.md)
