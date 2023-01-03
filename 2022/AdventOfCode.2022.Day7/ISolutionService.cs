@@ -4,7 +4,6 @@ public interface ISolutionService
 {
     public int RunPart1(string[] input);
     public Tree ParseInput(string[] input, int debugLevel = 0);
-    public string[] GetFolderContent(Tree tree, string path);
     public int RunPart2(string[] input);
 }
 
@@ -32,33 +31,47 @@ public class Tree
             return;
         }
 
-        // If the path is not empty, we need to go deeper
-        // TODO: navigate to /a/b/c/d etc, then add the child
-        var pathParts = path.Split('/');
+        var pathParts = path.Split('/', StringSplitOptions.RemoveEmptyEntries);
         var current = this;
+
+        // split into folders
         foreach (var pathPart in pathParts)
         {
-            if (string.IsNullOrWhiteSpace(pathPart))
-            {
-                continue;
-            }
-
             var childNode = current.Children.FirstOrDefault(x => x.Name == pathPart);
             if (childNode == null)
             {
                 throw new Exception($"Could not find child node {pathPart} in {current.Name}");
             }
 
+            // set folder to current node
             current = childNode;
         }
 
+        // finally add to the last folder in the path
         current.Children.AddLast(child);
-
-        // Children.AddLast(child);
     }
 
-    // TODO: AddChild
-    // TODO: Traverse
+    public List<string> PrintTree(int level = 0)
+    {
+        var lines = new List<string>();
+
+        var indent = new string(' ', level * 2);
+        if (IsFolder)
+        {
+            lines.Add($"{indent}- {Name} (dir)");
+        }
+        else
+        {
+            lines.Add($"{indent}- {Name} (file, size={Size})");
+        }
+
+        foreach (var child in Children)
+        {
+            lines.AddRange(child.PrintTree(level + 1));
+        }
+
+        return lines;
+    }
 }
 
 public class SolutionService : ISolutionService
@@ -90,7 +103,7 @@ public class SolutionService : ISolutionService
 
                     if (path == "..")
                     {
-                        var pathParts = currentPath.Split('/');
+                        var pathParts = currentPath.Split('/', StringSplitOptions.RemoveEmptyEntries);
                         currentPath = string.Join('/', pathParts.Take(pathParts.Length - 1));
                     }
                     else if (path == "/")
@@ -99,12 +112,9 @@ public class SolutionService : ISolutionService
                     }
                     else
                     {
-                        currentPath = $"{currentPath}/{path}";
+                        currentPath += $"{path}/";
                     }
                 }
-
-                // TODO: check if cd or ls
-                // TODO: if cd, update currentPath
             }
             else
             {
@@ -131,10 +141,27 @@ public class SolutionService : ISolutionService
                 }
             }
 
-            // TODO: print tree if debugLevel > 0
+            if (debugLevel > 1)
+            {
+                PrintTree(root);
+            }
+        }
+
+        if (debugLevel > 0)
+        {
+            PrintTree(root);
         }
 
         return root;
+    }
+
+    private void PrintTree(Tree tree)
+    {
+        var lines = tree.PrintTree();
+        foreach (var l in lines)
+        {
+            _logger.LogInformation(l);
+        }
     }
 
     public int RunPart1(string[] input)
@@ -142,11 +169,8 @@ public class SolutionService : ISolutionService
         _logger.LogInformation("Solving day 7");
         _logger.LogInformation("Input contains {Input} values", input.Length);
 
-        throw new NotImplementedException();
-    }
+        var root = ParseInput(input, 2);
 
-    public string[] GetFolderContent(Tree tree, string path)
-    {
         throw new NotImplementedException();
     }
 

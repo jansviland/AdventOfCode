@@ -76,7 +76,7 @@ public class Tests : TestBed<TestFixture>
         Assert.True(dirE.IsFolder);
 
         // 29116 f
-        var fileF = root.Children.First(x => x.Name == "f");
+        var fileF = dirA.Children.First(x => x.Name == "f");
         Assert.False(fileF.IsFolder);
         Assert.Equal(29116, fileF.Size);
     }
@@ -88,21 +88,21 @@ public class Tests : TestBed<TestFixture>
         var tree = _solutionService.ParseInput(_input);
 
         // act
-        var result = _solutionService.GetFolderContent(tree, "/");
+        var result = tree.PrintTree();
 
         // assert
         var expected = new[]
         {
             "- / (dir)",
-            "    - a (dir)",
+            "  - a (dir)",
             "    - e (dir)",
-            "    - i (file, size=584)",
+            "      - i (file, size=584)",
             "    - f (file, size=29116)",
             "    - g (file, size=2557)",
             "    - h.lst (file, size=62596)",
-            "    - b.txt (file, size=14848514)",
-            "    - c.dat (file, size=8504156)",
-            "    - d (dir)",
+            "  - b.txt (file, size=14848514)",
+            "  - c.dat (file, size=8504156)",
+            "  - d (dir)",
             "    - j (file, size=4060174)",
             "    - d.log (file, size=8033020)",
             "    - d.ext (file, size=5626152)",
