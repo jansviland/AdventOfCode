@@ -8,27 +8,27 @@ public class Tests : TestBed<TestFixture>
     {
         "$ cd /",
         "$ ls",
-        "$dir a",
-        "$14848514 b.txt",
-        "$8504156 c.dat",
-        "$dir d",
-        "$$ cd a",
-        "$$ ls",
-        "$dir e",
-        "$29116 f",
-        "$2557 g",
-        "$62596 h.lst",
-        "$$ cd e",
-        "$$ ls",
-        "$584 i",
-        "$$ cd ..",
-        "$$ cd ..",
-        "$$ cd d",
-        "$$ ls",
-        "$4060174 j",
-        "$8033020 d.log",
-        "$5626152 d.ext",
-        "$7214296 k",
+        "dir a",
+        "14848514 b.txt",
+        "8504156 c.dat",
+        "dir d",
+        "$ cd a",
+        "$ ls",
+        "dir e",
+        "29116 f",
+        "2557 g",
+        "62596 h.lst",
+        "$ cd e",
+        "$ ls",
+        "584 i",
+        "$ cd ..",
+        "$ cd ..",
+        "$ cd d",
+        "$ ls",
+        "4060174 j",
+        "8033020 d.log",
+        "5626152 d.ext",
+        "7214296 k",
     };
 
     public Tests(ITestOutputHelper testOutputHelper, TestFixture fixture) : base(testOutputHelper, fixture)
@@ -37,27 +37,48 @@ public class Tests : TestBed<TestFixture>
     }
 
     [Fact]
-    public void ParseInputTest()
+    public void ParseInput_RootHasCorrectChildren()
     {
         // act
-        var result = _solutionService.ParseInput(_input);
+        var root = _solutionService.ParseInput(_input);
 
         // assert
-        Assert.Equal(13, result.Children.Count);
+        Assert.Equal(4, root.Children.Count);
 
-        // a (dir)
-        var dirA = result.Children.First(x => x.Name == "a");
+        var dirA = root.Children.First(x => x.Name == "a");
         Assert.True(dirA.IsFolder);
 
-        // i (file, size=584)
-        var fileI = result.Children.First(x => x.Name == "i");
-        Assert.False(fileI.IsFolder);
-        Assert.Equal(584, fileI.Size);
+        var fileB = root.Children.First(x => x.Name == "b");
+        Assert.False(fileB.IsFolder);
+        Assert.Equal(14848514, fileB.Size);
 
-        // k (file, size=7214296)
-        var fileK = result.Children.First(x => x.Name == "k");
-        Assert.False(fileK.IsFolder);
-        Assert.Equal(7214296, fileK.Size);
+        var fileC = root.Children.First(x => x.Name == "c");
+        Assert.False(fileC.IsFolder);
+        Assert.Equal(8504156, fileC.Size);
+
+        var dirD = root.Children.First(x => x.Name == "d");
+        Assert.True(dirD.IsFolder);
+    }
+
+    [Fact]
+    public void ParseInput_AFolderHasCorrectChildren()
+    {
+        // act
+        var root = _solutionService.ParseInput(_input);
+        var dirA = root.Children.First(x => x.Name == "a");
+
+        // assert
+        Assert.True(dirA.IsFolder);
+        Assert.Equal(3, dirA.Children.Count);
+
+        // dir e
+        var dirE = dirA.Children.First(x => x.Name == "e");
+        Assert.True(dirE.IsFolder);
+
+        // 29116 f
+        var fileF = root.Children.First(x => x.Name == "k");
+        Assert.False(fileF.IsFolder);
+        Assert.Equal(29116, fileF.Size);
     }
 
     [Fact]

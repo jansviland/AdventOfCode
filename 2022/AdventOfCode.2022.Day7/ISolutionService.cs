@@ -23,6 +23,22 @@ public class Tree
         Children = new LinkedList<Tree>();
     }
 
+    public void AddChild(Tree child, string path)
+    {
+        // If the path is empty, we are at the right place
+        if (string.IsNullOrWhiteSpace(path) || path == "/")
+        {
+            Children.AddLast(child);
+            return;
+        }
+
+        // If the path is not empty, we need to go deeper
+        // TODO: navigate to /a/b/c/d etc, then add the child
+
+
+        // Children.AddLast(child);
+    }
+
     // TODO: AddChild
     // TODO: Traverse
 }
@@ -38,8 +54,42 @@ public class SolutionService : ISolutionService
 
     public Tree ParseInput(string[] input, int debugLevel)
     {
-        // TODO: go through each line, print folder content every time new folder or files are found, if debugLevel > 0
-        throw new NotImplementedException();
+        var root = new Tree("/", 0, true);
+
+        var currentPath = "/";
+        for (var i = 0; i < input.Length; i++)
+        {
+            var line = input[i];
+
+            var isCommand = line.StartsWith('$');
+            if (isCommand)
+            {
+                // TODO: check if cd or ls
+            }
+            else
+            {
+                // content
+                var isFolder = line.StartsWith("dir");
+                if (isFolder)
+                {
+                    var split = line.Split(" ");
+                    var name = split[1];
+                    var size = 0;
+
+                    var child = new Tree(name, size, isFolder);
+
+                    root.AddChild(child, currentPath);
+                }
+                else
+                {
+                    // TODO: add file
+                }
+            }
+
+            // TODO: print tree if debugLevel > 0
+        }
+
+        return root;
     }
 
     public int RunPart1(string[] input)
