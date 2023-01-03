@@ -48,11 +48,11 @@ public class Tests : TestBed<TestFixture>
         var dirA = root.Children.First(x => x.Name == "a");
         Assert.True(dirA.IsFolder);
 
-        var fileB = root.Children.First(x => x.Name == "b");
+        var fileB = root.Children.First(x => x.Name == "b.txt");
         Assert.False(fileB.IsFolder);
         Assert.Equal(14848514, fileB.Size);
 
-        var fileC = root.Children.First(x => x.Name == "c");
+        var fileC = root.Children.First(x => x.Name == "c.dat");
         Assert.False(fileC.IsFolder);
         Assert.Equal(8504156, fileC.Size);
 
@@ -69,14 +69,14 @@ public class Tests : TestBed<TestFixture>
 
         // assert
         Assert.True(dirA.IsFolder);
-        Assert.Equal(3, dirA.Children.Count);
+        Assert.Equal(4, dirA.Children.Count);
 
         // dir e
         var dirE = dirA.Children.First(x => x.Name == "e");
         Assert.True(dirE.IsFolder);
 
         // 29116 f
-        var fileF = root.Children.First(x => x.Name == "k");
+        var fileF = root.Children.First(x => x.Name == "f");
         Assert.False(fileF.IsFolder);
         Assert.Equal(29116, fileF.Size);
     }

@@ -34,7 +34,25 @@ public class Tree
 
         // If the path is not empty, we need to go deeper
         // TODO: navigate to /a/b/c/d etc, then add the child
+        var pathParts = path.Split('/');
+        var current = this;
+        foreach (var pathPart in pathParts)
+        {
+            if (string.IsNullOrWhiteSpace(pathPart))
+            {
+                continue;
+            }
 
+            var childNode = current.Children.FirstOrDefault(x => x.Name == pathPart);
+            if (childNode == null)
+            {
+                throw new Exception($"Could not find child node {pathPart} in {current.Name}");
+            }
+
+            current = childNode;
+        }
+
+        current.Children.AddLast(child);
 
         // Children.AddLast(child);
     }
@@ -64,7 +82,29 @@ public class SolutionService : ISolutionService
             var isCommand = line.StartsWith('$');
             if (isCommand)
             {
+                var isCd = line.Contains("cd");
+                if (isCd)
+                {
+                    var split = line.Split(' ');
+                    var path = split.Last();
+
+                    if (path == "..")
+                    {
+                        var pathParts = currentPath.Split('/');
+                        currentPath = string.Join('/', pathParts.Take(pathParts.Length - 1));
+                    }
+                    else if (path == "/")
+                    {
+                        currentPath = "/";
+                    }
+                    else
+                    {
+                        currentPath = $"{currentPath}/{path}";
+                    }
+                }
+
                 // TODO: check if cd or ls
+                // TODO: if cd, update currentPath
             }
             else
             {
@@ -74,15 +114,20 @@ public class SolutionService : ISolutionService
                 {
                     var split = line.Split(" ");
                     var name = split[1];
-                    var size = 0;
 
-                    var child = new Tree(name, size, isFolder);
+                    var child = new Tree(name, 0, isFolder);
 
                     root.AddChild(child, currentPath);
                 }
                 else
                 {
-                    // TODO: add file
+                    var split = line.Split(" ");
+                    var name = split[1];
+                    var size = split[0];
+
+                    var child = new Tree(name, int.Parse(size), isFolder);
+
+                    root.AddChild(child, currentPath);
                 }
             }
 

@@ -1,6 +1,6 @@
 # Advent of Code
 
-This is my attempt at solving the [Advent of Code](http://adventofcode.com/) puzzles. I have used C# and TDD to solve
+This is my solutions to the [Advent of Code](http://adventofcode.com/) puzzles. I have used C# and TDD to solve
 the puzzles.
 
 # Demo
