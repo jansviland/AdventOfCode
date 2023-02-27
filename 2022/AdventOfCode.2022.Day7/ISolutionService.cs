@@ -12,6 +12,7 @@ public class Tree
     public string Name;
     public int Size;
     public bool IsFolder;
+    public Tree? Parent;
     public LinkedList<Tree> Children;
 
     public Tree(string name, int size, bool isFolder)
@@ -43,12 +44,21 @@ public class Tree
                 throw new Exception($"Could not find child node {pathPart} in {current.Name}");
             }
 
+            // increase the size of the parent
+            // current.Size += child.Size;
+
+            childNode.Parent = current;
+
             // set folder to current node
             current = childNode;
         }
 
+        // TODO: update size of folder, folder size is sum of all children + all children's children
+
         // finally add to the last folder in the path
         current.Children.AddLast(child);
+
+        // TODO: update size of current folder + all parents
     }
 
     public List<string> PrintTree(int level = 0)
@@ -72,6 +82,17 @@ public class Tree
 
         return lines;
     }
+
+    // public int GetTotalSize()
+    // {
+    //     var size = Size;
+    //     foreach (var child in Children.Where(x => x.IsFolder))
+    //     {
+    //         size += child.GetTotalSize();
+    //     }
+    //
+    //     return size;
+    // }
 }
 
 public class SolutionService : ISolutionService
@@ -141,12 +162,14 @@ public class SolutionService : ISolutionService
                 }
             }
 
+            // print tree for every lines parsed
             if (debugLevel > 1)
             {
                 PrintTree(root);
             }
         }
 
+        // print tree when done
         if (debugLevel > 0)
         {
             PrintTree(root);
