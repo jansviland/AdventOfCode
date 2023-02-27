@@ -1,3 +1,5 @@
+using System.Drawing;
+
 namespace AdventOfCode._2022.Day7.Tests;
 
 public class Tests : TestBed<TestFixture>
@@ -79,6 +81,27 @@ public class Tests : TestBed<TestFixture>
         var fileF = dirA.Children.First(x => x.Name == "f");
         Assert.False(fileF.IsFolder);
         Assert.Equal(29116, fileF.Size);
+    }
+
+    [Fact]
+    public void ParseInput_FoldersHasCorrectSize()
+    {
+        // arrange
+        var tree = _solutionService.ParseInput(_input);
+
+        // act
+        // assert
+
+        // total size
+        Assert.Equal(48381165, tree.Size);
+
+        // size of A
+        var dirA = tree.Children.First(x => x.Name == "a");
+        Assert.Equal(584 + 29116 + 2557 + 62596, dirA.Size);
+
+        // size of E
+        var dirE = dirA.Children.First(x => x.Name == "e");
+        Assert.Equal(584, dirE.Size);
     }
 
     [Fact]

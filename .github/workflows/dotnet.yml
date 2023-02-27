@@ -25,4 +25,9 @@ jobs:
     - name: Build
       run: dotnet build --no-restore
     - name: Test
-      run: dotnet test --no-build --verbosity normal
+      run: dotnet test --no-build --verbosity normal --collect:"XPlat Code Coverage" --results-directory ./coverage
+    - name: Install ReportGenerator Global Tool
+      run: dotnet tool install -g dotnet-reportgenerator-globaltool
+    - name: Generate Report
+      run: reportgenerator "-reports:./coverage/**/coverage.cobertura.xml" "-targetdir:./coverage" "-reporttypes:HtmlInline_AzurePipelines;Cobertura" "-filefilters:-*Program.cs;-*Tests.cs;-*TestFixture.cs"
+      
