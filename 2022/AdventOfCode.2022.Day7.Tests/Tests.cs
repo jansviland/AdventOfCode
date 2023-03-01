@@ -87,12 +87,15 @@ public class Tests : TestBed<TestFixture>
     public void ParseInput_FoldersHasCorrectSize()
     {
         // arrange
-        var tree = _solutionService.ParseInput(_input);
+        var tree = _solutionService.ParseInput(_input, 1);
 
         // act
+        var result = _solutionService.UpdateFolderSizes(tree);
+
         // assert
 
         // total size
+        Assert.Equal(48381165, result);
         Assert.Equal(48381165, tree.Size);
 
         // size of A
@@ -133,6 +136,28 @@ public class Tests : TestBed<TestFixture>
         };
 
         Assert.Equal(expected, result);
+    }
+
+    [Fact]
+    public void UpdateFolderSizes1()
+    {
+        var input = new[]
+        {
+            "$ cd /",
+            "$ ls",
+            "dir a",
+            "14848514 b.txt",
+            "8504156 c.dat",
+        };
+
+        // arrange
+        var tree = _solutionService.ParseInput(input, 1);
+
+        // act
+        _solutionService.UpdateFolderSizes(tree);
+
+        // assert
+        Assert.Equal(14848514 + 8504156, tree.Size);
     }
 
     [Fact]

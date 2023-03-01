@@ -4,6 +4,7 @@ public interface ISolutionService
 {
     public int RunPart1(string[] input);
     public Tree ParseInput(string[] input, int debugLevel = 0);
+    public int UpdateFolderSizes(Tree tree, int debugLevel = 0);
     public int RunPart2(string[] input);
 }
 
@@ -57,8 +58,6 @@ public class Tree
 
         // finally add to the last folder in the path
         current.Children.AddLast(child);
-
-        // TODO: update size of current folder + all parents
     }
 
     public List<string> PrintTree(int level = 0)
@@ -176,6 +175,11 @@ public class SolutionService : ISolutionService
         }
 
         return root;
+    }
+
+    public int UpdateFolderSizes(Tree tree, int debugLevel = 0)
+    {
+        throw new NotImplementedException();
     }
 
     private void PrintTree(Tree tree)
