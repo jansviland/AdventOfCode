@@ -89,13 +89,8 @@ public class Tests : TestBed<TestFixture>
         // arrange
         var tree = _solutionService.ParseInput(_input, 1);
 
-        // act
-        var result = _solutionService.UpdateFolderSizes(tree);
-
         // assert
-
         // total size
-        Assert.Equal(48381165, result);
         Assert.Equal(48381165, tree.Size);
 
         // size of A
@@ -146,18 +141,46 @@ public class Tests : TestBed<TestFixture>
             "$ cd /",
             "$ ls",
             "dir a",
-            "14848514 b.txt",
-            "8504156 c.dat",
+            "10 b.txt",
+            "20 c.dat",
         };
 
         // arrange
         var tree = _solutionService.ParseInput(input, 1);
 
-        // act
-        _solutionService.UpdateFolderSizes(tree);
+        // assert
+        var folderA = tree.Children.First(x => x.Name == "a");
+
+        Assert.Equal(30, tree.Size);
+        Assert.Equal(0, folderA.Size);
+    }
+
+    [Fact]
+    public void UpdateFolderSizes2()
+    {
+        var input = new[]
+        {
+            "$ cd /",
+            "$ ls",
+            "dir a",
+            "10 b.txt",
+            "20 c.dat",
+            "$ cd a",
+            "$ ls",
+            "dir e",
+            "30 f",
+            "40 g",
+            "100 h.lst",
+        };
+
+        // arrange
+        var tree = _solutionService.ParseInput(input, 1);
 
         // assert
-        Assert.Equal(14848514 + 8504156, tree.Size);
+        var folderA = tree.Children.First(x => x.Name == "a");
+
+        Assert.Equal(30 + 40 + 100, folderA.Size);
+        Assert.Equal(10 + 20 + 30 + 40 + 100, tree.Size);
     }
 
     [Fact]

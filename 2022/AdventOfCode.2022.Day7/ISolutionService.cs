@@ -1,97 +1,12 @@
+using System.Diagnostics.Eventing.Reader;
+
 namespace AdventOfCode._2022.Day7;
 
 public interface ISolutionService
 {
-    public int RunPart1(string[] input);
+    public int RunPart1(string[] input, int debugLevel = 0);
     public Tree ParseInput(string[] input, int debugLevel = 0);
-    public int UpdateFolderSizes(Tree tree, int debugLevel = 0);
-    public int RunPart2(string[] input);
-}
-
-public class Tree
-{
-    public string Name;
-    public int Size;
-    public bool IsFolder;
-    public Tree? Parent;
-    public LinkedList<Tree> Children;
-
-    public Tree(string name, int size, bool isFolder)
-    {
-        this.Name = name;
-        this.Size = size;
-        this.IsFolder = isFolder;
-        Children = new LinkedList<Tree>();
-    }
-
-    public void AddChild(Tree child, string path)
-    {
-        // If the path is empty, we are at the right place
-        if (string.IsNullOrWhiteSpace(path) || path == "/")
-        {
-            Children.AddLast(child);
-            return;
-        }
-
-        var pathParts = path.Split('/', StringSplitOptions.RemoveEmptyEntries);
-        var current = this;
-
-        // split into folders
-        foreach (var pathPart in pathParts)
-        {
-            var childNode = current.Children.FirstOrDefault(x => x.Name == pathPart);
-            if (childNode == null)
-            {
-                throw new Exception($"Could not find child node {pathPart} in {current.Name}");
-            }
-
-            // increase the size of the parent
-            // current.Size += child.Size;
-
-            childNode.Parent = current;
-
-            // set folder to current node
-            current = childNode;
-        }
-
-        // TODO: update size of folder, folder size is sum of all children + all children's children
-
-        // finally add to the last folder in the path
-        current.Children.AddLast(child);
-    }
-
-    public List<string> PrintTree(int level = 0)
-    {
-        var lines = new List<string>();
-
-        var indent = new string(' ', level * 2);
-        if (IsFolder)
-        {
-            lines.Add($"{indent}- {Name} (dir)");
-        }
-        else
-        {
-            lines.Add($"{indent}- {Name} (file, size={Size})");
-        }
-
-        foreach (var child in Children)
-        {
-            lines.AddRange(child.PrintTree(level + 1));
-        }
-
-        return lines;
-    }
-
-    // public int GetTotalSize()
-    // {
-    //     var size = Size;
-    //     foreach (var child in Children.Where(x => x.IsFolder))
-    //     {
-    //         size += child.GetTotalSize();
-    //     }
-    //
-    //     return size;
-    // }
+    public int RunPart2(string[] input, int debugLevel = 0);
 }
 
 public class SolutionService : ISolutionService
@@ -132,7 +47,14 @@ public class SolutionService : ISolutionService
                     }
                     else
                     {
-                        currentPath += $"{path}/";
+                        if (currentPath.EndsWith("/"))
+                        {
+                            currentPath += $"{path}/";
+                        }
+                        else
+                        {
+                            currentPath += $"/{path}/";
+                        }
                     }
                 }
             }
@@ -174,12 +96,9 @@ public class SolutionService : ISolutionService
             PrintTree(root);
         }
 
-        return root;
-    }
+        root.TraverseAndUpdate();
 
-    public int UpdateFolderSizes(Tree tree, int debugLevel = 0)
-    {
-        throw new NotImplementedException();
+        return root;
     }
 
     private void PrintTree(Tree tree)
@@ -191,17 +110,21 @@ public class SolutionService : ISolutionService
         }
     }
 
-    public int RunPart1(string[] input)
+    public int RunPart1(string[] input, int debugLevel = 0)
     {
         _logger.LogInformation("Solving day 7");
         _logger.LogInformation("Input contains {Input} values", input.Length);
 
-        var root = ParseInput(input, 2);
+        var root = ParseInput(input, debugLevel);
 
-        throw new NotImplementedException();
+        // Find all of the directories with a total size of at most 100000. What is the sum of the total sizes of those directories?
+        return root
+            .Traverse()
+            .Where(x => x.IsFolder && x.Size <= 100000)
+            .Sum(x => x.Size);
     }
 
-    public int RunPart2(string[] input)
+    public int RunPart2(string[] input, int debugLevel = 0)
     {
         _logger.LogInformation("Solving day 7 - Part 2");
         _logger.LogInformation("Input contains {Input} values", input.Length);
