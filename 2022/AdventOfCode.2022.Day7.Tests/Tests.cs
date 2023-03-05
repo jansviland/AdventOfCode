@@ -206,6 +206,6 @@ public class Tests : TestBed<TestFixture>
         var result = _solutionService.RunPart2(_input);
 
         // assert
-        Assert.Equal(45000, result);
+        Assert.Equal(24933642, result);
     }
 }

@@ -129,6 +129,24 @@ public class SolutionService : ISolutionService
         _logger.LogInformation("Solving day 7 - Part 2");
         _logger.LogInformation("Input contains {Input} values", input.Length);
 
-        throw new NotImplementedException();
+        var root = ParseInput(input, debugLevel);
+        var unusedDiskSpace = 70000000 - root.Size;
+
+        var folders = root
+            .Traverse()
+            .Where(x => x.IsFolder)
+            .OrderBy(x => x.Size)
+            .ToList();
+
+        for (var i = 0; i < folders.Count; i++)
+        {
+            var unusedDiskSpaceAfter = unusedDiskSpace + folders[i].Size;
+            if (unusedDiskSpaceAfter >= 30000000)
+            {
+                return folders[i].Size;
+            }
+        }
+
+        return 0;
     }
 }
