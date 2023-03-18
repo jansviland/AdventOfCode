@@ -23,7 +23,32 @@ public class SolutionService : ISolutionService
     /// </summary>
     public int[] GetRegisterXValuePerCycle(string[] input)
     {
-        throw new NotImplementedException();
+        var result = new List<int?>();
+
+        for (var i = 0; i < input.Length; i++)
+        {
+            var command = input[i].Split(' ');
+
+            var last = result.LastOrDefault() ?? 1;
+
+            switch (command.First())
+            {
+                case "noop":
+                    result.Add(last);
+                    break;
+                case "addx":
+                {
+                    result.Add(last);
+                    result.Add(last);
+
+                    var value = int.Parse(command.Last());
+                    result.Add(last + value);
+                    break;
+                }
+            }
+        }
+
+        return result.Select(x => x ?? 0).ToArray();
     }
 
     public int RunPart1(string[] input)
