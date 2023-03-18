@@ -2,7 +2,7 @@ namespace AdventOfCode._2022.Day10;
 
 public interface ISolutionService
 {
-    public int[] GetCycleResult(string[] input);
+    public int[] GetRegisterXValuePerCycle(string[] input);
     public int RunPart1(string[] input);
     public int RunPart2(string[] input);
 }
@@ -16,7 +16,12 @@ public class SolutionService : ISolutionService
         _logger = logger;
     }
 
-    public int[] GetCycleResult(string[] input)
+    /// <summary>
+    /// index 0 = cycle 0 (always 1)
+    /// index 1 = cycle 1
+    /// Value = register X value
+    /// </summary>
+    public int[] GetRegisterXValuePerCycle(string[] input)
     {
         throw new NotImplementedException();
     }

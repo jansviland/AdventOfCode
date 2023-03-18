@@ -31,7 +31,7 @@ public class Tests : TestBed<TestFixture>
         };
 
         // act
-        var result = _solutionService.GetCycleResult(input);
+        var result = _solutionService.GetRegisterXValuePerCycle(input);
 
         // assert
         Assert.Equal(1, result[0]); // start with value 1
@@ -41,6 +41,21 @@ public class Tests : TestBed<TestFixture>
         Assert.Equal(4, result[4]); // the addx -5 instruction begins execution. During the fourth cycle, X is still 4.
         Assert.Equal(4, result[5]); // During the fifth cycle, X is still 4.
         Assert.Equal(-1, result[6]); // After the fifth cycle, the addx -5 instruction finishes execution, setting X to -1.
+    }
+
+    [Fact]
+    public void GetCycleResult2()
+    {
+        // act
+        var result = _solutionService.GetRegisterXValuePerCycle(_input);
+
+        // assert
+        Assert.Equal(21, result[20]); // During the 20th cycle, register X has the value 21
+        Assert.Equal(19, result[60]); // During the 60th cycle, register X has the value 19, so the signal
+        Assert.Equal(18, result[100]);
+        Assert.Equal(21, result[140]);
+        Assert.Equal(16, result[180]);
+        Assert.Equal(18, result[220]);
     }
 
     [Fact]
