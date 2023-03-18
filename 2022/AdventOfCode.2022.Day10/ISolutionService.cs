@@ -59,7 +59,11 @@ public class SolutionService : ISolutionService
         _logger.LogInformation("Solving day 10");
         _logger.LogInformation("Input contains {Input} values", input.Length);
 
-        throw new NotImplementedException();
+        var result = GetRegisterXValuePerCycle(input);
+
+        // Find the signal strength during the 20th, 60th, 100th, 140th, 180th, and 220th cycles.
+        // What is the sum of these six signal strengths?
+        return 20 * result[20] + 60 * result[60] + 100 * result[100] + 140 * result[140] + 180 * result[180] + 220 * result[220];
     }
 
     public int RunPart2(string[] input)
