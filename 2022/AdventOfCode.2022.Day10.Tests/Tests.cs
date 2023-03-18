@@ -72,6 +72,29 @@ public class Tests : TestBed<TestFixture>
     }
 
     [Fact]
+    public void GetCrtOutputTest()
+    {
+        // arrange
+        var result = _solutionService.GetRegisterXValuePerCycle(_input);
+
+        // act
+        var output = _solutionService.GetCrtOutput(result);
+
+        // assert
+        var expect = new[]
+        {
+            "##..##..##..##..##..##..##..##..##..##..",
+            "###...###...###...###...###...###...###.",
+            "####....####....####....####....####....",
+            "#####.....#####.....#####.....#####.....",
+            "######......######......######......####",
+            "#######.......#######.......#######.....",
+        };
+
+        Assert.Equal(expect, output);
+    }
+
+    [Fact]
     public void Part2Test()
     {
         _testOutputHelper.WriteLine("Running unit test - Part 2");

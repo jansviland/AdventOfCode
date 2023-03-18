@@ -3,6 +3,7 @@ namespace AdventOfCode._2022.Day10;
 public interface ISolutionService
 {
     public int[] GetRegisterXValuePerCycle(string[] input);
+    public string[] GetCrtOutput(int[] input);
     public int RunPart1(string[] input);
     public int RunPart2(string[] input);
 }
@@ -52,6 +53,11 @@ public class SolutionService : ISolutionService
         result.Add(currentValue);
 
         return result.Select(x => x ?? 0).ToArray();
+    }
+
+    public string[] GetCrtOutput(int[] input)
+    {
+        throw new NotImplementedException();
     }
 
     public int RunPart1(string[] input)
