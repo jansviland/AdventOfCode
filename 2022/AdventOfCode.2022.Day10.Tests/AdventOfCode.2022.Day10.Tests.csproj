@@ -26,4 +26,10 @@
       <ProjectReference Include="..\AdventOfCode.2022.Day10\AdventOfCode.2022.Day10.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Update="Assets\test-input.txt">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
 </Project>

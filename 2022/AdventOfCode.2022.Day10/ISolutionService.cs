@@ -2,6 +2,7 @@ namespace AdventOfCode._2022.Day10;
 
 public interface ISolutionService
 {
+    public int[] GetCycleResult(string[] input);
     public int RunPart1(string[] input);
     public int RunPart2(string[] input);
 }
@@ -13,6 +14,11 @@ public class SolutionService : ISolutionService
     public SolutionService(ILogger<SolutionService> logger)
     {
         _logger = logger;
+    }
+
+    public int[] GetCycleResult(string[] input)
+    {
+        throw new NotImplementedException();
     }
 
     public int RunPart1(string[] input)
