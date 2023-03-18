@@ -37,7 +37,7 @@ public class Tests : TestBed<TestFixture>
         Assert.Equal(1, result[0]); // start with value 1
         Assert.Equal(1, result[1]); // During the first cycle, X is 1.
         Assert.Equal(1, result[2]); // the addx 3 instruction begins execution. During the second cycle, X is still 1.
-        Assert.Equal(4, result[3]); // After the third cycle, the addx 3 instruction finishes execution, setting X to 4.
+        Assert.Equal(1, result[3]); // After the third cycle, the addx 3 instruction finishes execution, setting X to 4.
         Assert.Equal(4, result[4]); // the addx -5 instruction begins execution. During the fourth cycle, X is still 4.
         Assert.Equal(4, result[5]); // During the fifth cycle, X is still 4.
         Assert.Equal(-1, result[6]); // After the fifth cycle, the addx -5 instruction finishes execution, setting X to -1.

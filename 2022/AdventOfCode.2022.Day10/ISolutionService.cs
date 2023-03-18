@@ -25,28 +25,31 @@ public class SolutionService : ISolutionService
     {
         var result = new List<int?>();
 
+        var currentValue = 1;
+        result.Add(currentValue);
+
         for (var i = 0; i < input.Length; i++)
         {
             var command = input[i].Split(' ');
-
-            var last = result.LastOrDefault() ?? 1;
-
             switch (command.First())
             {
                 case "noop":
-                    result.Add(last);
+                    result.Add(currentValue);
                     break;
                 case "addx":
                 {
-                    result.Add(last);
-                    result.Add(last);
+                    result.Add(currentValue);
+                    result.Add(currentValue);
 
                     var value = int.Parse(command.Last());
-                    result.Add(last + value);
+                    currentValue += value;
+
                     break;
                 }
             }
         }
+
+        result.Add(currentValue);
 
         return result.Select(x => x ?? 0).ToArray();
     }
