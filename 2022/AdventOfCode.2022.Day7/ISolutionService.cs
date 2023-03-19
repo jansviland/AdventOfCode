@@ -1,5 +1,3 @@
-using System.Diagnostics.Eventing.Reader;
-
 namespace AdventOfCode._2022.Day7;
 
 public interface ISolutionService

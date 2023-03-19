@@ -1,5 +1,3 @@
-using System.Drawing;
-
 namespace AdventOfCode._2022.Day7.Tests;
 
 public class Tests : TestBed<TestFixture>

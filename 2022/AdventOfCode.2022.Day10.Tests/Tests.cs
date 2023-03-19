@@ -75,10 +75,10 @@ public class Tests : TestBed<TestFixture>
     public void GetCrtOutputTest()
     {
         // arrange
-        var result = _solutionService.GetRegisterXValuePerCycle(_input);
+        // var result = _solutionService.GetRegisterXValuePerCycle(_input);
 
         // act
-        var output = _solutionService.GetCrtOutput(result);
+        var output = _solutionService.GetCrtOutput(_input);
 
         // assert
         var expect = new[]

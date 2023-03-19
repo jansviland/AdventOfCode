@@ -3,7 +3,7 @@ namespace AdventOfCode._2022.Day10;
 public interface ISolutionService
 {
     public int[] GetRegisterXValuePerCycle(string[] input);
-    public string[] GetCrtOutput(int[] input);
+    public string[] GetCrtOutput(string[] input);
     public int RunPart1(string[] input);
     public int RunPart2(string[] input);
 }
@@ -55,9 +55,31 @@ public class SolutionService : ISolutionService
         return result.Select(x => x ?? 0).ToArray();
     }
 
-    public string[] GetCrtOutput(int[] input)
+    public string[] GetCrtOutput(string[] input)
     {
-        throw new NotImplementedException();
+        var xValues = GetRegisterXValuePerCycle(input);
+
+        var result = new List<string>();
+        for (var i = 1; i < xValues.Length; i++)
+        {
+            // X register sets the horizontal position of the middle of that sprite
+            // if x is one less, equal or one more than the current cycle, the sprite is visible
+            var x = xValues[i];
+            var visible = x == i - 1 || x == i || x == i + 1;
+
+            result.Add(visible ? "#" : ".");
+        }
+
+        // The CRT is 40 pixels wide and 6 pixels tall.
+        // convert to 6 lines of 40 characters
+        var output = new List<string>();
+        for (var i = 0; i < 6; i++)
+        {
+            var line = string.Join("", result.Skip(i * 40).Take(40));
+            output.Add(line);
+        }
+
+        return output.ToArray();
     }
 
     public int RunPart1(string[] input)
