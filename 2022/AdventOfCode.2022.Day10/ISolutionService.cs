@@ -65,7 +65,9 @@ public class SolutionService : ISolutionService
             // X register sets the horizontal position of the middle of that sprite
             // if x is one less, equal or one more than the current cycle, the sprite is visible
             var x = xValues[i];
-            var visible = x == i - 1 || x == i || x == i + 1;
+            var y = (i - 1) % 40;
+
+            var visible = x == y - 1 || x == y || x == y + 1;
 
             result.Add(visible ? "#" : ".");
         }
@@ -99,6 +101,13 @@ public class SolutionService : ISolutionService
         _logger.LogInformation("Solving day 10 - Part 2");
         _logger.LogInformation("Input contains {Input} values", input.Length);
 
-        throw new NotImplementedException();
+        var output = GetCrtOutput(input);
+
+        foreach (var line in output)
+        {
+            _logger.LogInformation(line);
+        }
+
+        return 0;
     }
 }

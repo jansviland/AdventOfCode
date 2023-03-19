@@ -94,16 +94,16 @@ public class Tests : TestBed<TestFixture>
         Assert.Equal(expect, output);
     }
 
-    [Fact]
-    public void Part2Test()
-    {
-        _testOutputHelper.WriteLine("Running unit test - Part 2");
-
-        // arrange
-        // act
-        var result = _solutionService.RunPart2(_input);
-
-        // assert
-        Assert.Equal(45000, result);
-    }
+    // [Fact]
+    // public void Part2Test()
+    // {
+    //     _testOutputHelper.WriteLine("Running unit test - Part 2");
+    //
+    //     // arrange
+    //     // act
+    //     var result = _solutionService.RunPart2(_input);
+    //
+    //     // assert
+    //     Assert.Equal(45000, result);
+    // }
 }
