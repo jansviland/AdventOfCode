@@ -6,17 +6,36 @@ public class Tests : TestBed<TestFixture>
 
     private readonly string[] _input = new[]
     {
-        "vJrwpWtwJgWrhcsFMMfFFhFp",
-        "jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL",
-        "PmmdzqPrVvPwwTWBwg",
-        "wMqvLMZHhHMvwLHjbvcjnnSBnvTQFn",
-        "ttgJtRGJQctTZtZT",
-        "CrZsJsPPZsGzwwsLwLmpwMDw"
+        "Sabqponm",
+        "abcryxxl",
+        "accszExk",
+        "acctuvwj",
+        "abdefghi",
     };
 
     public Tests(ITestOutputHelper testOutputHelper, TestFixture fixture) : base(testOutputHelper, fixture)
     {
         _solutionService = _fixture.GetService<ISolutionService>(_testOutputHelper)!;
+    }
+
+    [Fact]
+    public void FindPathTest()
+    {
+        // act
+        var result = _solutionService.FindPath(_input);
+
+        // assert
+        var expected = new[]
+        {
+            "v..v<<<<",
+            ">v.vv<<^",
+            ".>vv>E^^",
+            "..v>>>^^",
+            "..>>>>>^",
+        };
+
+        Assert.Equal(expected, result.Path);
+        Assert.Equal(31, result.Steps);
     }
 
     [Fact]
