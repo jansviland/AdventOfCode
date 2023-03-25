@@ -1,3 +1,5 @@
+using AdventOfCode._2022.Day12.Common.Models;
+
 namespace AdventOfCode._2022.Day12.Tests;
 
 public class Tests : TestBed<TestFixture>
@@ -39,14 +41,29 @@ public class Tests : TestBed<TestFixture>
     }
 
     [Fact]
-    public void ParseInputTest()
+    public void ParseInputTestRow0()
     {
         // act
-        var result = _solutionService.ParseInput(_input);
+        var grid = _solutionService.ParseInput(_input);
 
         // assert
-        Assert.Equal(8, result.GetLength(0));
-        Assert.Equal(5, result.GetLength(1));
+        Assert.Equal(8, grid.GetLength(0));
+        Assert.Equal(5, grid.GetLength(1));
+
+        // "Sabqponm",
+
+        // top left should be a snake
+        Assert.Equal(GridElementType.Snake, grid[0, 0].Type);
+        Assert.Equal("S", grid[0, 0].Value);
+
+        Assert.Equal(GridElementType.Empty, grid[0, 1].Type);
+        Assert.Equal("a", grid[0, 1].Value);
+
+        Assert.Equal(GridElementType.Empty, grid[0, 2].Type);
+        Assert.Equal("b", grid[0, 2].Value);
+
+        Assert.Equal(GridElementType.Empty, grid[0, 3].Type);
+        Assert.Equal("q", grid[0, 3].Value);
     }
 
     [Fact]
