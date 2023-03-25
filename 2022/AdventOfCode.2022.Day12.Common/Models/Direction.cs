@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace AdventOfCode._2022.Day12.App.Models;
+﻿namespace AdventOfCode._2022.Day12.Common.Models;
 
 public class Direction
 {
@@ -22,27 +19,6 @@ public class Direction
     public Direction GetOppositeDirection()
     {
         return new Direction(-RowOffset, -ColumnOffset);
-
-        // if (this == Left)
-        // {
-        //     return Right;
-        // }
-        // else if (this == Right)
-        // {
-        //     return Left;
-        // }
-        // else if (this == Up)
-        // {
-        //     return Down;
-        // }
-        // else if (this == Down)
-        // {
-        //     return Up;
-        // }
-        // else
-        // {
-        //     throw new InvalidOperationException("Invalid direction");
-        // }
     }
 
     protected bool Equals(Direction other)

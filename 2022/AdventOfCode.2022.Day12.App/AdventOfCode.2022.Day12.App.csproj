@@ -32,4 +32,8 @@
       <Resource Include="Assets\SnakeAssets.zip" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\AdventOfCode.2022.Day12.Common\AdventOfCode.2022.Day12.Common.csproj" />
+    </ItemGroup>
+
 </Project>

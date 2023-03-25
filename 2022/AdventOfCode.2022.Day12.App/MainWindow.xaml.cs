@@ -6,6 +6,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using AdventOfCode._2022.Day12.App.Models;
+using AdventOfCode._2022.Day12.Common.Models;
 
 namespace AdventOfCode._2022.Day12.App
 {

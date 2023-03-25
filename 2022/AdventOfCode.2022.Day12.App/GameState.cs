@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using AdventOfCode._2022.Day12.App.Models;
+using AdventOfCode._2022.Day12.Common.Models;
 
 namespace AdventOfCode._2022.Day12.App;
 

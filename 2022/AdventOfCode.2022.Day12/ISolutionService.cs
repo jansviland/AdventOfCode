@@ -1,10 +1,12 @@
+using AdventOfCode._2022.Day12.Common.Models;
+
 namespace AdventOfCode._2022.Day12;
 
 public interface ISolutionService
 {
     public int RunPart1(string[] input);
-    public void Print(string[] input);
-    public Result FindPath(string[] input);
+    public GridValue[,] ParseInput(string[] input);
+    public LinkedList<Position> FindPath(string[] input); // each position from the start to the end
     public int RunPart2(string[] input);
 }
 
@@ -31,18 +33,12 @@ public class SolutionService : ISolutionService
         throw new NotImplementedException();
     }
 
-    /// <summary>
-    /// Animate the input, so that it can be seen in the console
-    ///
-    /// Print the result, then move the cursor up and to the left.
-    /// Then the next frame can be printed on top of the previous one.
-    /// </summary>
-    public void Print(string[] input)
+    public GridValue[,] ParseInput(string[] input)
     {
         throw new NotImplementedException();
     }
 
-    public Result FindPath(string[] input)
+    public LinkedList<Position> FindPath(string[] input)
     {
         throw new NotImplementedException();
     }

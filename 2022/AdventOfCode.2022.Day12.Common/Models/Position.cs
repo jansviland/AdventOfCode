@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace AdventOfCode._2022.Day12.App.Models;
+﻿namespace AdventOfCode._2022.Day12.Common.Models;
 
 public class Position
 {
