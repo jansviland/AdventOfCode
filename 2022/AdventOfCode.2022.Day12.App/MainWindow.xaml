@@ -60,11 +60,13 @@
                     Margin="{Binding Path=Margin, ElementName=GridBorder}"
                     >
 
-                <TextBlock x:Name="OverlayText" Text="PRESS ANY KEY TO START"
-                           FontSize="22"
+                <TextBlock x:Name="OverlayText" 
+                           Text="Press S to play Snake or A for Advent of Code task"
+                           FontSize="18"
                            HorizontalAlignment="Center"
                            VerticalAlignment="Center"
                            TextWrapping="Wrap"
+                           Margin="20"
                            >
 
                 </TextBlock>

@@ -46,6 +46,24 @@ public class Tests : TestBed<TestFixture>
         Assert.Equal("q", grid[0, 3].Value);
     }
 
+    [Fact]
+    public void GetNumberOfStepsToEachLocationTest()
+    {
+        // arrange
+        var grid = _solutionService.ParseInput(_input);
+
+        // act
+        var result = _solutionService.GetNumberOfStepsToEachLocation(grid);
+
+        // assert
+        Assert.Equal(0, result[0, 0].Step);
+        Assert.Equal(1, result[0, 1].Step); // a
+        Assert.Equal(1, result[1, 0].Step); // a
+
+        Assert.Equal(2, result[0, 2].Step); // b
+        Assert.Equal(2, result[1, 1].Step); // b
+    }
+
     // [Fact]
     // public void FindPathTest()
     // {

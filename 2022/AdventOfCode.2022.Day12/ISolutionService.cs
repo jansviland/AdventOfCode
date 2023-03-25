@@ -6,6 +6,9 @@ public interface ISolutionService
 {
     public int RunPart1(string[] input);
     public GridElement[,] ParseInput(string[] input);
+
+    // https://en.wikipedia.org/wiki/Pathfinding
+    public GridElement[,] GetNumberOfStepsToEachLocation(GridElement[,] grid);
     public LinkedList<Position> FindPath(string[] input); // each position from the start to the end
     public int RunPart2(string[] input);
 }
@@ -59,6 +62,11 @@ public class SolutionService : ISolutionService
         }
 
         return grid;
+    }
+
+    public GridElement[,] GetNumberOfStepsToEachLocation(GridElement[,] grid)
+    {
+        throw new NotImplementedException();
     }
 
     public LinkedList<Position> FindPath(string[] input)

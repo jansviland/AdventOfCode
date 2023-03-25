@@ -35,16 +35,16 @@ namespace AdventOfCode._2022.Day12.App
             { Direction.Left, 270 },
         };
 
-        private readonly int _rows = 20;
-        private readonly int _columns = 20;
-        private readonly Grid[,] _grid;
+        private int _rows = 20;
+        private int _columns = 20;
+        private Grid[,] _grid;
 
-        private bool _isGameLoopRunning;
+        private bool _isSnakeGameLoopRunning;
         private State _state;
 
-        // snake game
-        public MainWindow()
+        public MainWindow(ISolutionService solutionService)
         {
+            _solutionService = solutionService;
             InitializeComponent();
 
             _grid = CreateGrid();
@@ -53,12 +53,8 @@ namespace AdventOfCode._2022.Day12.App
             DrawGrid();
         }
 
-        public MainWindow(ISolutionService solutionService)
+        private void StartAdventOfCode()
         {
-            _solutionService = solutionService;
-
-            InitializeComponent();
-
             string[] input = File.ReadAllLines("Assets/sample-input.txt");
 
             // parse input
@@ -80,8 +76,26 @@ namespace AdventOfCode._2022.Day12.App
             ScoreText.Text = "STEP: 0";
         }
 
+        private async void StartSnakeGame()
+        {
+            _grid = CreateGrid();
+            _state = new State(_rows, _columns);
+
+            DrawGrid();
+
+            // if the game loop is not running, start it
+            if (!_isSnakeGameLoopRunning)
+            {
+                _isSnakeGameLoopRunning = true;
+                await RunGame();
+                _isSnakeGameLoopRunning = false;
+            }
+        }
+
         private Grid[,] CreateGrid()
         {
+            GameGrid.Children.Clear();
+
             // var images = new Image[_rows, _columns];
             var gridElements = new Grid[_rows, _columns];
 
@@ -142,9 +156,16 @@ namespace AdventOfCode._2022.Day12.App
         private void HandleGridClick(int row, int column)
         {
             // Add your custom logic here based on the row and column of the clicked Grid element
-            MessageBox.Show($"Clicked on Grid at row {row} and column {column}");
+            // MessageBox.Show($"Clicked on Grid at row {row} and column {column}");
+
+            if (_isSnakeGameLoopRunning) return;
 
             // TODO: find neighbours of clicked grid element that we can move to
+            var gridElement = _state.Grid[row, column];
+            gridElement.Type = GridElementType.Food;
+
+            DrawGrid();
+
             // TODO: add the neighbours to a list of possible moves
         }
 
@@ -164,7 +185,7 @@ namespace AdventOfCode._2022.Day12.App
                     image.RenderTransform = Transform.Identity; // reset rotation
 
                     var textBlock = _grid[r, c].Children[1] as TextBlock;
-                    textBlock.Text = gridElement.Value.ToString();
+                    textBlock.Text = gridElement.Value;
                 }
             }
         }
@@ -213,7 +234,7 @@ namespace AdventOfCode._2022.Day12.App
             OverlayText.Text = "GAME OVER";
 
             await Task.Delay(2000);
-            OverlayText.Text = "PRESS ANY KEY TO PLAY AGAIN";
+            OverlayText.Text = "PRESS S TO PLAY AGAIN";
         }
 
         private async Task GameLoop()
@@ -276,12 +297,18 @@ namespace AdventOfCode._2022.Day12.App
                 e.Handled = true;
             }
 
-            // if the game loop is not running, start it
-            if (!_isGameLoopRunning)
+            // get key pressed
+            var key = e.Key;
+            switch (key)
             {
-                _isGameLoopRunning = true;
-                await RunGame();
-                _isGameLoopRunning = false;
+                case Key.S:
+                    StartSnakeGame();
+                    break;
+                case Key.A:
+                    StartAdventOfCode();
+                    break;
+                default:
+                    return;
             }
         }
     }

@@ -13,6 +13,7 @@ public class GridElement
 {
     public GridElementType Type { get; set; }
     public string Value { get; set; }
+    public int Step { get; set; } // number of steps to get to this position
 
     public GridElement()
     {
@@ -25,4 +26,9 @@ public class GridElement
         Type = type;
         Value = value;
     }
+
+    // public void SetDistance(int targetX, int targetY)
+    // {
+    //     this.Distance = Math.Abs(targetX - X) + Math.Abs(targetY - Y);
+    // }
 }
