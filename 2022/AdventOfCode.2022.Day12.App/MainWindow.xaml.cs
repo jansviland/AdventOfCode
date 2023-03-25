@@ -36,47 +36,49 @@ namespace AdventOfCode._2022.Day12.App
 
         private readonly int _rows = 20;
         private readonly int _columns = 20;
-        private readonly Image[,] _gridImages;
+        private readonly Grid[,] _grid;
 
         private bool _isGameLoopRunning;
         private GameState _gameState;
 
-        // public MainWindow()
-        // {
-        //     InitializeComponent();
-        //     _gridImages = CreateGrid();
-        //     _gameState = new GameState(_rows, _columns);
-        // }
-
-        public MainWindow(ISolutionService solutionService)
+        public MainWindow()
         {
-            _solutionService = solutionService;
-
             InitializeComponent();
-
-            string[] input = File.ReadAllLines("Assets/sample-input.txt");
-
-            // parse input
-            var grid = _solutionService.ParseInput(input);
-
-            // set rows and columns
-            _rows = grid.GetLength(0);
-            _columns = grid.GetLength(1);
-
-            // create UI elements
-            _gridImages = CreateGrid();
-
-            // update game state
-            _gameState = new GameState(grid);
-
-            // update UI elements with correct images
-            DrawGrid();
-            Overlay.Visibility = Visibility.Hidden;
+            _grid = CreateGrid();
+            _gameState = new GameState(_rows, _columns);
         }
 
-        private Image[,] CreateGrid()
+        // public MainWindow(ISolutionService solutionService)
+        // {
+        //     _solutionService = solutionService;
+        //
+        //     InitializeComponent();
+        //
+        //     string[] input = File.ReadAllLines("Assets/sample-input.txt");
+        //
+        //     // parse input
+        //     var grid = _solutionService.ParseInput(input);
+        //
+        //     // set rows and columns
+        //     _rows = grid.GetLength(0);
+        //     _columns = grid.GetLength(1);
+        //
+        //     // create UI elements
+        //     _grid = CreateGrid();
+        //
+        //     // update game state
+        //     _gameState = new GameState(grid);
+        //
+        //     // update UI elements with correct images
+        //     DrawGrid();
+        //     Overlay.Visibility = Visibility.Hidden;
+        // }
+
+        private Grid[,] CreateGrid()
         {
-            var images = new Image[_rows, _columns];
+            // var images = new Image[_rows, _columns];
+            var gridElements = new Grid[_rows, _columns];
+
             GameGrid.Rows = _rows;
             GameGrid.Columns = _columns;
             GameGrid.Width = GameGrid.Height * (_columns / (double)_rows);
@@ -91,9 +93,7 @@ namespace AdventOfCode._2022.Day12.App
                         Source = Images.Empty,
                         RenderTransformOrigin = new Point(0.5, 0.5) // center the rotation, otherwise it rotates around the top left corner
                     };
-                    images[row, column] = image;
-
-                    // TODO: wrap image and textblock in a UIElement
+                    // images[row, column] = image;
 
                     TextBlock textBlock = new TextBlock();
                     textBlock.Text = "a";
@@ -109,10 +109,12 @@ namespace AdventOfCode._2022.Day12.App
 
                     // add to UniformGrid in the MainWindow
                     GameGrid.Children.Add(grid);
+                    gridElements[row, column] = grid;
                 }
             }
 
-            return images;
+            // return images;
+            return gridElements;
         }
 
         private async Task DrawDeadSnake()
@@ -124,7 +126,10 @@ namespace AdventOfCode._2022.Day12.App
                 var position = snakePositions[i];
                 var imageSource = i == 0 ? Images.DeadHead : Images.DeadBody;
 
-                _gridImages[position.Row, position.Column].Source = imageSource;
+                var image = _grid[position.Row, position.Column].Children[0] as Image;
+                image.Source = imageSource;
+
+                // _gridImages[position.Row, position.Column].Source = imageSource;
 
                 await Task.Delay(100);
             }
@@ -133,8 +138,11 @@ namespace AdventOfCode._2022.Day12.App
         private void DrawSnakeHead()
         {
             var head = _gameState.GetSnakeHeadPosition();
-            var image = _gridImages[head.Row, head.Column];
+            var image = _grid[head.Row, head.Column].Children[0] as Image;
             image.Source = Images.Head;
+
+            // var image = _gridImages[head.Row, head.Column];
+            // image.Source = Images.Head;
 
             var rotation = _directionToRotation[_gameState.Direction];
             image.RenderTransform = new RotateTransform(rotation);
@@ -185,8 +193,13 @@ namespace AdventOfCode._2022.Day12.App
                 for (var c = 0; c < _columns; c++)
                 {
                     var gridElement = _gameState.Grid[r, c];
-                    _gridImages[r, c].Source = _gridValueToImage[gridElement.Type];
-                    _gridImages[r, c].RenderTransform = Transform.Identity; // reset rotation
+                    var image = _grid[r, c].Children[0] as Image;
+
+                    image.Source = _gridValueToImage[gridElement.Type];
+                    image.RenderTransform = Transform.Identity; // reset rotation
+
+                    // _grid[r, c].Source = _gridValueToImage[gridElement.Type];
+                    // _grid[r, c].RenderTransform = Transform.Identity; // reset rotation
                 }
             }
         }
