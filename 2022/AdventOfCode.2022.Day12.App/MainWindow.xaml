@@ -1,0 +1,76 @@
+﻿<Window x:Class="AdventOfCode._2022.Day12.App.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="Day12" Height="600" Width="800"
+        Background="{StaticResource BackgroundColor}"
+        Foreground="{StaticResource TextColor}"
+        FontFamily="{StaticResource MainFont}"
+        WindowStartupLocation="CenterScreen"
+        Icon="Assets/icon.ico"
+        MinHeight="300"
+        MinWidth="300"
+
+        PreviewKeyDown="MainWindow_OnPreviewKeyDown"
+        KeyDown="MainWindow_OnKeyDown">
+    <Viewbox>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <TextBlock x:Name="ScoreText"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       Text="SCORE 0"
+                       Margin="20"
+                       FontSize="20">
+            </TextBlock>
+
+            <!--
+        Each image has a border, when placed next to eachother it creats double border size.
+        To fix this we need to place a border around the grid and set the border thickness to 1.5
+        -->
+            <Border x:Name="GridBorder"
+                    Grid.Row="1"
+                    BorderBrush="{StaticResource GridLineColor}"
+                    BorderThickness="1.5"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Margin="20,0, 20, 20">
+
+                <UniformGrid x:Name="GameGrid"
+                             Width="400"
+                             Height="400"
+                             Background="{StaticResource GridBackgroundColor}"
+                             HorizontalAlignment="Center"
+                             VerticalAlignment="Center"
+                             SnapsToDevicePixels="True">
+                </UniformGrid>
+            </Border>
+
+            <Border x:Name="Overlay"
+                    Grid.Row="1"
+                    Background="{StaticResource OverlayColor}"
+                    Width="{Binding Path=ActualWidth, ElementName=GridBorder}"
+                    Height="{Binding Path=ActualHeight, ElementName=GridBorder}"
+                    Margin="{Binding Path=Margin, ElementName=GridBorder}"
+                    >
+
+                <TextBlock x:Name="OverlayText" Text="PRESS ANY KEY TO START"
+                           FontSize="22"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           TextWrapping="Wrap"
+                           >
+
+                </TextBlock>
+
+            </Border>
+
+        </Grid>
+    </Viewbox>
+</Window>
