@@ -23,6 +23,12 @@ cd 2022\AdventOfCode.2022.Day14
 dotnet run
 ```
 
+## 2022 - Day 12 - Demo
+
+Poorly implemented path finding algorithm. It will find the shortest path between two points, but it will not do it very fast...
+
+![gif](./wiki/2022-day12-solution-v1.gif)
+
 ## 2022 - Day 5 - Demo
 
 Here is an example of the solution for day 5. It will print out all the move operations and the results along

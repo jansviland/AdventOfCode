@@ -94,7 +94,7 @@ public class Tests : TestBed<TestFixture>
         var result = _solutionService.RunPart1(_input);
 
         // assert
-        Assert.Equal(157, result);
+        Assert.Equal(31, result);
     }
 
     [Fact]
@@ -107,6 +107,6 @@ public class Tests : TestBed<TestFixture>
         var result = _solutionService.RunPart2(_input);
 
         // assert
-        Assert.Equal(45000, result);
+        Assert.Equal(29, result);
     }
 }

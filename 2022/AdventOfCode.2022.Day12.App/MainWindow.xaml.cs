@@ -7,7 +7,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Shapes;
 using AdventOfCode._2022.Day12.App.Models;
 using AdventOfCode._2022.Day12.Common.Models;
 
@@ -16,7 +15,7 @@ namespace AdventOfCode._2022.Day12.App
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow
     {
         private readonly ISolutionService _solutionService;
 
@@ -55,8 +54,8 @@ namespace AdventOfCode._2022.Day12.App
 
         private void StartAdventOfCode()
         {
-            string[] input = File.ReadAllLines("Assets/sample-input.txt");
-            // string[] input = File.ReadAllLines("Assets/input.txt");
+            // string[] input = File.ReadAllLines("Assets/sample-input.txt");
+            string[] input = File.ReadAllLines("Assets/input.txt");
 
             // parse input
             var grid = _solutionService.ParseInput(input);
@@ -133,8 +132,8 @@ namespace AdventOfCode._2022.Day12.App
                             elementValue = 122; // z
                         }
 
-                        var diff = Math.Abs(currentValue - elementValue);
-                        if (diff > 1)
+                        // var diff = Math.Abs(currentValue - elementValue);
+                        if (elementValue - currentValue > 1)
                         {
                             continue;
                         }
@@ -148,7 +147,7 @@ namespace AdventOfCode._2022.Day12.App
                         ScoreText.Text = $"STEP: {element.Step}";
 
                         DrawGrid();
-                        await Task.Delay(50);
+                        await Task.Delay(10);
 
                         // if element is the finish line, stop the loop and animate the path
                         if (element.Value == "E")
@@ -234,8 +233,8 @@ namespace AdventOfCode._2022.Day12.App
                         Foreground = Brushes.White,
                         FontSize = 14,
                         Margin = new Thickness(5),
-                        HorizontalAlignment = System.Windows.HorizontalAlignment.Center,
-                        VerticalAlignment = System.Windows.VerticalAlignment.Center
+                        HorizontalAlignment = HorizontalAlignment.Center,
+                        VerticalAlignment = VerticalAlignment.Center
                     };
 
                     var grid = new Grid();
@@ -295,7 +294,7 @@ namespace AdventOfCode._2022.Day12.App
                     // TODO: instead of using type, use value, then create a rectangle instead of image
                     // the color can be based on the value
 
-                    image.Source = _gridValueToImage[gridElement.Type];
+                    image!.Source = _gridValueToImage[gridElement.Type];
                     image.RenderTransform = Transform.Identity; // reset rotation
 
                     if (_isSnakeGameLoopRunning)
@@ -307,12 +306,12 @@ namespace AdventOfCode._2022.Day12.App
 
                     if (_rows > 40)
                     {
-                        textBlock.FontSize = 6;
+                        textBlock!.FontSize = 6;
                         textBlock.Margin = new Thickness(0);
                     }
 
                     // textBlock.Text = gridElement.Value;
-                    textBlock.Text = gridElement.Step != -1 ? gridElement.Step.ToString() : gridElement.Value;
+                    textBlock!.Text = gridElement.Step != -1 ? gridElement.Step.ToString() : gridElement.Value;
                 }
             }
         }
@@ -327,7 +326,7 @@ namespace AdventOfCode._2022.Day12.App
                 var imageSource = i == 0 ? Images.DeadHead : Images.DeadBody;
 
                 var image = _grid[position.Row, position.Column].Children[0] as Image;
-                image.Source = imageSource;
+                image!.Source = imageSource;
 
                 await Task.Delay(100);
             }
@@ -337,7 +336,7 @@ namespace AdventOfCode._2022.Day12.App
         {
             var head = _state.GetSnakeHeadPosition();
             var image = _grid[head.Row, head.Column].Children[0] as Image;
-            image.Source = Images.Head;
+            image!.Source = Images.Head;
 
             var rotation = _directionToRotation[_state.Direction];
             image.RenderTransform = new RotateTransform(rotation);

@@ -1,4 +1,3 @@
-using System.Net.WebSockets;
 using AdventOfCode._2022.Day12.Common.Models;
 
 namespace AdventOfCode._2022.Day12;
@@ -9,7 +8,7 @@ public interface ISolutionService
     public GridElement[,] ParseInput(string[] input);
 
     // https://en.wikipedia.org/wiki/Pathfinding
-    public void GetNumberOfStepsToEachLocation(GridElement[,] grid);
+    public GridElement? GetNumberOfStepsToEachLocation(GridElement[,] grid);
     public LinkedList<Position> FindPath(string[] input); // each position from the start to the end
     public int RunPart2(string[] input);
 }
@@ -28,7 +27,10 @@ public class SolutionService : ISolutionService
         _logger.LogInformation("Solving day 12");
         _logger.LogInformation("Input contains {Input} values", input.Length);
 
-        throw new NotImplementedException();
+        var grid = ParseInput(input);
+
+        var finalElement = GetNumberOfStepsToEachLocation(grid);
+        return finalElement!.Step;
     }
 
     public GridElement[,] ParseInput(string[] input)
@@ -59,7 +61,7 @@ public class SolutionService : ISolutionService
         return grid;
     }
 
-    public void GetNumberOfStepsToEachLocation(GridElement[,] grid)
+    public GridElement? GetNumberOfStepsToEachLocation(GridElement[,] grid)
     {
         // find start position
         var start = FindStart(grid);
@@ -95,22 +97,48 @@ public class SolutionService : ISolutionService
 
                 // check to see if we have visited this position before, if we have (step is != -1), skip it
                 var element = grid[row, column];
-                if (element is { Type: GridElementType.Empty, Step: -1 })
+                if (element is { Type: GridElementType.Empty or GridElementType.Food, Step: -1 })
                 {
                     var currentValue = (int)current.Value.First();
-                    var elementValue = (int)element.Value.First();
+                    if (current.Value == "S")
+                    {
+                        currentValue = 97; // a
+                    }
 
-                    var diff = Math.Abs(currentValue - elementValue);
-                    if (diff > 1)
+                    var elementValue = (int)element.Value.First();
+                    if (element.Value == "E")
+                    {
+                        elementValue = 122; // z
+                    }
+
+                    // var diff = Math.Abs(currentValue - elementValue);
+                    if (elementValue - currentValue > 1)
                     {
                         continue;
                     }
 
+                    element.Previous = current;
                     element.Step = currentStep + 1;
+
                     queue.Enqueue(element); // add to queue to visit later
+
+                    // animate
+                    // ScoreText.Text = $"STEP: {element.Step}";
+                    //
+                    // DrawGrid();
+                    // await Task.Delay(10);
+                    //
+                    // // if element is the finish line, stop the loop and animate the path
+                    if (element.Value == "E")
+                    {
+                        // ShowFinalPath(element);
+                        return element;
+                    }
                 }
             }
         }
+
+        return null;
     }
 
     private GridElement FindStart(GridElement[,] grid)

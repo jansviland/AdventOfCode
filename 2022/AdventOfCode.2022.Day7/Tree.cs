@@ -10,9 +10,9 @@ public class Tree
 
     public Tree(string name, int size, bool isFolder)
     {
-        this.Name = name;
-        this.Size = size;
-        this.IsFolder = isFolder;
+        Name = name;
+        Size = size;
+        IsFolder = isFolder;
         Children = new LinkedList<Tree>();
     }
 
@@ -92,7 +92,7 @@ public class Tree
         foreach (var child in Children)
         {
             result.AddRange(child.TraverseAndResetSize());
-            this.Size = 0;
+            Size = 0;
         }
 
         return result;
@@ -117,7 +117,7 @@ public class Tree
         foreach (var child in Children)
         {
             result.AddRange(child.TraverseAndUpdate());
-            this.Size += child.Size;
+            Size += child.Size;
         }
 
         return result;

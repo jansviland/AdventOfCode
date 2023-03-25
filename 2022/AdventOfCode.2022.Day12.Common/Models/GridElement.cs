@@ -20,8 +20,8 @@ public class GridElement
 
     public GridElement()
     {
-        this.Type = GridElementType.Empty;
-        this.Value = "";
+        Type = GridElementType.Empty;
+        Value = "";
     }
 
     public GridElement(GridElementType type, string value, int row, int column)

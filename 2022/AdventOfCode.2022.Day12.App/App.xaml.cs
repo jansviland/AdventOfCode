@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Media;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -9,14 +8,14 @@ namespace AdventOfCode._2022.Day12.App
     /// <summary>
     /// Interaction logic for App.xaml
     /// </summary>
-    public partial class App : Application
+    public partial class App
     {
-        public static IHost? Host { get; private set; }
+        private static IHost Host { get; set; }
 
         public App()
         {
             Host = Microsoft.Extensions.Hosting.Host.CreateDefaultBuilder()
-                .ConfigureServices((context, services) => { ConfigureServices(services); })
+                .ConfigureServices((_, services) => { ConfigureServices(services); })
                 .Build();
         }
 
