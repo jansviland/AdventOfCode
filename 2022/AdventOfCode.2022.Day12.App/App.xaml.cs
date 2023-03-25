@@ -1,21 +1,50 @@
-﻿using System.Windows;
+﻿using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Media;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace AdventOfCode._2022.Day12.App
 {
     /// <summary>
     /// Interaction logic for App.xaml
     /// </summary>
-    public partial class App
+    public partial class App : Application
     {
-        protected override void OnStartup(StartupEventArgs e)
+        public static IHost? Host { get; private set; }
+
+        public App()
+        {
+            Host = Microsoft.Extensions.Hosting.Host.CreateDefaultBuilder()
+                .ConfigureServices((context, services) => { ConfigureServices(services); })
+                .Build();
+        }
+
+        public void ConfigureServices(IServiceCollection services)
+        {
+            services.AddTransient<ISolutionService, SolutionService>();
+            services.AddSingleton<MainWindow>();
+        }
+
+        protected override async void OnStartup(StartupEventArgs e)
         {
             // set quality of rendering for all windows to high quality
             RenderOptions.EdgeModeProperty.OverrideMetadata(typeof(Window), new FrameworkPropertyMetadata(EdgeMode.Aliased));
             RenderOptions.ClearTypeHintProperty.OverrideMetadata(typeof(Window), new FrameworkPropertyMetadata(ClearTypeHint.Enabled));
             RenderOptions.BitmapScalingModeProperty.OverrideMetadata(typeof(Window), new FrameworkPropertyMetadata(BitmapScalingMode.HighQuality));
 
+            await Host!.StartAsync();
+
+            var mainWindow = Host.Services.GetRequiredService<MainWindow>();
+            mainWindow.Show();
+
             base.OnStartup(e);
+        }
+
+        protected override async void OnExit(ExitEventArgs e)
+        {
+            await Host!.StopAsync();
+            base.OnExit(e);
         }
     }
 }

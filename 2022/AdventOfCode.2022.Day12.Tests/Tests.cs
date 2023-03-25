@@ -21,34 +21,14 @@ public class Tests : TestBed<TestFixture>
     }
 
     [Fact]
-    public void FindPathTest()
-    {
-        // act
-        var result = _solutionService.FindPath(_input);
-
-        // assert
-        // var expected = new[]
-        // {
-        //     "v..v<<<<",
-        //     ">v.vv<<^",
-        //     ".>vv>E^^",
-        //     "..v>>>^^",
-        //     "..>>>>>^",
-        // };
-        //
-        // Assert.Equal(expected, result.Path);
-        // Assert.Equal(31, result.Steps);
-    }
-
-    [Fact]
     public void ParseInputTestRow0()
     {
         // act
         var grid = _solutionService.ParseInput(_input);
 
         // assert
-        Assert.Equal(8, grid.GetLength(0));
-        Assert.Equal(5, grid.GetLength(1));
+        Assert.Equal(5, grid.GetLength(0)); // rows
+        Assert.Equal(8, grid.GetLength(1)); // columns
 
         // "Sabqponm",
 
@@ -65,6 +45,26 @@ public class Tests : TestBed<TestFixture>
         Assert.Equal(GridElementType.Empty, grid[0, 3].Type);
         Assert.Equal("q", grid[0, 3].Value);
     }
+
+    // [Fact]
+    // public void FindPathTest()
+    // {
+    //     // act
+    //     var result = _solutionService.FindPath(_input);
+    //
+    //     // assert
+    //     var expected = new[]
+    //     {
+    //         "v..v<<<<",
+    //         ">v.vv<<^",
+    //         ".>vv>E^^",
+    //         "..v>>>^^",
+    //         "..>>>>>^",
+    //     };
+    //     
+    //     Assert.Equal(expected, result.Path);
+    //     Assert.Equal(31, result.Steps);
+    // }
 
     [Fact]
     public void Part1Test()

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -15,6 +16,8 @@ namespace AdventOfCode._2022.Day12.App
     /// </summary>
     public partial class MainWindow : Window
     {
+        private readonly ISolutionService _solutionService;
+
         private readonly Dictionary<GridElementType, ImageSource> _gridValueToImage = new()
         {
             { GridElementType.Empty, Images.Empty },
@@ -30,31 +33,56 @@ namespace AdventOfCode._2022.Day12.App
             { Direction.Left, 270 },
         };
 
-        private const int Rows = 20;
-        private const int Columns = 20;
+        private readonly int _rows = 20;
+        private readonly int _columns = 20;
         private readonly Image[,] _gridImages;
 
         private bool _isGameLoopRunning;
         private GameState _gameState;
 
-        public MainWindow()
+        // public MainWindow()
+        // {
+        //     InitializeComponent();
+        //     _gridImages = CreateGrid();
+        //     _gameState = new GameState(_rows, _columns);
+        // }
+
+        public MainWindow(ISolutionService solutionService)
         {
+            _solutionService = solutionService;
+
             InitializeComponent();
 
+            string[] input = File.ReadAllLines("Assets/sample-input.txt");
+
+            // parse input
+            var grid = _solutionService.ParseInput(input);
+
+            // set rows and columns
+            _rows = grid.GetLength(0);
+            _columns = grid.GetLength(1);
+
+            // create UI elements
             _gridImages = CreateGrid();
-            _gameState = new GameState(Rows, Columns);
+
+            // update game state
+            _gameState = new GameState(grid);
+
+            // update UI elements with correct images
+            DrawGrid();
+            Overlay.Visibility = Visibility.Hidden;
         }
 
         private Image[,] CreateGrid()
         {
-            var images = new Image[Rows, Columns];
-            GameGrid.Rows = Rows;
-            GameGrid.Columns = Columns;
-            GameGrid.Width = GameGrid.Height * (Columns / (double)Rows);
+            var images = new Image[_rows, _columns];
+            GameGrid.Rows = _rows;
+            GameGrid.Columns = _columns;
+            GameGrid.Width = GameGrid.Height * (_columns / (double)_rows);
 
-            for (var row = 0; row < Rows; row++)
+            for (var row = 0; row < _rows; row++)
             {
-                for (var column = 0; column < Columns; column++)
+                for (var column = 0; column < _columns; column++)
                 {
                     // set all grid positions to empty with the image for empty to begin with
                     var image = new Image
@@ -137,9 +165,9 @@ namespace AdventOfCode._2022.Day12.App
 
         private void DrawGrid()
         {
-            for (var r = 0; r < Rows; r++)
+            for (var r = 0; r < _rows; r++)
             {
-                for (var c = 0; c < Columns; c++)
+                for (var c = 0; c < _columns; c++)
                 {
                     var gridElement = _gameState.Grid[r, c];
                     _gridImages[r, c].Source = _gridValueToImage[gridElement.Type];
@@ -180,7 +208,7 @@ namespace AdventOfCode._2022.Day12.App
             await GameLoop();
             await ShowGameOver();
 
-            _gameState = new GameState(Rows, Columns);
+            _gameState = new GameState(_rows, _columns);
         }
 
         private async void MainWindow_OnPreviewKeyDown(object sender, KeyEventArgs e)

@@ -35,7 +35,30 @@ public class SolutionService : ISolutionService
 
     public GridElement[,] ParseInput(string[] input)
     {
-        throw new NotImplementedException();
+        var rowCount = input.Length;
+        var columnCount = input[0].Length;
+        var grid = new GridElement[rowCount, columnCount];
+
+        for (var row = 0; row < rowCount; row++)
+        {
+            var column = input[row];
+
+            for (var c = 0; c < columnCount; c++)
+            {
+                var character = column[c];
+                var type = character switch
+                {
+                    'S' => GridElementType.Snake,
+                    'E' => GridElementType.Food,
+                    _ => GridElementType.Empty
+                };
+                var element = new GridElement(type, character.ToString());
+
+                grid[row, c] = element;
+            }
+        }
+
+        return grid;
     }
 
     public LinkedList<Position> FindPath(string[] input)

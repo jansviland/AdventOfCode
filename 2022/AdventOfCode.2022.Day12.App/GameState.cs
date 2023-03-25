@@ -56,6 +56,19 @@ public class GameState
         AddFood();
     }
 
+    public GameState(GridElement[,] grid)
+    {
+        Rows = grid.GetLength(0);
+        Columns = grid.GetLength(1);
+        Grid = grid;
+        // Direction = Direction.Right;
+        // Score = 0;
+        // IsGameOver = false;
+
+        // AddSnake();
+        // AddFood();
+    }
+
     private void AddSnake()
     {
         var r = Rows / 2; // middle row
