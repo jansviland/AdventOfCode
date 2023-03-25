@@ -41,38 +41,43 @@ namespace AdventOfCode._2022.Day12.App
         private bool _isGameLoopRunning;
         private GameState _gameState;
 
-        public MainWindow()
-        {
-            InitializeComponent();
-            _grid = CreateGrid();
-            _gameState = new GameState(_rows, _columns);
-        }
-
-        // public MainWindow(ISolutionService solutionService)
+        // snake game
+        // public MainWindow()
         // {
-        //     _solutionService = solutionService;
-        //
         //     InitializeComponent();
         //
-        //     string[] input = File.ReadAllLines("Assets/sample-input.txt");
-        //
-        //     // parse input
-        //     var grid = _solutionService.ParseInput(input);
-        //
-        //     // set rows and columns
-        //     _rows = grid.GetLength(0);
-        //     _columns = grid.GetLength(1);
-        //
-        //     // create UI elements
         //     _grid = CreateGrid();
+        //     _gameState = new GameState(_rows, _columns);
         //
-        //     // update game state
-        //     _gameState = new GameState(grid);
-        //
-        //     // update UI elements with correct images
         //     DrawGrid();
-        //     Overlay.Visibility = Visibility.Hidden;
         // }
+
+        public MainWindow(ISolutionService solutionService)
+        {
+            _solutionService = solutionService;
+
+            InitializeComponent();
+
+            string[] input = File.ReadAllLines("Assets/sample-input.txt");
+
+            // parse input
+            var grid = _solutionService.ParseInput(input);
+
+            // set rows and columns
+            _rows = grid.GetLength(0);
+            _columns = grid.GetLength(1);
+
+            // create UI elements
+            _grid = CreateGrid();
+
+            // update game state
+            _gameState = new GameState(grid);
+
+            // update UI elements with correct images
+            DrawGrid();
+            Overlay.Visibility = Visibility.Hidden;
+            ScoreText.Text = "STEP: 0";
+        }
 
         private Grid[,] CreateGrid()
         {
@@ -93,17 +98,18 @@ namespace AdventOfCode._2022.Day12.App
                         Source = Images.Empty,
                         RenderTransformOrigin = new Point(0.5, 0.5) // center the rotation, otherwise it rotates around the top left corner
                     };
-                    // images[row, column] = image;
 
-                    TextBlock textBlock = new TextBlock();
-                    textBlock.Text = "a";
-                    textBlock.Foreground = Brushes.White;
-                    textBlock.FontSize = 14;
-                    textBlock.Margin = new Thickness(5);
-                    textBlock.HorizontalAlignment = System.Windows.HorizontalAlignment.Center;
-                    textBlock.VerticalAlignment = System.Windows.VerticalAlignment.Center;
+                    var textBlock = new TextBlock
+                    {
+                        Text = "", // set the value from the input.txt file
+                        Foreground = Brushes.White,
+                        FontSize = 14,
+                        Margin = new Thickness(5),
+                        HorizontalAlignment = System.Windows.HorizontalAlignment.Center,
+                        VerticalAlignment = System.Windows.VerticalAlignment.Center
+                    };
 
-                    Grid grid = new Grid();
+                    var grid = new Grid();
                     grid.Children.Add(image);
                     grid.Children.Add(textBlock);
 
@@ -113,7 +119,6 @@ namespace AdventOfCode._2022.Day12.App
                 }
             }
 
-            // return images;
             return gridElements;
         }
 
@@ -129,8 +134,6 @@ namespace AdventOfCode._2022.Day12.App
                 var image = _grid[position.Row, position.Column].Children[0] as Image;
                 image.Source = imageSource;
 
-                // _gridImages[position.Row, position.Column].Source = imageSource;
-
                 await Task.Delay(100);
             }
         }
@@ -140,9 +143,6 @@ namespace AdventOfCode._2022.Day12.App
             var head = _gameState.GetSnakeHeadPosition();
             var image = _grid[head.Row, head.Column].Children[0] as Image;
             image.Source = Images.Head;
-
-            // var image = _gridImages[head.Row, head.Column];
-            // image.Source = Images.Head;
 
             var rotation = _directionToRotation[_gameState.Direction];
             image.RenderTransform = new RotateTransform(rotation);
@@ -195,11 +195,14 @@ namespace AdventOfCode._2022.Day12.App
                     var gridElement = _gameState.Grid[r, c];
                     var image = _grid[r, c].Children[0] as Image;
 
+                    // TODO: instead of using type, use value, then create a rectangle instead of image
+                    // the color can be based on the value
+
                     image.Source = _gridValueToImage[gridElement.Type];
                     image.RenderTransform = Transform.Identity; // reset rotation
 
-                    // _grid[r, c].Source = _gridValueToImage[gridElement.Type];
-                    // _grid[r, c].RenderTransform = Transform.Identity; // reset rotation
+                    var textBlock = _grid[r, c].Children[1] as TextBlock;
+                    textBlock.Text = gridElement.Value.ToString();
                 }
             }
         }
