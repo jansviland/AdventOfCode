@@ -16,6 +16,7 @@ public class GridElement
     public GridElementType Type { get; set; }
     public string Value { get; set; }
     public int Step { get; set; } = -1; // number of steps to get to this position
+    public GridElement? Previous { get; set; }
 
     public GridElement()
     {

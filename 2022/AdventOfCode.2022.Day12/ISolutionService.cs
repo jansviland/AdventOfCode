@@ -97,7 +97,14 @@ public class SolutionService : ISolutionService
                 var element = grid[row, column];
                 if (element is { Type: GridElementType.Empty, Step: -1 })
                 {
-                    // TODO: In addition we can only move to a position if the value one away in the alfabetic order
+                    var currentValue = (int)current.Value.First();
+                    var elementValue = (int)element.Value.First();
+
+                    var diff = Math.Abs(currentValue - elementValue);
+                    if (diff > 1)
+                    {
+                        continue;
+                    }
 
                     element.Step = currentStep + 1;
                     queue.Enqueue(element); // add to queue to visit later

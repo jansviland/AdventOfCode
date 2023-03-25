@@ -55,8 +55,8 @@ namespace AdventOfCode._2022.Day12.App
 
         private void StartAdventOfCode()
         {
-            // string[] input = File.ReadAllLines("Assets/sample-input.txt");
-            string[] input = File.ReadAllLines("Assets/input.txt");
+            string[] input = File.ReadAllLines("Assets/sample-input.txt");
+            // string[] input = File.ReadAllLines("Assets/input.txt");
 
             // parse input
             var grid = _solutionService.ParseInput(input);
@@ -119,16 +119,43 @@ namespace AdventOfCode._2022.Day12.App
 
                     // check to see if we have visited this position before, if we have (step is != -1), skip it
                     var element = grid[row, column];
-                    if (element is { Type: GridElementType.Empty, Step: -1 })
+                    if (element is { Type: GridElementType.Empty or GridElementType.Food, Step: -1 })
                     {
-                        // TODO: In addition we can only move to a position if the value one away in the alfabetic order 
+                        var currentValue = (int)current.Value.First();
+                        if (current.Value == "S")
+                        {
+                            currentValue = 97; // a
+                        }
 
+                        var elementValue = (int)element.Value.First();
+                        if (element.Value == "E")
+                        {
+                            elementValue = 122; // z
+                        }
+
+                        var diff = Math.Abs(currentValue - elementValue);
+                        if (diff > 1)
+                        {
+                            continue;
+                        }
+
+                        element.Previous = current;
                         element.Step = currentStep + 1;
+
                         queue.Enqueue(element); // add to queue to visit later
 
                         // animate
+                        ScoreText.Text = $"STEP: {element.Step}";
+
                         DrawGrid();
-                        await Task.Delay(100);
+                        await Task.Delay(50);
+
+                        // if element is the finish line, stop the loop and animate the path
+                        if (element.Value == "E")
+                        {
+                            ShowFinalPath(element);
+                            return;
+                        }
                     }
                 }
             }
@@ -149,6 +176,19 @@ namespace AdventOfCode._2022.Day12.App
             }
 
             throw new Exception("No start position found");
+        }
+
+        private async void ShowFinalPath(GridElement element)
+        {
+            var current = element;
+            while (current.Previous != null)
+            {
+                current.Type = GridElementType.Snake;
+                DrawGrid();
+                await Task.Delay(50);
+
+                current = current.Previous;
+            }
         }
 
         private async void StartSnakeGame()
