@@ -43,15 +43,15 @@ namespace AdventOfCode._2022.Day12.App
         private State _state;
 
         // snake game
-        // public MainWindow()
-        // {
-        //     InitializeComponent();
-        //
-        //     _grid = CreateGrid();
-        //     _state = new State(_rows, _columns);
-        //
-        //     DrawGrid();
-        // }
+        public MainWindow()
+        {
+            InitializeComponent();
+
+            _grid = CreateGrid();
+            _state = new State(_rows, _columns);
+
+            DrawGrid();
+        }
 
         public MainWindow(ISolutionService solutionService)
         {
@@ -114,6 +114,8 @@ namespace AdventOfCode._2022.Day12.App
                     grid.Children.Add(image);
                     grid.Children.Add(textBlock);
 
+                    grid.Tag = new Tuple<int, int>(row, column); // Store row and column information on the Grid element
+
                     // add click event to each grid element with the row and column as parameters
                     grid.MouseLeftButtonDown += GridElement_MouseLeftButtonDown;
 
@@ -128,39 +130,22 @@ namespace AdventOfCode._2022.Day12.App
 
         private void GridElement_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            var clickedGrid = sender as Grid;
-            var rowIndex = -1;
-            var columnIndex = -1;
-
-            if (clickedGrid == null) return;
-
-            // Find the row and column index of the clicked Grid element
-            for (var row = 0; row < _rows; row++)
+            // check if type is of type Grid and if the Tag is of type Tuple<int, int>
+            // if so, get the row and column index from the Tag
+            if (sender is Grid clickedGrid && clickedGrid.Tag is Tuple<int, int>(var rowIndex, var columnIndex))
             {
-                for (var col = 0; col < _columns; col++)
-                {
-                    if (clickedGrid == GameGrid.Children[row * _columns + col])
-                    {
-                        rowIndex = row;
-                        columnIndex = col;
-                        break;
-                    }
-                }
-
-                if (rowIndex != -1 && columnIndex != -1)
-                {
-                    break;
-                }
+                // Call your custom method with the row and column index
+                HandleGridClick(rowIndex, columnIndex);
             }
-
-            // Call your custom method with the row and column index
-            HandleGridClick(rowIndex, columnIndex);
         }
 
         private void HandleGridClick(int row, int column)
         {
             // Add your custom logic here based on the row and column of the clicked Grid element
             MessageBox.Show($"Clicked on Grid at row {row} and column {column}");
+
+            // TODO: find neighbours of clicked grid element that we can move to
+            // TODO: add the neighbours to a list of possible moves
         }
 
         private void DrawGrid()
