@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Controls;
 using AdventOfCode._2022.Day12.Common.Models;
 
 namespace AdventOfCode._2022.Day12.App;
@@ -9,7 +10,7 @@ public class GameState
 {
     private int Rows { get; }
     private int Columns { get; }
-    public GridValue[,] Grid { get; }
+    public GridElement[,] Grid { get; }
     public Direction Direction { get; set; }
     public int Score { get; private set; }
     public bool IsGameOver { get; private set; }
@@ -36,7 +37,17 @@ public class GameState
     {
         Rows = rows;
         Columns = columns;
-        Grid = new GridValue[rows, columns]; // 2D array, all values are initialized to Empty
+
+        // init grid with new GridElement objects
+        Grid = new GridElement[rows, columns];
+        for (var r = 0; r < Rows; r++)
+        {
+            for (var c = 0; c < Columns; c++)
+            {
+                Grid[r, c] = new GridElement();
+            }
+        }
+
         Direction = Direction.Right;
         Score = 0;
         IsGameOver = false;
@@ -52,7 +63,7 @@ public class GameState
         // start the snake in the middle of the grid, 3 cells wide, column 1, facing right
         for (var c = 1; c <= 3; c++)
         {
-            Grid[r, c] = GridValue.Snake;
+            Grid[r, c].Type = GridElementType.Snake;
             _snakePositions.AddFirst(new Position(r, c));
         }
     }
@@ -66,7 +77,7 @@ public class GameState
         {
             for (var c = 0; c < Columns; c++)
             {
-                if (Grid[r, c] == GridValue.Empty)
+                if (Grid[r, c].Type == GridElementType.Empty)
                 {
                     yield return new Position(r, c);
                 }
@@ -88,7 +99,7 @@ public class GameState
         var position = emptyPositions[_random.Next(0, emptyPositions.Count)];
 
         // place food at that position
-        Grid[position.Row, position.Column] = GridValue.Food;
+        Grid[position.Row, position.Column].Type = GridElementType.Food;
     }
 
     public Position GetSnakeHeadPosition()
@@ -118,14 +129,14 @@ public class GameState
 
     private void AddSnakeHead(Position position)
     {
-        Grid[position.Row, position.Column] = GridValue.Snake;
+        Grid[position.Row, position.Column].Type = GridElementType.Snake;
         _snakePositions.AddFirst(position);
     }
 
     private void RemoveSnakeTail()
     {
         var tailPosition = _snakePositions.Last.Value;
-        Grid[tailPosition.Row, tailPosition.Column] = GridValue.Empty;
+        Grid[tailPosition.Row, tailPosition.Column].Type = GridElementType.Empty;
         _snakePositions.RemoveLast();
     }
 
@@ -174,21 +185,21 @@ public class GameState
         return position.Row < 0 || position.Row >= Rows || position.Column < 0 || position.Column >= Columns;
     }
 
-    private GridValue WillHit(Position newSnakeHeadPosition)
+    private GridElementType WillHit(Position newSnakeHeadPosition)
     {
         if (OutOfBounds(newSnakeHeadPosition))
         {
-            return GridValue.OutOfBounds;
+            return GridElementType.OutOfBounds;
         }
 
         // Special case: if the snake is about to hit it's own tail, we allow this.
         // Since the tail will be removed as we move forward, this position will be empty.
         if (newSnakeHeadPosition == GetSnakeTailPosition())
         {
-            return GridValue.Empty;
+            return GridElementType.Empty;
         }
 
-        return Grid[newSnakeHeadPosition.Row, newSnakeHeadPosition.Column];
+        return Grid[newSnakeHeadPosition.Row, newSnakeHeadPosition.Column].Type;
     }
 
     public void Move()
@@ -207,17 +218,17 @@ public class GameState
         var willHit = WillHit(newSnakeHeadPosition);
         switch (willHit)
         {
-            case GridValue.Empty:
+            case GridElementType.Empty:
                 AddSnakeHead(newSnakeHeadPosition);
                 RemoveSnakeTail();
                 break;
-            case GridValue.Food:
+            case GridElementType.Food:
                 AddSnakeHead(newSnakeHeadPosition);
                 AddFood();
                 Score++;
                 break;
-            case GridValue.Snake:
-            case GridValue.OutOfBounds:
+            case GridElementType.Snake:
+            case GridElementType.OutOfBounds:
                 IsGameOver = true;
                 break;
             default:

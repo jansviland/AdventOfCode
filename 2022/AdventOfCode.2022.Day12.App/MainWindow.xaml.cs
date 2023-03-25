@@ -15,11 +15,11 @@ namespace AdventOfCode._2022.Day12.App
     /// </summary>
     public partial class MainWindow : Window
     {
-        private readonly Dictionary<GridValue, ImageSource> _gridValueToImage = new()
+        private readonly Dictionary<GridElementType, ImageSource> _gridValueToImage = new()
         {
-            { GridValue.Empty, Images.Empty },
-            { GridValue.Snake, Images.Body },
-            { GridValue.Food, Images.Food },
+            { GridElementType.Empty, Images.Empty },
+            { GridElementType.Snake, Images.Body },
+            { GridElementType.Food, Images.Food },
         };
 
         private readonly Dictionary<Direction, int> _directionToRotation = new()
@@ -141,8 +141,8 @@ namespace AdventOfCode._2022.Day12.App
             {
                 for (var c = 0; c < Columns; c++)
                 {
-                    var gridValue = _gameState.Grid[r, c];
-                    _gridImages[r, c].Source = _gridValueToImage[gridValue];
+                    var gridElement = _gameState.Grid[r, c];
+                    _gridImages[r, c].Source = _gridValueToImage[gridElement.Type];
                     _gridImages[r, c].RenderTransform = Transform.Identity; // reset rotation
                 }
             }

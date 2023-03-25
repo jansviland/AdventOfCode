@@ -5,7 +5,7 @@ namespace AdventOfCode._2022.Day12;
 public interface ISolutionService
 {
     public int RunPart1(string[] input);
-    public GridValue[,] ParseInput(string[] input);
+    public GridElementType[,] ParseInput(string[] input);
     public LinkedList<Position> FindPath(string[] input); // each position from the start to the end
     public int RunPart2(string[] input);
 }
@@ -33,7 +33,7 @@ public class SolutionService : ISolutionService
         throw new NotImplementedException();
     }
 
-    public GridValue[,] ParseInput(string[] input)
+    public GridElementType[,] ParseInput(string[] input)
     {
         throw new NotImplementedException();
     }
