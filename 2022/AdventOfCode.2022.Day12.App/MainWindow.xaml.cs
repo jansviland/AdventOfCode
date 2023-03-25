@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Shapes;
 using AdventOfCode._2022.Day12.App.Models;
 using AdventOfCode._2022.Day12.Common.Models;
 
@@ -92,8 +93,22 @@ namespace AdventOfCode._2022.Day12.App
                     };
                     images[row, column] = image;
 
+                    // TODO: wrap image and textblock in a UIElement
+
+                    TextBlock textBlock = new TextBlock();
+                    textBlock.Text = "a";
+                    textBlock.Foreground = Brushes.White;
+                    textBlock.FontSize = 14;
+                    textBlock.Margin = new Thickness(5);
+                    textBlock.HorizontalAlignment = System.Windows.HorizontalAlignment.Center;
+                    textBlock.VerticalAlignment = System.Windows.VerticalAlignment.Center;
+
+                    Grid grid = new Grid();
+                    grid.Children.Add(image);
+                    grid.Children.Add(textBlock);
+
                     // add to UniformGrid in the MainWindow
-                    GameGrid.Children.Add(image);
+                    GameGrid.Children.Add(grid);
                 }
             }
 
