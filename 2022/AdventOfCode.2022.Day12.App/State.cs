@@ -6,7 +6,7 @@ using AdventOfCode._2022.Day12.Common.Models;
 
 namespace AdventOfCode._2022.Day12.App;
 
-public class GameState
+public class State
 {
     private int Rows { get; }
     private int Columns { get; }
@@ -33,7 +33,7 @@ public class GameState
     /// </summary>
     private readonly Random _random = new Random();
 
-    public GameState(int rows, int columns)
+    public State(int rows, int columns)
     {
         Rows = rows;
         Columns = columns;
@@ -56,7 +56,7 @@ public class GameState
         AddFood();
     }
 
-    public GameState(GridElement[,] grid)
+    public State(GridElement[,] grid)
     {
         Rows = grid.GetLength(0);
         Columns = grid.GetLength(1);

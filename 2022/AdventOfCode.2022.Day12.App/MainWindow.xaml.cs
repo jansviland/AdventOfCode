@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -39,7 +40,7 @@ namespace AdventOfCode._2022.Day12.App
         private readonly Grid[,] _grid;
 
         private bool _isGameLoopRunning;
-        private GameState _gameState;
+        private State _state;
 
         // snake game
         // public MainWindow()
@@ -47,7 +48,7 @@ namespace AdventOfCode._2022.Day12.App
         //     InitializeComponent();
         //
         //     _grid = CreateGrid();
-        //     _gameState = new GameState(_rows, _columns);
+        //     _state = new State(_rows, _columns);
         //
         //     DrawGrid();
         // }
@@ -71,7 +72,7 @@ namespace AdventOfCode._2022.Day12.App
             _grid = CreateGrid();
 
             // update game state
-            _gameState = new GameState(grid);
+            _state = new State(grid);
 
             // update UI elements with correct images
             DrawGrid();
@@ -113,6 +114,9 @@ namespace AdventOfCode._2022.Day12.App
                     grid.Children.Add(image);
                     grid.Children.Add(textBlock);
 
+                    // add click event to each grid element with the row and column as parameters
+                    grid.MouseLeftButtonDown += GridElement_MouseLeftButtonDown;
+
                     // add to UniformGrid in the MainWindow
                     GameGrid.Children.Add(grid);
                     gridElements[row, column] = grid;
@@ -122,9 +126,67 @@ namespace AdventOfCode._2022.Day12.App
             return gridElements;
         }
 
+        private void GridElement_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            var clickedGrid = sender as Grid;
+            var rowIndex = -1;
+            var columnIndex = -1;
+
+            if (clickedGrid == null) return;
+
+            // Find the row and column index of the clicked Grid element
+            for (var row = 0; row < _rows; row++)
+            {
+                for (var col = 0; col < _columns; col++)
+                {
+                    if (clickedGrid == GameGrid.Children[row * _columns + col])
+                    {
+                        rowIndex = row;
+                        columnIndex = col;
+                        break;
+                    }
+                }
+
+                if (rowIndex != -1 && columnIndex != -1)
+                {
+                    break;
+                }
+            }
+
+            // Call your custom method with the row and column index
+            HandleGridClick(rowIndex, columnIndex);
+        }
+
+        private void HandleGridClick(int row, int column)
+        {
+            // Add your custom logic here based on the row and column of the clicked Grid element
+            MessageBox.Show($"Clicked on Grid at row {row} and column {column}");
+        }
+
+        private void DrawGrid()
+        {
+            for (var r = 0; r < _rows; r++)
+            {
+                for (var c = 0; c < _columns; c++)
+                {
+                    var gridElement = _state.Grid[r, c];
+                    var image = _grid[r, c].Children[0] as Image;
+
+                    // TODO: instead of using type, use value, then create a rectangle instead of image
+                    // the color can be based on the value
+
+                    image.Source = _gridValueToImage[gridElement.Type];
+                    image.RenderTransform = Transform.Identity; // reset rotation
+
+                    var textBlock = _grid[r, c].Children[1] as TextBlock;
+                    textBlock.Text = gridElement.Value.ToString();
+                }
+            }
+        }
+
         private async Task DrawDeadSnake()
         {
-            var snakePositions = new List<Position>(_gameState.GetSnakePositions());
+            var snakePositions = new List<Position>(_state.GetSnakePositions());
 
             for (var i = 0; i < snakePositions.Count(); i++)
             {
@@ -140,11 +202,11 @@ namespace AdventOfCode._2022.Day12.App
 
         private void DrawSnakeHead()
         {
-            var head = _gameState.GetSnakeHeadPosition();
+            var head = _state.GetSnakeHeadPosition();
             var image = _grid[head.Row, head.Column].Children[0] as Image;
             image.Source = Images.Head;
 
-            var rotation = _directionToRotation[_gameState.Direction];
+            var rotation = _directionToRotation[_state.Direction];
             image.RenderTransform = new RotateTransform(rotation);
         }
 
@@ -171,10 +233,10 @@ namespace AdventOfCode._2022.Day12.App
 
         private async Task GameLoop()
         {
-            while (!_gameState.IsGameOver)
+            while (!_state.IsGameOver)
             {
                 await Task.Delay(100);
-                _gameState.Move();
+                _state.Move();
                 Draw();
             }
         }
@@ -183,52 +245,7 @@ namespace AdventOfCode._2022.Day12.App
         {
             DrawGrid();
             DrawSnakeHead();
-            ScoreText.Text = $"SCORE: {_gameState.Score}";
-        }
-
-        private void DrawGrid()
-        {
-            for (var r = 0; r < _rows; r++)
-            {
-                for (var c = 0; c < _columns; c++)
-                {
-                    var gridElement = _gameState.Grid[r, c];
-                    var image = _grid[r, c].Children[0] as Image;
-
-                    // TODO: instead of using type, use value, then create a rectangle instead of image
-                    // the color can be based on the value
-
-                    image.Source = _gridValueToImage[gridElement.Type];
-                    image.RenderTransform = Transform.Identity; // reset rotation
-
-                    var textBlock = _grid[r, c].Children[1] as TextBlock;
-                    textBlock.Text = gridElement.Value.ToString();
-                }
-            }
-        }
-
-        private void MainWindow_OnKeyDown(object sender, KeyEventArgs e)
-        {
-            if (_gameState.IsGameOver)
-            {
-                return;
-            }
-
-            switch (e.Key)
-            {
-                case Key.Up:
-                    _gameState.ChangeDirection(Direction.Up);
-                    break;
-                case Key.Down:
-                    _gameState.ChangeDirection(Direction.Down);
-                    break;
-                case Key.Left:
-                    _gameState.ChangeDirection(Direction.Left);
-                    break;
-                case Key.Right:
-                    _gameState.ChangeDirection(Direction.Right);
-                    break;
-            }
+            ScoreText.Text = $"SCORE: {_state.Score}";
         }
 
         private async Task RunGame()
@@ -239,7 +256,31 @@ namespace AdventOfCode._2022.Day12.App
             await GameLoop();
             await ShowGameOver();
 
-            _gameState = new GameState(_rows, _columns);
+            _state = new State(_rows, _columns);
+        }
+
+        private void MainWindow_OnKeyDown(object sender, KeyEventArgs e)
+        {
+            if (_state.IsGameOver)
+            {
+                return;
+            }
+
+            switch (e.Key)
+            {
+                case Key.Up:
+                    _state.ChangeDirection(Direction.Up);
+                    break;
+                case Key.Down:
+                    _state.ChangeDirection(Direction.Down);
+                    break;
+                case Key.Left:
+                    _state.ChangeDirection(Direction.Left);
+                    break;
+                case Key.Right:
+                    _state.ChangeDirection(Direction.Right);
+                    break;
+            }
         }
 
         private async void MainWindow_OnPreviewKeyDown(object sender, KeyEventArgs e)
