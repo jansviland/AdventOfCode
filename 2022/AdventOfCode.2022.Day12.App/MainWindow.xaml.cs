@@ -55,10 +55,15 @@ namespace AdventOfCode._2022.Day12.App
 
         private void StartAdventOfCode()
         {
-            string[] input = File.ReadAllLines("Assets/sample-input.txt");
+            // string[] input = File.ReadAllLines("Assets/sample-input.txt");
+            string[] input = File.ReadAllLines("Assets/input.txt");
 
             // parse input
             var grid = _solutionService.ParseInput(input);
+
+            // update grid and calculate the step to each position
+            // _solutionService.GetNumberOfStepsToEachLocation(grid);
+            GetNumberOfStepsToEachLocation(grid);
 
             // set rows and columns
             _rows = grid.GetLength(0);
@@ -72,8 +77,78 @@ namespace AdventOfCode._2022.Day12.App
 
             // update UI elements with correct images
             DrawGrid();
+
             Overlay.Visibility = Visibility.Hidden;
             ScoreText.Text = "STEP: 0";
+        }
+
+        // DUPLICATE CODE, also in solution service, but here we update the UI and animate
+        public async void GetNumberOfStepsToEachLocation(GridElement[,] grid)
+        {
+            // find start position
+            var start = FindStart(grid);
+            start.Step = 0;
+
+            // adjecent positions
+            var adjecentPositions = new List<Position>
+            {
+                new Position(0, 1),
+                new Position(0, -1),
+                new Position(1, 0),
+                new Position(-1, 0),
+            };
+
+            var queue = new Queue<GridElement>();
+            queue.Enqueue(start);
+
+            while (queue.Count > 0)
+            {
+                var current = queue.Dequeue();
+                var currentStep = current.Step;
+
+                foreach (var adjecentPosition in adjecentPositions)
+                {
+                    var row = current.Row + adjecentPosition.Row; // move along x axis
+                    var column = current.Column + adjecentPosition.Column; // move along y axis
+
+                    // check if we are out of bounds
+                    if (row < 0 || row >= grid.GetLength(0) || column < 0 || column >= grid.GetLength(1))
+                    {
+                        continue; // skip this position since it is out of bounds
+                    }
+
+                    // check to see if we have visited this position before, if we have (step is != -1), skip it
+                    var element = grid[row, column];
+                    if (element is { Type: GridElementType.Empty, Step: -1 })
+                    {
+                        // TODO: In addition we can only move to a position if the value one away in the alfabetic order 
+
+                        element.Step = currentStep + 1;
+                        queue.Enqueue(element); // add to queue to visit later
+
+                        // animate
+                        DrawGrid();
+                        await Task.Delay(100);
+                    }
+                }
+            }
+        }
+
+        // DUPLICATE CODE, also in solution service
+        private GridElement FindStart(GridElement[,] grid)
+        {
+            for (var r = 0; r < grid.GetLength(0); r++)
+            {
+                for (var c = 0; c < grid.GetLength(1); c++)
+                {
+                    if (grid[r, c].Type == GridElementType.Snake || grid[r, c].Value == "S") // or value S
+                    {
+                        return grid[r, c];
+                    }
+                }
+            }
+
+            throw new Exception("No start position found");
         }
 
         private async void StartSnakeGame()
@@ -96,7 +171,6 @@ namespace AdventOfCode._2022.Day12.App
         {
             GameGrid.Children.Clear();
 
-            // var images = new Image[_rows, _columns];
             var gridElements = new Grid[_rows, _columns];
 
             GameGrid.Rows = _rows;
@@ -184,8 +258,21 @@ namespace AdventOfCode._2022.Day12.App
                     image.Source = _gridValueToImage[gridElement.Type];
                     image.RenderTransform = Transform.Identity; // reset rotation
 
+                    if (_isSnakeGameLoopRunning)
+                    {
+                        continue;
+                    }
+
                     var textBlock = _grid[r, c].Children[1] as TextBlock;
-                    textBlock.Text = gridElement.Value;
+
+                    if (_rows > 40)
+                    {
+                        textBlock.FontSize = 6;
+                        textBlock.Margin = new Thickness(0);
+                    }
+
+                    // textBlock.Text = gridElement.Value;
+                    textBlock.Text = gridElement.Step != -1 ? gridElement.Step.ToString() : gridElement.Value;
                 }
             }
         }
@@ -289,7 +376,7 @@ namespace AdventOfCode._2022.Day12.App
             }
         }
 
-        private async void MainWindow_OnPreviewKeyDown(object sender, KeyEventArgs e)
+        private void MainWindow_OnPreviewKeyDown(object sender, KeyEventArgs e)
         {
             // if overlay is visible, don't allow any key presses to go through
             if (Overlay.Visibility == Visibility.Visible)

@@ -53,15 +53,15 @@ public class Tests : TestBed<TestFixture>
         var grid = _solutionService.ParseInput(_input);
 
         // act
-        var result = _solutionService.GetNumberOfStepsToEachLocation(grid);
+        _solutionService.GetNumberOfStepsToEachLocation(grid);
 
         // assert
-        Assert.Equal(0, result[0, 0].Step);
-        Assert.Equal(1, result[0, 1].Step); // a
-        Assert.Equal(1, result[1, 0].Step); // a
+        Assert.Equal(0, grid[0, 0].Step);
+        Assert.Equal(1, grid[0, 1].Step); // a
+        Assert.Equal(1, grid[1, 0].Step); // a
 
-        Assert.Equal(2, result[0, 2].Step); // b
-        Assert.Equal(2, result[1, 1].Step); // b
+        Assert.Equal(2, grid[0, 2].Step); // b
+        Assert.Equal(2, grid[1, 1].Step); // b
     }
 
     // [Fact]

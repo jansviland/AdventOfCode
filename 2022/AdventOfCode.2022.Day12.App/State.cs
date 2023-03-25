@@ -61,12 +61,6 @@ public class State
         Rows = grid.GetLength(0);
         Columns = grid.GetLength(1);
         Grid = grid;
-        // Direction = Direction.Right;
-        // Score = 0;
-        // IsGameOver = false;
-
-        // AddSnake();
-        // AddFood();
     }
 
     private void AddSnake()
