@@ -16,8 +16,10 @@ public interface ISolutionService
     /// </summary>
     /// <returns>Returns the final GridElement that contains the number of steps to each location and the final path</returns>
     public GridElement? FindShortestPath(GridElement[,] grid);
+
     public GridElement? FindShortestPath(GridElement[,] grid, GridElement start, GridElement end);
     public GridElement FindGridElement(GridElement[,] grid, string value);
+    public List<GridElement> GetNeighbors(GridElement[,] grid, GridElement element);
 
     /// <summary>
     /// https://www.omnicalculator.com/math/manhattan-distance#what-is-the-manhattan-distance
@@ -78,6 +80,92 @@ public class SolutionService : ISolutionService
         return grid;
     }
 
+    // public GridElement? FindShortestPath(GridElement[,] grid)
+    // {
+    //     // find start position
+    //     var start = FindGridElement(grid, "S");
+    //     start.Step = 0;
+    //
+    //     // find end position
+    //     var end = FindGridElement(grid, "E");
+    //
+    //     // Automatically keep the list sorted by TotalCost
+    //     // var openList = new SortedSet<GridElement>(Comparer<GridElement>.Create((a, b) => a.Distance.CompareTo(b.Distance)));
+    //     // var openList = new SortedSet<GridElement>(Comparer<GridElement>.Create((a, b) => a.TotalCost.CompareTo(b.TotalCost)));
+    //     // openList.Add(start);
+    //
+    //     var queue = new Queue<GridElement>();
+    //     queue.Enqueue(start);
+    //
+    //     while (queue.Count > 0)
+    //     {
+    //         // BUG: this is not working correctly, when using orderBy, it is not finding the shortest path, should be 490, result is 514...
+    //
+    //         // order by distance to end goal (remove this to find every possible path)
+    //         // queue = new Queue<GridElement>(queue.OrderBy(x => x.Distance));
+    //
+    //         var current = queue.Dequeue();
+    //         // var current = openList.First();
+    //         // openList.Remove(current);
+    //
+    //         var currentStep = current.Step;
+    //
+    //         foreach (var neighbor in GetNeighbors(grid, current))
+    //         {
+    //             // check to see if we have visited this position before, if we have (step is != -1), skip it
+    //             // var element = grid[neighbor.Row, neighbor.Column];
+    //
+    //             var tentativeCost = current.Step + 1;
+    //
+    //             if (neighbor is { Type: GridElementType.Empty or GridElementType.Food, Step: -1}) // && !openList.Contains(neighbor) || tentativeCost < neighbor.Step
+    //             {
+    //                 var currentValue = (int)current.Value.First();
+    //                 if (current.Value == "S")
+    //                 {
+    //                     currentValue = 97; // a
+    //                 }
+    //
+    //                 var elementValue = (int)neighbor.Value.First();
+    //                 if (neighbor.Value == "E")
+    //                 {
+    //                     elementValue = 122; // z
+    //                 }
+    //
+    //                 // var diff = Math.Abs(currentValue - elementValue);
+    //                 if (elementValue - currentValue > 1)
+    //                 {
+    //                     continue;
+    //                 }
+    //
+    //                 // var cost = current.Cost + 1;
+    //
+    //                 neighbor.Previous = current;
+    //                 neighbor.Step = currentStep + 1;
+    //                 neighbor.Distance = GetManhattanDistance(grid, neighbor, end);
+    //                 neighbor.TotalCost = neighbor.Step + neighbor.Distance;
+    //
+    //                 queue.Enqueue(neighbor); // add to queue to visit later
+    //                 // openList.Add(neighbor); // add to queue to visit later
+    //
+    //                 // animate
+    //                 // ScoreText.Text = $"STEP: {element.Step}";
+    //                 //
+    //                 // DrawGrid();
+    //                 // await Task.Delay(10);
+    //                 //
+    //                 // // if element is the finish line, stop the loop and animate the path
+    //                 if (neighbor.Value == "E")
+    //                 {
+    //                     // ShowFinalPath(element);
+    //                     return neighbor;
+    //                 }
+    //             }
+    //         }
+    //     }
+    //
+    //     return null;
+    // }
+
     public GridElement? FindShortestPath(GridElement[,] grid)
     {
         // find start position
@@ -101,10 +189,9 @@ public class SolutionService : ISolutionService
 
         while (queue.Count > 0)
         {
-            // BUG: this is not working correctly, when using orderBy, it is not finding the shortest path, should be 490, result is 514...
-
             // order by distance to end goal (remove this to find every possible path)
-            queue = new Queue<GridElement>(queue.OrderBy(x => x.Distance));
+            // queue = new Queue<GridElement>(queue.OrderBy(x => x.Distance));
+            queue = new Queue<GridElement>(queue.OrderBy(x => x.TotalCost));
 
             var current = queue.Dequeue();
             var currentStep = current.Step;
@@ -145,6 +232,7 @@ public class SolutionService : ISolutionService
                     element.Previous = current;
                     element.Step = currentStep + 1;
                     element.Distance = GetManhattanDistance(grid, element, end);
+                    element.TotalCost = element.Step + element.Distance;
 
                     queue.Enqueue(element); // add to queue to visit later
 
@@ -153,8 +241,8 @@ public class SolutionService : ISolutionService
                     //
                     // DrawGrid();
                     // await Task.Delay(10);
-                    //
-                    // // if element is the finish line, stop the loop and animate the path
+
+                    // if element is the finish line, stop the loop and animate the path
                     if (element.Value == "E")
                     {
                         // ShowFinalPath(element);
@@ -186,6 +274,36 @@ public class SolutionService : ISolutionService
         }
 
         throw new Exception("No start position found");
+    }
+
+    public List<GridElement> GetNeighbors(GridElement[,] grid, GridElement element)
+    {
+        var neighbors = new List<GridElement>();
+
+        // adjecent positions
+        var adjecentPositions = new List<Position>
+        {
+            new Position(0, 1),
+            new Position(0, -1),
+            new Position(1, 0),
+            new Position(-1, 0),
+        };
+
+        foreach (var adjecentPosition in adjecentPositions)
+        {
+            var row = element.Row + adjecentPosition.Row; // move along x axis
+            var column = element.Column + adjecentPosition.Column; // move along y axis
+
+            // check if we are out of bounds
+            if (row < 0 || row >= grid.GetLength(0) || column < 0 || column >= grid.GetLength(1))
+            {
+                continue; // skip this position since it is out of bounds
+            }
+
+            neighbors.Add(grid[row, column]);
+        }
+
+        return neighbors;
     }
 
     public int GetManhattanDistance(GridElement[,] grid, GridElement start, GridElement end)

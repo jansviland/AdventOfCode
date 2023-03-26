@@ -82,6 +82,85 @@ namespace AdventOfCode._2022.Day12.App
         }
 
         // DUPLICATE CODE, also in solution service, but here we update the UI and animate
+        // public async Task<GridElement?> FindShortestPath(GridElement[,] grid)
+        // {
+        //     // find start position
+        //     var start = _solutionService.FindGridElement(grid, "S");
+        //     start.Step = 0;
+        //
+        //     // find end position
+        //     var end = _solutionService.FindGridElement(grid, "E");
+        //
+        //     // Automatically keep the list sorted by TotalCost
+        //     var openList = new SortedSet<GridElement>(Comparer<GridElement>.Create((a, b) => a.TotalCost.CompareTo(b.TotalCost)));
+        //     openList.Add(start);
+        //
+        //     // var queue = new Queue<GridElement>();
+        //     // queue.Enqueue(start);
+        //
+        //     while (openList.Count > 0)
+        //     {
+        //         // BUG: this is not working correctly, when using orderBy, it is not finding the shortest path, should be 490, result is 514...
+        //
+        //         // order by distance to end goal (remove this to find every possible path)
+        //         // queue = new Queue<GridElement>(queue.OrderBy(x => x.Distance));
+        //
+        //         // var current = queue.Dequeue();
+        //         var current = openList.First();
+        //         openList.Remove(current);
+        //
+        //         var currentStep = current.Step;
+        //
+        //         foreach (var adjecentPosition in _solutionService.GetNeighbors(grid, current))
+        //         {
+        //             // check to see if we have visited this position before, if we have (step is != -1), skip it
+        //             var element = grid[adjecentPosition.Row, adjecentPosition.Column];
+        //             if (element is { Type: GridElementType.Empty or GridElementType.Food, Step: -1 })
+        //             {
+        //                 var currentValue = (int)current.Value.First();
+        //                 if (current.Value == "S")
+        //                 {
+        //                     currentValue = 97; // a
+        //                 }
+        //
+        //                 var elementValue = (int)element.Value.First();
+        //                 if (element.Value == "E")
+        //                 {
+        //                     elementValue = 122; // z
+        //                 }
+        //
+        //                 if (elementValue - currentValue > 1)
+        //                 {
+        //                     continue;
+        //                 }
+        //
+        //                 element.Previous = current;
+        //                 element.Step = currentStep + 1;
+        //                 element.Distance = _solutionService.GetManhattanDistance(grid, element, end);
+        //                 element.TotalCost = element.Step + element.Distance;
+        //
+        //                 // queue.Enqueue(element); // add to queue to visit later
+        //                 openList.Add(element); // add to queue to visit later
+        //
+        //                 // animate
+        //                 ScoreText.Text = $"STEP: {element.Step}";
+        //
+        //                 DrawGrid();
+        //                 await Task.Delay(10);
+        //
+        //                 // if element is the finish line, stop the loop and animate the path
+        //                 if (element.Value == "E")
+        //                 {
+        //                     ShowFinalPath(element);
+        //                     return element;
+        //                 }
+        //             }
+        //         }
+        //     }
+        //
+        //     return null;
+        // }
+
         public async Task<GridElement?> FindShortestPath(GridElement[,] grid)
         {
             // find start position
@@ -106,7 +185,8 @@ namespace AdventOfCode._2022.Day12.App
             while (queue.Count > 0)
             {
                 // order by distance to end goal (remove this to find every possible path)
-                queue = new Queue<GridElement>(queue.OrderBy(x => x.Distance));
+                // queue = new Queue<GridElement>(queue.OrderBy(x => x.Distance));
+                queue = new Queue<GridElement>(queue.OrderBy(x => x.TotalCost));
 
                 var current = queue.Dequeue();
                 var currentStep = current.Step;
@@ -147,6 +227,7 @@ namespace AdventOfCode._2022.Day12.App
                         element.Previous = current;
                         element.Step = currentStep + 1;
                         element.Distance = _solutionService.GetManhattanDistance(grid, element, end);
+                        element.TotalCost = element.Step + element.Distance;
 
                         queue.Enqueue(element); // add to queue to visit later
 

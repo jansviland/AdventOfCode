@@ -15,9 +15,10 @@ public class GridElement
     public int Column { get; set; } // column
     public GridElementType Type { get; set; }
     public string Value { get; set; }
-    public int Step { get; set; } = -1; // number of steps to get to this position
+    public int Step { get; set; } = -1; // number of steps to get to this position, can also be called "Cost"
     public GridElement? Previous { get; set; }
-    public int Distance { get; set; } // manhattan distance to end goal
+    public int Distance { get; set; } // manhattan distance to end goal, also called "Heuristic"
+    public int TotalCost { get; set; } // Step (cost) + Distance (heuristic) = TotalCost
 
     public GridElement()
     {

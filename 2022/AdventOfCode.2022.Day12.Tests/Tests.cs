@@ -47,7 +47,7 @@ public class Tests : TestBed<TestFixture>
     }
 
     [Fact]
-    public void FindShortestPathTest()
+    public void FindShortestPathTest1()
     {
         // arrange
         var grid = _solutionService.ParseInput(_input);
