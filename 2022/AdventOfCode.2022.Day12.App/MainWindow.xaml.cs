@@ -62,7 +62,7 @@ namespace AdventOfCode._2022.Day12.App
 
             // update grid and calculate the step to each position
             // _solutionService.GetNumberOfStepsToEachLocation(grid);
-            GetNumberOfStepsToEachLocation(grid);
+            FindShortestPath(grid);
 
             // set rows and columns
             _rows = grid.GetLength(0);
@@ -82,7 +82,7 @@ namespace AdventOfCode._2022.Day12.App
         }
 
         // DUPLICATE CODE, also in solution service, but here we update the UI and animate
-        public async Task<GridElement?> GetNumberOfStepsToEachLocation(GridElement[,] grid)
+        public async Task<GridElement?> FindShortestPath(GridElement[,] grid)
         {
             // find start position
             var start = _solutionService.FindGridElement(grid, "S");
@@ -176,7 +176,7 @@ namespace AdventOfCode._2022.Day12.App
             {
                 current.Type = GridElementType.Snake;
                 DrawGrid();
-                await Task.Delay(50);
+                await Task.Delay(20);
 
                 current = current.Previous;
             }
@@ -188,6 +188,9 @@ namespace AdventOfCode._2022.Day12.App
 
         private async void StartSnakeGame()
         {
+            _rows = 20;
+            _columns = 20;
+
             _grid = CreateGrid();
             _state = new State(_rows, _columns);
 
@@ -384,6 +387,7 @@ namespace AdventOfCode._2022.Day12.App
             await GameLoop();
             await ShowGameOver();
 
+            // reset state
             _state = new State(_rows, _columns);
         }
 

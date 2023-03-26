@@ -47,13 +47,13 @@ public class Tests : TestBed<TestFixture>
     }
 
     [Fact]
-    public void GetNumberOfStepsToEachLocationTest()
+    public void FindShortestPathTest()
     {
         // arrange
         var grid = _solutionService.ParseInput(_input);
 
         // act
-        _solutionService.GetNumberOfStepsToEachLocation(grid);
+        _solutionService.FindShortestPath(grid);
 
         // assert
         Assert.Equal(0, grid[0, 0].Step);
@@ -62,6 +62,57 @@ public class Tests : TestBed<TestFixture>
 
         Assert.Equal(2, grid[0, 2].Step); // b
         Assert.Equal(2, grid[1, 1].Step); // b
+    }
+
+    [Fact]
+    public void FindShortestPathTest2()
+    {
+        // arrange
+        var grid = _solutionService.ParseInput(_input);
+
+        // act
+        var result = _solutionService.FindShortestPath(grid);
+
+        // assert
+        Assert.NotNull(result);
+        Assert.Equal(31, result.Step);
+    }
+
+    [Fact]
+    public void FindShortestPathTest3()
+    {
+        // arrange
+        var grid = _solutionService.ParseInput(_input);
+
+        var start = _solutionService.FindGridElement(grid, "S");
+        var end = _solutionService.FindGridElement(grid, "E");
+
+        // act
+        var result = _solutionService.FindShortestPath(grid, start, end);
+
+        // assert
+        Assert.NotNull(result);
+        Assert.Equal(31, result.Step);
+    }
+
+
+    [Fact]
+    public void FindShortestPathTest4()
+    {
+        // arrange
+        var input = File.ReadAllLines("Assets/input.txt");
+
+        var grid = _solutionService.ParseInput(input);
+
+        var start = _solutionService.FindGridElement(grid, "S");
+        var end = _solutionService.FindGridElement(grid, "E");
+
+        // act
+        var result = _solutionService.FindShortestPath(grid, start, end);
+
+        // assert
+        Assert.NotNull(result);
+        Assert.Equal(490, result.Step);
     }
 
     [Fact]

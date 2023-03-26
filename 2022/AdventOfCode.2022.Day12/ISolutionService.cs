@@ -15,8 +15,8 @@ public interface ISolutionService
     /// Updates the grid with the number of steps to each location.
     /// </summary>
     /// <returns>Returns the final GridElement that contains the number of steps to each location and the final path</returns>
-    public GridElement? GetNumberOfStepsToEachLocation(GridElement[,] grid);
-
+    public GridElement? FindShortestPath(GridElement[,] grid);
+    public GridElement? FindShortestPath(GridElement[,] grid, GridElement start, GridElement end);
     public GridElement FindGridElement(GridElement[,] grid, string value);
 
     /// <summary>
@@ -46,7 +46,7 @@ public class SolutionService : ISolutionService
 
         var grid = ParseInput(input);
 
-        var finalElement = GetNumberOfStepsToEachLocation(grid);
+        var finalElement = FindShortestPath(grid);
         return finalElement!.Step;
     }
 
@@ -78,7 +78,7 @@ public class SolutionService : ISolutionService
         return grid;
     }
 
-    public GridElement? GetNumberOfStepsToEachLocation(GridElement[,] grid)
+    public GridElement? FindShortestPath(GridElement[,] grid)
     {
         // find start position
         var start = FindGridElement(grid, "S");
@@ -165,6 +165,11 @@ public class SolutionService : ISolutionService
         }
 
         return null;
+    }
+
+    public GridElement? FindShortestPath(GridElement[,] grid, GridElement start, GridElement end)
+    {
+        throw new NotImplementedException();
     }
 
     public GridElement FindGridElement(GridElement[,] grid, string value)
