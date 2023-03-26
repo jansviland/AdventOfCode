@@ -25,9 +25,18 @@ dotnet run
 
 ## 2022 - Day 12 - Demo
 
-Poorly implemented path finding algorithm. It will find the shortest path between two points, but it will not do it very fast...
+Poorly implemented path finding algorithm. It will find the shortest path between two points, but it will not do it very fast... 
+Made a nice animation of the path finding algorithm though.
 
 ![gif](./wiki/2022-day12-solution-v1.gif)
+
+much better implementation of the path finding algorithm. Prioritizes the path that is closest to the goal.
+
+![gif](./wiki/2022-day12-solution-v2.gif)
+
+Result
+
+![png](./wiki/2022-day12-solution-v1-final.PNG)
 
 ## 2022 - Day 5 - Demo
 

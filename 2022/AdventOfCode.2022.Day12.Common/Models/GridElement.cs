@@ -17,6 +17,7 @@ public class GridElement
     public string Value { get; set; }
     public int Step { get; set; } = -1; // number of steps to get to this position
     public GridElement? Previous { get; set; }
+    public int Distance { get; set; } // manhattan distance to end goal
 
     public GridElement()
     {

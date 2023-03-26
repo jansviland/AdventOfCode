@@ -64,6 +64,54 @@ public class Tests : TestBed<TestFixture>
         Assert.Equal(2, grid[1, 1].Step); // b
     }
 
+    [Fact]
+    public void FindGridElementTest1()
+    {
+        // arrange
+        var grid = _solutionService.ParseInput(_input);
+
+        // act
+        var result = _solutionService.FindGridElement(grid, "E");
+
+        // assert
+        Assert.Equal(2, result.Row);
+        Assert.Equal(5, result.Column);
+        Assert.Equal("E", result.Value);
+        Assert.Equal(GridElementType.Food, result.Type);
+    }
+
+    [Fact]
+    public void FindGridElementTest2()
+    {
+        // arrange
+        var grid = _solutionService.ParseInput(_input);
+
+        // act
+        var result = _solutionService.FindGridElement(grid, "S");
+
+        // assert
+        Assert.Equal(0, result.Row);
+        Assert.Equal(0, result.Column);
+        Assert.Equal("S", result.Value);
+        Assert.Equal(GridElementType.Snake, result.Type);
+    }
+
+    [Fact]
+    public void GetDistanceTest()
+    {
+        // arrange
+        var grid = _solutionService.ParseInput(_input);
+
+        var from = _solutionService.FindGridElement(grid, "S");
+        var to = _solutionService.FindGridElement(grid, "E");
+
+        // act
+        var result = _solutionService.GetManhattanDistance(grid, from, to);
+
+        // assert
+        Assert.Equal(7, result);
+    }
+
     // [Fact]
     // public void FindPathTest()
     // {
@@ -95,6 +143,21 @@ public class Tests : TestBed<TestFixture>
 
         // assert
         Assert.Equal(31, result);
+    }
+
+    [Fact]
+    public void Part1ActualInputTest()
+    {
+        _testOutputHelper.WriteLine("Running unit test - Part 1");
+
+        // arrange
+        var input = File.ReadAllLines("Assets/input.txt");
+
+        // act
+        var result = _solutionService.RunPart1(input);
+
+        // assert
+        Assert.Equal(490, result);
     }
 
     [Fact]

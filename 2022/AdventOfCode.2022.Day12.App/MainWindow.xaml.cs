@@ -82,11 +82,14 @@ namespace AdventOfCode._2022.Day12.App
         }
 
         // DUPLICATE CODE, also in solution service, but here we update the UI and animate
-        public async void GetNumberOfStepsToEachLocation(GridElement[,] grid)
+        public async Task<GridElement?> GetNumberOfStepsToEachLocation(GridElement[,] grid)
         {
             // find start position
-            var start = FindStart(grid);
+            var start = _solutionService.FindGridElement(grid, "S");
             start.Step = 0;
+
+            // find end position
+            var end = _solutionService.FindGridElement(grid, "E");
 
             // adjecent positions
             var adjecentPositions = new List<Position>
@@ -102,6 +105,9 @@ namespace AdventOfCode._2022.Day12.App
 
             while (queue.Count > 0)
             {
+                // order by distance to end goal (remove this to find every possible path)
+                queue = new Queue<GridElement>(queue.OrderBy(x => x.Distance));
+
                 var current = queue.Dequeue();
                 var currentStep = current.Step;
 
@@ -140,6 +146,7 @@ namespace AdventOfCode._2022.Day12.App
 
                         element.Previous = current;
                         element.Step = currentStep + 1;
+                        element.Distance = _solutionService.GetManhattanDistance(grid, element, end);
 
                         queue.Enqueue(element); // add to queue to visit later
 
@@ -153,28 +160,13 @@ namespace AdventOfCode._2022.Day12.App
                         if (element.Value == "E")
                         {
                             ShowFinalPath(element);
-                            return;
+                            return element;
                         }
                     }
                 }
             }
-        }
 
-        // DUPLICATE CODE, also in solution service
-        private GridElement FindStart(GridElement[,] grid)
-        {
-            for (var r = 0; r < grid.GetLength(0); r++)
-            {
-                for (var c = 0; c < grid.GetLength(1); c++)
-                {
-                    if (grid[r, c].Type == GridElementType.Snake || grid[r, c].Value == "S") // or value S
-                    {
-                        return grid[r, c];
-                    }
-                }
-            }
-
-            throw new Exception("No start position found");
+            return null;
         }
 
         private async void ShowFinalPath(GridElement element)
@@ -188,6 +180,10 @@ namespace AdventOfCode._2022.Day12.App
 
                 current = current.Previous;
             }
+
+            await Task.Delay(1000);
+            Overlay.Visibility = Visibility.Visible;
+            OverlayText.Text = "Path Found!";
         }
 
         private async void StartSnakeGame()

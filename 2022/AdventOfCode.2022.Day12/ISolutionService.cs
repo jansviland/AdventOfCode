@@ -6,11 +6,28 @@ public interface ISolutionService
 {
     public int RunPart1(string[] input);
     public GridElement[,] ParseInput(string[] input);
-
-    // https://en.wikipedia.org/wiki/Pathfinding
-    public GridElement? GetNumberOfStepsToEachLocation(GridElement[,] grid);
-    public LinkedList<Position> FindPath(string[] input); // each position from the start to the end
     public int RunPart2(string[] input);
+
+    // move all grid and path related methods to a common library
+    // https://en.wikipedia.org/wiki/Pathfinding
+
+    /// <summary>
+    /// Updates the grid with the number of steps to each location.
+    /// </summary>
+    /// <returns>Returns the final GridElement that contains the number of steps to each location and the final path</returns>
+    public GridElement? GetNumberOfStepsToEachLocation(GridElement[,] grid);
+
+    public GridElement FindGridElement(GridElement[,] grid, string value);
+
+    /// <summary>
+    /// https://www.omnicalculator.com/math/manhattan-distance#what-is-the-manhattan-distance
+    ///
+    /// Get the Manhattan distance between two points. This means that you can not move diagonally. Only up, down, left and right.
+    /// Similar to if you were to walk through a city and had to walk around any buildings in your way (like in New York City).
+    /// </summary>
+    public int GetManhattanDistance(GridElement[,] grid, GridElement start, GridElement end);
+
+    public LinkedList<Position> FindPath(string[] input); // each position from the start to the end
 }
 
 public class SolutionService : ISolutionService
@@ -64,8 +81,11 @@ public class SolutionService : ISolutionService
     public GridElement? GetNumberOfStepsToEachLocation(GridElement[,] grid)
     {
         // find start position
-        var start = FindStart(grid);
+        var start = FindGridElement(grid, "S");
         start.Step = 0;
+
+        // find end position
+        var end = FindGridElement(grid, "E");
 
         // adjecent positions
         var adjecentPositions = new List<Position>
@@ -81,6 +101,11 @@ public class SolutionService : ISolutionService
 
         while (queue.Count > 0)
         {
+            // BUG: this is not working correctly, when using orderBy, it is not finding the shortest path, should be 490, result is 514...
+
+            // order by distance to end goal (remove this to find every possible path)
+            queue = new Queue<GridElement>(queue.OrderBy(x => x.Distance));
+
             var current = queue.Dequeue();
             var currentStep = current.Step;
 
@@ -119,6 +144,7 @@ public class SolutionService : ISolutionService
 
                     element.Previous = current;
                     element.Step = currentStep + 1;
+                    element.Distance = GetManhattanDistance(grid, element, end);
 
                     queue.Enqueue(element); // add to queue to visit later
 
@@ -141,13 +167,13 @@ public class SolutionService : ISolutionService
         return null;
     }
 
-    private GridElement FindStart(GridElement[,] grid)
+    public GridElement FindGridElement(GridElement[,] grid, string value)
     {
         for (var r = 0; r < grid.GetLength(0); r++)
         {
             for (var c = 0; c < grid.GetLength(1); c++)
             {
-                if (grid[r, c].Type == GridElementType.Snake || grid[r, c].Value == "S") // or value S
+                if (grid[r, c].Value == value)
                 {
                     return grid[r, c];
                 }
@@ -155,6 +181,11 @@ public class SolutionService : ISolutionService
         }
 
         throw new Exception("No start position found");
+    }
+
+    public int GetManhattanDistance(GridElement[,] grid, GridElement start, GridElement end)
+    {
+        return Math.Abs(start.Row - end.Row) + Math.Abs(start.Column - end.Column);
     }
 
     public LinkedList<Position> FindPath(string[] input)
