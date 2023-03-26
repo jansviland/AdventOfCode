@@ -34,6 +34,10 @@ Much better implementation of the path finding algorithm. Prioritizes the path t
 
 ![gif](./wiki/2022-day12-solution-v2.gif)
 
+Correct implementation that finds the shortest path between two points.
+
+![gif](./wiki/2022-day12-solution-v3.gif)
+
 Result
 
 ![png](./wiki/2022-day12-solution-v1-final.PNG)
