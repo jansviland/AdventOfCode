@@ -95,7 +95,6 @@ public class Tests : TestBed<TestFixture>
         Assert.Equal(31, result.Step);
     }
 
-
     [Fact]
     public void FindShortestPathTest4()
     {

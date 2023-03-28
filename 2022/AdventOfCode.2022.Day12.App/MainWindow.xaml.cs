@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -170,41 +171,18 @@ namespace AdventOfCode._2022.Day12.App
             // find end position
             var end = _solutionService.FindGridElement(grid, "E");
 
-            // adjecent positions
-            var adjecentPositions = new List<Position>
-            {
-                new Position(0, 1),
-                new Position(0, -1),
-                new Position(1, 0),
-                new Position(-1, 0),
-            };
-
             var queue = new Queue<GridElement>();
             queue.Enqueue(start);
 
             while (queue.Count > 0)
             {
-                // order by distance to end goal (remove this to find every possible path)
-                // queue = new Queue<GridElement>(queue.OrderBy(x => x.Distance));
+                // re-order by total cost
                 queue = new Queue<GridElement>(queue.OrderBy(x => x.TotalCost));
 
                 var current = queue.Dequeue();
-                var currentStep = current.Step;
-
-                foreach (var adjecentPosition in adjecentPositions)
+                foreach (var neighbour in _solutionService.GetNeighbors(grid, current))
                 {
-                    var row = current.Row + adjecentPosition.Row; // move along x axis
-                    var column = current.Column + adjecentPosition.Column; // move along y axis
-
-                    // check if we are out of bounds
-                    if (row < 0 || row >= grid.GetLength(0) || column < 0 || column >= grid.GetLength(1))
-                    {
-                        continue; // skip this position since it is out of bounds
-                    }
-
-                    // check to see if we have visited this position before, if we have (step is != -1), skip it
-                    var element = grid[row, column];
-                    if (element is { Type: GridElementType.Empty or GridElementType.Food, Step: -1 })
+                    if (neighbour is { Type: GridElementType.Empty or GridElementType.Food, Step: -1 })
                     {
                         var currentValue = (int)current.Value.First();
                         if (current.Value == "S")
@@ -212,36 +190,37 @@ namespace AdventOfCode._2022.Day12.App
                             currentValue = 97; // a
                         }
 
-                        var elementValue = (int)element.Value.First();
-                        if (element.Value == "E")
+                        var neighbourValue = (int)neighbour.Value.First();
+                        if (neighbour.Value == "E")
                         {
-                            elementValue = 122; // z
+                            neighbourValue = 122; // z
                         }
 
                         // var diff = Math.Abs(currentValue - elementValue);
-                        if (elementValue - currentValue > 1)
+                        if (neighbourValue - currentValue > 1)
                         {
                             continue;
                         }
 
-                        element.Previous = current;
-                        element.Step = currentStep + 1;
-                        element.Distance = _solutionService.GetManhattanDistance(grid, element, end);
-                        element.TotalCost = element.Step + element.Distance;
+                        neighbour.Previous = current;
+                        neighbour.Step = current.Step + 1;
+                        neighbour.Distance = _solutionService.GetManhattanDistance(grid, neighbour, end);
+                        neighbour.TotalCost = neighbour.Step + neighbour.Distance;
 
-                        queue.Enqueue(element); // add to queue to visit later
+                        queue.Enqueue(neighbour); // add to queue to visit later
+                        // queue.Add(neighbour.TotalCost, neighbour); // add to queue to visit later
 
                         // animate
-                        ScoreText.Text = $"STEP: {element.Step}";
+                        ScoreText.Text = $"STEP: {neighbour.Step}";
 
                         DrawGrid();
                         await Task.Delay(10);
 
                         // if element is the finish line, stop the loop and animate the path
-                        if (element.Value == "E")
+                        if (neighbour.Value == "E")
                         {
-                            ShowFinalPath(element);
-                            return element;
+                            ShowFinalPath(neighbour);
+                            return neighbour;
                         }
                     }
                 }
