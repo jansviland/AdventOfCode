@@ -1,0 +1,50 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net7.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>Assets\icon.ico</ApplicationIcon>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <TrimmerRootAssembly Include="Avalonia.Themes.Fluent" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia" Version="0.10.18" />
+    <PackageReference Include="Avalonia.Desktop" Version="0.10.18" />
+    <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
+    <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="0.10.18" />
+    <PackageReference Include="XamlNameReferenceGenerator" Version="1.6.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\AdventOfCode.2022.Day12.Common\AdventOfCode.2022.Day12.Common.csproj" />
+    <ProjectReference Include="..\AdventOfCode.2022.Day12\AdventOfCode.2022.Day12.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Assets\Body.png" />
+    <Resource Include="Assets\Body.png" />
+    <None Remove="Assets\DeadBody.png" />
+    <Resource Include="Assets\DeadBody.png" />
+    <None Remove="Assets\DeadHead.png" />
+    <Resource Include="Assets\DeadHead.png" />
+    <None Remove="Assets\DroidSansMono.ttf" />
+    <Resource Include="Assets\DroidSansMono.ttf" />
+    <None Remove="Assets\Empty.png" />
+    <Resource Include="Assets\Empty.png" />
+    <None Remove="Assets\Food.png" />
+    <Resource Include="Assets\Food.png" />
+    <None Remove="Assets\Head.png" />
+    <Resource Include="Assets\Head.png" />
+    <None Remove="Assets\icon.ico" />
+    <Resource Include="Assets\icon.ico" />
+    <None Remove="Assets\input.txt" />
+    <Resource Include="Assets\input.txt" />
+    <None Remove="Assets\sample-input.txt" />
+    <Resource Include="Assets\sample-input.txt" />
+  </ItemGroup>
+</Project>

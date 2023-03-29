@@ -1,0 +1,48 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="AdventOfCode._2022.Day12.Avalonia.MainWindow"
+        Title="AdventOfCode._2022.Day12.Avalonia"
+        Background="#211E2B"
+        Height="600"
+        Width="800">
+
+    <Viewbox>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <TextBlock x:Name="ScoreText"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       Text="SCORE 0"
+                       Margin="20"
+                       FontSize="20"
+                       Foreground="#EBEBEB">
+            </TextBlock>
+        
+        
+        <Border x:Name="GridBorder"
+                Grid.Row="1"
+                BorderThickness="1.5"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                BorderBrush="#4F4867"
+                Margin="20,0, 20, 20">
+
+            <UniformGrid x:Name="GameGrid"
+                         Width="400"
+                         Height="400"
+                         Background="Black"
+                         HorizontalAlignment="Center"
+                         VerticalAlignment="Center">
+            </UniformGrid>
+        </Border>
+        </Grid>
+    </Viewbox>
+
+</Window>

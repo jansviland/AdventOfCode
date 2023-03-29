@@ -28,8 +28,6 @@
       <Resource Include="Assets\Head.png" />
       <None Remove="Assets\icon.ico" />
       <Resource Include="Assets\icon.ico" />
-      <None Remove="Assets\SnakeAssets.zip" />
-      <Resource Include="Assets\SnakeAssets.zip" />
       <None Update="Assets\input.txt">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
