@@ -7,7 +7,10 @@
         Title="AdventOfCode._2022.Day12.Avalonia"
         Background="#211E2B"
         Height="600"
-        Width="800">
+        Width="800"
+        WindowStartupLocation="CenterScreen"
+        
+        >
 
     <Viewbox>
         <Grid>
@@ -25,21 +28,23 @@
                        Foreground="#EBEBEB">
             </TextBlock>
         
-        
         <Border x:Name="GridBorder"
                 Grid.Row="1"
                 BorderThickness="1.5"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
                 BorderBrush="#4F4867"
-                Margin="20,0, 20, 20">
+                Margin="20,0, 20, 20"
+                >
 
             <UniformGrid x:Name="GameGrid"
                          Width="400"
                          Height="400"
                          Background="Black"
                          HorizontalAlignment="Center"
-                         VerticalAlignment="Center">
+                         VerticalAlignment="Center"
+                         UseLayoutRounding="True"
+                         >
             </UniformGrid>
         </Border>
         </Grid>
