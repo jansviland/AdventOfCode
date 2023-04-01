@@ -1,8 +1,13 @@
 using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 using AdventOfCode._2022.Day12.Common.Models;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Shapes;
+using Avalonia.Input;
 using Avalonia.Layout;
 using Avalonia.Media;
 
@@ -10,6 +15,22 @@ namespace AdventOfCode._2022.Day12.Avalonia;
 
 public partial class MainWindow : Window
 {
+    private readonly ISolutionService _solutionService;
+    // private readonly Dictionary<GridElementType, ImageSource> _gridValueToImage = new()
+    // {
+    //     { GridElementType.Empty, Images.Empty },
+    //     { GridElementType.Snake, Images.Body },
+    //     { GridElementType.Food, Images.Food },
+    // };
+    //
+    // private readonly Dictionary<Direction, int> _directionToRotation = new()
+    // {
+    //     { Direction.Up, 0 },
+    //     { Direction.Down, 180 },
+    //     { Direction.Right, 90 },
+    //     { Direction.Left, 270 },
+    // };
+
     private bool _isSnakeGameLoopRunning;
 
     private int _rows = 20;
@@ -21,6 +42,13 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
+    }
+
+    public MainWindow(ISolutionService solutionService) : this()
+    {
+        _solutionService = solutionService;
+
+        // InitializeComponent();
 
 #if DEBUG
         this.AttachDevTools();
@@ -43,6 +71,102 @@ public partial class MainWindow : Window
         //     
         //     Position = new PixelPoint(Position.X + (int)x, Position.Y + (int)y);
         // });
+    }
+
+    private void StartAdventOfCode()
+    {
+        // string[] input = File.ReadAllLines("Assets/sample-input.txt");
+        string[] input = File.ReadAllLines("Assets/input.txt");
+
+        // parse input
+        var grid = _solutionService.ParseInput(input);
+
+        // update grid and calculate the step to each position
+        // _solutionService.GetNumberOfStepsToEachLocation(grid);
+        FindShortestPath(grid);
+
+        // set rows and columns
+        _rows = grid.GetLength(0);
+        _columns = grid.GetLength(1);
+
+        // create UI elements
+        _grid = CreateGrid();
+
+        // update game state
+        _state = new State(grid);
+
+        // update UI elements with correct images
+        DrawGrid();
+
+        Overlay.IsVisible = false;
+        ScoreText.Text = "STEP: 0";
+    }
+
+    public async Task<GridElement?> FindShortestPath(GridElement[,] grid)
+    {
+        // find start position
+        var start = _solutionService.FindGridElement(grid, "S");
+        start.Step = 0;
+
+        // find end position
+        var end = _solutionService.FindGridElement(grid, "E");
+
+        var queue = new Queue<GridElement>();
+        queue.Enqueue(start);
+
+        while (queue.Count > 0)
+        {
+            // re-order by total cost
+            queue = new Queue<GridElement>(queue.OrderBy(x => x.TotalCost));
+
+            var current = queue.Dequeue();
+            foreach (var neighbour in _solutionService.GetNeighbors(grid, current))
+            {
+                if (neighbour is { Type: GridElementType.Empty or GridElementType.Food, Step: -1 })
+                {
+                    var currentValue = (int)current.Value.First();
+                    if (current.Value == "S")
+                    {
+                        currentValue = 97; // a
+                    }
+
+                    var neighbourValue = (int)neighbour.Value.First();
+                    if (neighbour.Value == "E")
+                    {
+                        neighbourValue = 122; // z
+                    }
+
+                    // var diff = Math.Abs(currentValue - elementValue);
+                    if (neighbourValue - currentValue > 1)
+                    {
+                        continue;
+                    }
+
+                    neighbour.Previous = current;
+                    neighbour.Step = current.Step + 1;
+                    neighbour.Distance = _solutionService.GetManhattanDistance(grid, neighbour, end);
+                    neighbour.TotalCost = neighbour.Step + neighbour.Distance;
+
+                    queue.Enqueue(neighbour); // add to queue to visit later
+                    // queue.Add(neighbour.TotalCost, neighbour); // add to queue to visit later
+
+                    // animate
+                    ScoreText.Text = $"STEP: {neighbour.Step}";
+
+                    DrawGrid();
+                    await Task.Delay(10);
+
+                    // if element is the finish line, stop the loop and animate the path
+                    if (neighbour.Value == "E")
+                    {
+                        // ShowFinalPath(neighbour);
+                        return neighbour;
+                    }
+                }
+            }
+        }
+
+        return null;
     }
 
     private Grid[,] CreateGrid()
@@ -105,7 +229,7 @@ public partial class MainWindow : Window
     private void DrawGrid()
     {
         // test
-        var counter = 0;
+        // var counter = 0;
 
         for (var r = 0; r < _rows; r++)
         {
@@ -117,15 +241,14 @@ public partial class MainWindow : Window
                 var image = _grid[r, c].Children[0] as Rectangle;
                 image.Fill = gridElement.Type switch
                 {
-                    GridElementType.Empty => Brushes.White,
-                    GridElementType.Snake => Brushes.Green,
+                    // define color based on value
+                    // TODO: make this faster
+                    GridElementType.Empty => new SolidColorBrush(GetColorFromValue(gridElement.Step)),
+                    GridElementType.Snake => Brushes.Black,
                     GridElementType.Food => Brushes.Red,
                     _ => throw new ArgumentOutOfRangeException()
                 };
                 image.ClipToBounds = true;
-
-                // TODO: instead of using type, use value, then create a rectangle instead of image
-                // the color can be based on the value, the higher the value, the darker the color for example
 
                 // image!.Source = _gridValueToImage[gridElement.Type];
                 // image.RenderTransform = Transform.Identity; // reset rotation
@@ -143,11 +266,49 @@ public partial class MainWindow : Window
                     textBlock.Margin = new Thickness(0);
                 }
 
-                // textBlock!.Text = gridElement.Step != -1 ? gridElement.Step.ToString() : gridElement.Value;
+                textBlock!.Text = gridElement.Step != -1 ? gridElement.Step.ToString() : gridElement.Value;
 
                 // test
-                textBlock!.Text = counter++.ToString();
+                // textBlock!.Text = counter++.ToString();
             }
+        }
+    }
+
+    // TODO: create a dictionary of colors and use that instead, so it's faster
+    // go from 0 to 1000 and add a color for each value to a dictionary for faster lookup
+    private static Color GetColorFromValue(int value)
+    {
+        int old_min = 0;
+        int old_max = 500;
+        float t = (float)(value - old_min) / (old_max - old_min);
+
+        byte redValue = (byte)(255 * (1 - t));
+        byte greenValue = 255;
+        byte blueValue = redValue;
+
+        return Color.FromArgb(255, redValue, greenValue, blueValue);
+    }
+
+    private void InputElement_OnKeyDown(object? sender, KeyEventArgs e)
+    {
+        // if overlay is visible, don't allow any key presses to go through
+        if (Overlay.IsVisible)
+        {
+            e.Handled = true;
+        }
+
+        // get key pressed
+        var key = e.Key;
+        switch (key)
+        {
+            case Key.S:
+                // StartSnakeGame();
+                break;
+            case Key.A:
+                StartAdventOfCode();
+                break;
+            default:
+                return;
         }
     }
 }
