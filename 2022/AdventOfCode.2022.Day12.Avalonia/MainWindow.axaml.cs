@@ -16,6 +16,10 @@ namespace AdventOfCode._2022.Day12.Avalonia;
 public partial class MainWindow : Window
 {
     private readonly ISolutionService _solutionService;
+
+    // pre-calculate the colors for the cells based on the value
+    private readonly Dictionary<int, SolidColorBrush> _valueToColor = new();
+
     // private readonly Dictionary<GridElementType, ImageSource> _gridValueToImage = new()
     // {
     //     { GridElementType.Empty, Images.Empty },
@@ -56,6 +60,8 @@ public partial class MainWindow : Window
 
         _grid = CreateGrid();
         _state = new State(_rows, _columns);
+
+        PopulateValueToColorDictionary(0, 500);
 
         DrawGrid();
 
@@ -104,6 +110,8 @@ public partial class MainWindow : Window
 
     public async Task<GridElement?> FindShortestPath(GridElement[,] grid)
     {
+        var count = 0;
+
         // find start position
         var start = _solutionService.FindGridElement(grid, "S");
         start.Step = 0;
@@ -150,16 +158,22 @@ public partial class MainWindow : Window
                     queue.Enqueue(neighbour); // add to queue to visit later
                     // queue.Add(neighbour.TotalCost, neighbour); // add to queue to visit later
 
-                    // animate
-                    ScoreText.Text = $"STEP: {neighbour.Step}";
+                    // only animate every 5th step
+                    count++;
+                    if (count % 5 == 0)
+                    {
+                        Console.WriteLine($"count: {count}");
+                        // animate
+                        ScoreText.Text = $"STEP: {neighbour.Step}";
 
-                    DrawGrid();
-                    await Task.Delay(10);
+                        DrawGrid();
+                        await Task.Delay(2);
+                    }
 
                     // if element is the finish line, stop the loop and animate the path
                     if (neighbour.Value == "E")
                     {
-                        // ShowFinalPath(neighbour);
+                        ShowFinalPath(neighbour);
                         return neighbour;
                     }
                 }
@@ -167,6 +181,25 @@ public partial class MainWindow : Window
         }
 
         return null;
+    }
+
+    private async void ShowFinalPath(GridElement element)
+    {
+        var current = element;
+        while (current.Previous != null)
+        {
+            current.Type = GridElementType.Snake;
+            DrawGrid();
+
+            await Task.Delay(5);
+
+            current = current.Previous;
+        }
+
+        await Task.Delay(1000);
+
+        Overlay.IsVisible = true;
+        OverlayText.Text = "Path Found!";
     }
 
     private Grid[,] CreateGrid()
@@ -228,9 +261,6 @@ public partial class MainWindow : Window
 
     private void DrawGrid()
     {
-        // test
-        // var counter = 0;
-
         for (var r = 0; r < _rows; r++)
         {
             for (var c = 0; c < _columns; c++)
@@ -242,8 +272,7 @@ public partial class MainWindow : Window
                 image.Fill = gridElement.Type switch
                 {
                     // define color based on value
-                    // TODO: make this faster
-                    GridElementType.Empty => new SolidColorBrush(GetColorFromValue(gridElement.Step)),
+                    GridElementType.Empty => gridElement.Step != -1 ? _valueToColor[gridElement.Step] : Brushes.White,
                     GridElementType.Snake => Brushes.Black,
                     GridElementType.Food => Brushes.Red,
                     _ => throw new ArgumentOutOfRangeException()
@@ -267,26 +296,26 @@ public partial class MainWindow : Window
                 }
 
                 textBlock!.Text = gridElement.Step != -1 ? gridElement.Step.ToString() : gridElement.Value;
-
-                // test
-                // textBlock!.Text = counter++.ToString();
             }
         }
     }
 
-    // TODO: create a dictionary of colors and use that instead, so it's faster
-    // go from 0 to 1000 and add a color for each value to a dictionary for faster lookup
-    private static Color GetColorFromValue(int value)
+    private void PopulateValueToColorDictionary(int min, int max)
     {
-        int old_min = 0;
-        int old_max = 500;
-        float t = (float)(value - old_min) / (old_max - old_min);
+        for (var i = min; i < max; i++)
+        {
+            _valueToColor.Add(i, new SolidColorBrush(GetColorFromValue(i, min, max)));
+        }
+    }
 
-        byte redValue = (byte)(255 * (1 - t));
-        byte greenValue = 255;
-        byte blueValue = redValue;
+    private static Color GetColorFromValue(int value, int min, int max)
+    {
+        var t = (float)(value - min) / (max - min);
 
-        return Color.FromArgb(255, redValue, greenValue, blueValue);
+        var redValue = (byte)(255 * (1 - t));
+        const byte greenValue = 255;
+
+        return Color.FromArgb(255, redValue, greenValue, redValue);
     }
 
     private void InputElement_OnKeyDown(object? sender, KeyEventArgs e)
