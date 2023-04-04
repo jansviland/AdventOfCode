@@ -17,6 +17,8 @@ public partial class MainWindow : Window
 {
     private readonly ISolutionService _solutionService;
 
+    // use Dictionary to avoid having to create a new SolidColorBrush, ImageSource, etc. every time, which is expensive
+
     // pre-calculate the colors for the cells based on the value
     private readonly Dictionary<int, SolidColorBrush> _valueToColor = new();
 
@@ -79,17 +81,13 @@ public partial class MainWindow : Window
         // });
     }
 
-    private void StartAdventOfCode()
+    private async void StartAdventOfCode()
     {
-        // string[] input = File.ReadAllLines("Assets/sample-input.txt");
-        string[] input = File.ReadAllLines("Assets/input.txt");
+        // var input = await File.ReadAllLinesAsync("Assets/sample-input.txt");
+        var input = await File.ReadAllLinesAsync("Assets/input.txt");
 
         // parse input
         var grid = _solutionService.ParseInput(input);
-
-        // update grid and calculate the step to each position
-        // _solutionService.GetNumberOfStepsToEachLocation(grid);
-        FindShortestPath(grid);
 
         // set rows and columns
         _rows = grid.GetLength(0);
@@ -106,8 +104,13 @@ public partial class MainWindow : Window
 
         Overlay.IsVisible = false;
         ScoreText.Text = "STEP: 0";
+
+        // update grid and calculate the step to each position
+        // _solutionService.GetNumberOfStepsToEachLocation(grid);
+        await FindShortestPath(grid);
     }
 
+    // DUPLICATE CODE, also in solution service, but here we update the UI and animate
     public async Task<GridElement?> FindShortestPath(GridElement[,] grid)
     {
         var count = 0;
@@ -124,6 +127,7 @@ public partial class MainWindow : Window
 
         while (queue.Count > 0)
         {
+            // TODO: this should not be needed, should be able to use SortedList that is kept sorted on insert
             // re-order by total cost
             queue = new Queue<GridElement>(queue.OrderBy(x => x.TotalCost));
 
@@ -144,7 +148,8 @@ public partial class MainWindow : Window
                         neighbourValue = 122; // z
                     }
 
-                    // var diff = Math.Abs(currentValue - elementValue);
+                    // if the neighbour is more than 1 step away, it is not allowed to go "up"
+                    // still allowed to go "down", so we can go from "z" to "a" for example
                     if (neighbourValue - currentValue > 1)
                     {
                         continue;
