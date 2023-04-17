@@ -29,6 +29,11 @@ public interface ISolutionService
     /// </summary>
     public int GetManhattanDistance(GridElement[,] grid, GridElement start, GridElement end);
 
+    /// <summary>
+    /// Find all starting positions (elements with a value of "a")
+    /// </summary>
+    public List<GridElement> GetStartingPositions(GridElement[,] grid);
+
     public LinkedList<Position> FindPath(string[] input); // each position from the start to the end
 }
 
@@ -346,6 +351,11 @@ public class SolutionService : ISolutionService
         return Math.Abs(start.Row - end.Row) + Math.Abs(start.Column - end.Column);
     }
 
+    public List<GridElement> GetStartingPositions(GridElement[,] grid)
+    {
+        throw new NotImplementedException();
+    }
+
     public LinkedList<Position> FindPath(string[] input)
     {
         throw new NotImplementedException();
@@ -355,6 +365,9 @@ public class SolutionService : ISolutionService
     {
         _logger.LogInformation("Solving day 12 - Part 2");
         _logger.LogInformation("Input contains {Input} values", input.Length);
+
+        // TODO: find all starting points (posistions with elevation a)
+        // TODO: run A* for each starting point to end point E
 
         throw new NotImplementedException();
     }
