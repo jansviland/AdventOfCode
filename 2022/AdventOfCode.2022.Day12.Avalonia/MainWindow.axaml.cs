@@ -107,17 +107,17 @@ public partial class MainWindow : Window
 
         // update grid and calculate the step to each position
         // _solutionService.GetNumberOfStepsToEachLocation(grid);
-        await FindShortestPath(grid);
+        // await FindShortestPath(grid);
     }
 
     // DUPLICATE CODE, also in solution service, but here we update the UI and animate
-    public async Task<GridElement?> FindShortestPath(GridElement[,] grid)
+    public async Task<GridElement?> FindShortestPath(GridElement[,] grid, GridElement start)
     {
         var count = 0;
 
         // find start position
-        var start = _solutionService.FindGridElement(grid, "S");
-        start.Step = 0;
+        // var start = _solutionService.FindGridElement(grid, "S");
+        // start.Step = 0;
 
         // find end position
         var end = _solutionService.FindGridElement(grid, "E");
@@ -253,7 +253,6 @@ public partial class MainWindow : Window
                 grid.Tag = new Tuple<int, int>(row, column); // Store row and column information on the Grid element
 
                 // add click event to each grid element with the row and column as parameters
-                // grid.MouseLeftButtonDown += GridElement_MouseLeftButtonDown;
 
                 // add to UniformGrid in the MainWindow
                 GameGrid.Children.Add(grid);
@@ -291,6 +290,14 @@ public partial class MainWindow : Window
                 {
                     continue;
                 }
+
+                image.PointerPressed += (sender, args) =>
+                {
+                    // stop FindShortestPath if it is running and start a new one
+
+                    // find path from clicked element to end
+                    FindShortestPath(_state.Grid, gridElement);
+                };
 
                 var textBlock = _grid[r, c].Children[1] as TextBlock;
 
@@ -339,7 +346,12 @@ public partial class MainWindow : Window
                 // StartSnakeGame();
                 break;
             case Key.A:
+
+                // TODO: do not start game, instead you can click on the grid element to set the starting point
                 StartAdventOfCode();
+
+                // TODO: mark all possible starting points
+
                 break;
             default:
                 return;
