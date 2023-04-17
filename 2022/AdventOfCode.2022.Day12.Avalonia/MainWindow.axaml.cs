@@ -2,10 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using AdventOfCode._2022.Day12.Common.Models;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Platform;
 using Avalonia.Controls.Shapes;
 using Avalonia.Input;
 using Avalonia.Layout;
@@ -45,6 +47,8 @@ public partial class MainWindow : Window
     private Grid[,] _grid;
     private State _state;
 
+    private CancellationTokenSource _cancellationTokenSource = new();
+
     public MainWindow()
     {
         InitializeComponent();
@@ -81,6 +85,19 @@ public partial class MainWindow : Window
         // });
     }
 
+    // private void ResetValues()
+    // {
+    //     // var input = await File.ReadAllLinesAsync("Assets/sample-input.txt");
+    //     var input = await File.ReadAllLinesAsync("Assets/input.txt");
+    //
+    //     // parse input
+    //     var grid = _solutionService.ParseInput(input);
+    //
+    //     // set rows and columns
+    //     _rows = grid.GetLength(0);
+    //     _columns = grid.GetLength(1); 
+    // }
+
     private async void StartAdventOfCode()
     {
         // var input = await File.ReadAllLinesAsync("Assets/sample-input.txt");
@@ -110,8 +127,7 @@ public partial class MainWindow : Window
         // await FindShortestPath(grid);
     }
 
-    // DUPLICATE CODE, also in solution service, but here we update the UI and animate
-    public async Task<GridElement?> FindShortestPath(GridElement[,] grid, GridElement start)
+    public async Task<GridElement?> FindShortestPath(GridElement[,] grid, GridElement start, CancellationToken cancellationToken)
     {
         var count = 0;
 
@@ -127,6 +143,11 @@ public partial class MainWindow : Window
 
         while (queue.Count > 0)
         {
+            // if (cancellationToken.IsCancellationRequested)
+            // {
+            //     return null;
+            // }
+
             // TODO: this should not be needed, should be able to use SortedList that is kept sorted on insert
             // re-order by total cost
             queue = new Queue<GridElement>(queue.OrderBy(x => x.TotalCost));
@@ -134,7 +155,12 @@ public partial class MainWindow : Window
             var current = queue.Dequeue();
             foreach (var neighbour in _solutionService.GetNeighbors(grid, current))
             {
-                if (neighbour is { Type: GridElementType.Empty or GridElementType.Food, Step: -1 })
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    return null;
+                }
+
+                if (neighbour is { Type: GridElementType.Empty or GridElementType.Food or GridElementType.Path, Step: -1 })
                 {
                     var currentValue = (int)current.Value.First();
                     if (current.Value == "S")
@@ -167,12 +193,12 @@ public partial class MainWindow : Window
                     count++;
                     if (count % 5 == 0)
                     {
-                        Console.WriteLine($"count: {count}");
                         // animate
                         ScoreText.Text = $"STEP: {neighbour.Step}";
 
                         DrawGrid();
-                        await Task.Delay(2);
+
+                        await Task.Delay(2, cancellationToken);
                     }
 
                     // if element is the finish line, stop the loop and animate the path
@@ -193,7 +219,8 @@ public partial class MainWindow : Window
         var current = element;
         while (current.Previous != null)
         {
-            current.Type = GridElementType.Snake;
+            current.Type = GridElementType.Path;
+
             DrawGrid();
 
             await Task.Delay(5);
@@ -250,9 +277,10 @@ public partial class MainWindow : Window
                 grid.Children.Add(image);
                 grid.Children.Add(textBlock);
 
+                // row, column, has buttonClickHandler
                 grid.Tag = new Tuple<int, int>(row, column); // Store row and column information on the Grid element
 
-                // add click event to each grid element with the row and column as parameters
+                grid.PointerPressed += OnGridElementMouseClick;
 
                 // add to UniformGrid in the MainWindow
                 GameGrid.Children.Add(grid);
@@ -277,8 +305,9 @@ public partial class MainWindow : Window
                 {
                     // define color based on value
                     GridElementType.Empty => gridElement.Step != -1 ? _valueToColor[gridElement.Step] : Brushes.White,
-                    GridElementType.Snake => Brushes.Black,
+                    GridElementType.Snake => Brushes.GreenYellow,
                     GridElementType.Food => Brushes.Red,
+                    GridElementType.Path => Brushes.Yellow,
                     _ => throw new ArgumentOutOfRangeException()
                 };
                 image.ClipToBounds = true;
@@ -286,18 +315,10 @@ public partial class MainWindow : Window
                 // image!.Source = _gridValueToImage[gridElement.Type];
                 // image.RenderTransform = Transform.Identity; // reset rotation
 
-                if (_isSnakeGameLoopRunning)
-                {
-                    continue;
-                }
-
-                image.PointerPressed += (sender, args) =>
-                {
-                    // stop FindShortestPath if it is running and start a new one
-
-                    // find path from clicked element to end
-                    FindShortestPath(_state.Grid, gridElement);
-                };
+                // if (_isSnakeGameLoopRunning)
+                // {
+                //     continue;
+                // }
 
                 var textBlock = _grid[r, c].Children[1] as TextBlock;
 
@@ -310,6 +331,28 @@ public partial class MainWindow : Window
                 textBlock!.Text = gridElement.Step != -1 ? gridElement.Step.ToString() : gridElement.Value;
             }
         }
+    }
+
+    private void OnGridElementMouseClick(object sender, PointerPressedEventArgs args)
+    {
+        var gridElement = sender as Grid;
+        var rowColumn = gridElement?.Tag as Tuple<int, int>;
+
+        // stop FindShortestPath if it is running and start a new one
+        _cancellationTokenSource.Cancel();
+        _cancellationTokenSource = new CancellationTokenSource();
+
+        // reset number of steps, set all steps to -1
+        for (var r = 0; r < _rows; r++)
+        {
+            for (var c = 0; c < _columns; c++)
+            {
+                _state.Grid[r, c].Step = -1;
+            }
+        }
+
+        // find path from clicked element to end
+        FindShortestPath(_state.Grid, _state.Grid[rowColumn.Item1, rowColumn.Item2], _cancellationTokenSource.Token);
     }
 
     private void PopulateValueToColorDictionary(int min, int max)

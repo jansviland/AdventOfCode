@@ -245,6 +245,8 @@ public class SolutionService : ISolutionService
         start.Step = 0;
         queue.Enqueue(start);
 
+        // var gridClone = (GridElement[,])grid.Clone();
+
         while (queue.Count > 0)
         {
             // re-order by total cost
@@ -353,7 +355,19 @@ public class SolutionService : ISolutionService
 
     public List<GridElement> GetStartingPositions(GridElement[,] grid)
     {
-        throw new NotImplementedException();
+        var startingPositions = new List<GridElement>();
+        for (var r = 0; r < grid.GetLength(0); r++)
+        {
+            for (var c = 0; c < grid.GetLength(1); c++)
+            {
+                if (grid[r, c].Value == "a")
+                {
+                    startingPositions.Add(grid[r, c]);
+                }
+            }
+        }
+
+        return startingPositions;
     }
 
     public LinkedList<Position> FindPath(string[] input)
@@ -366,9 +380,28 @@ public class SolutionService : ISolutionService
         _logger.LogInformation("Solving day 12 - Part 2");
         _logger.LogInformation("Input contains {Input} values", input.Length);
 
-        // TODO: find all starting points (posistions with elevation a)
-        // TODO: run A* for each starting point to end point E
+        var grid = ParseInput(input);
 
-        throw new NotImplementedException();
+        // find all starting points (posistions with elevation a)
+        var startingPositions = GetStartingPositions(grid);
+
+        var shortestPath = int.MaxValue;
+        foreach (var start in startingPositions)
+        {
+            // TODO: should move this out of the loop
+            grid = ParseInput(input);
+            var end = FindGridElement(grid, "E");
+
+            var result = FindShortestPath(grid, start, end);
+            if (result != null)
+            {
+                if (result.Step < shortestPath)
+                {
+                    shortestPath = result.Step;
+                }
+            }
+        }
+
+        return shortestPath - 1;
     }
 }

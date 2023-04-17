@@ -6,6 +6,7 @@ public enum GridElementType
     Snake,
     Food,
     OutOfBounds,
+    Path
     // Wall
 }
 

@@ -211,6 +211,19 @@ public class Tests : TestBed<TestFixture>
     }
 
     [Fact]
+    public void GetStartingPositionsTest()
+    {
+        // arrange
+        var grid = _solutionService.ParseInput(_input);
+
+        // act
+        var result = _solutionService.GetStartingPositions(grid);
+
+        // assert
+        Assert.Equal(5, result.Count);
+    }
+
+    [Fact]
     public void Part2Test()
     {
         _testOutputHelper.WriteLine("Running unit test - Part 2");
