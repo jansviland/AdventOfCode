@@ -39,7 +39,7 @@ public partial class MainWindow : Window
     //     { Direction.Left, 270 },
     // };
 
-    private bool _isSnakeGameLoopRunning;
+    // private bool _isSnakeGameLoopRunning;
 
     private int _rows = 20;
     private int _columns = 20;
@@ -70,33 +70,7 @@ public partial class MainWindow : Window
         PopulateValueToColorDictionary(0, 500);
 
         DrawGrid();
-
-        // ClientSizeProperty.Changed.Subscribe(size =>
-        // {
-        //     var x = (size.OldValue.Value.Width - size.NewValue.Value.Width) / 2;
-        //     var y = (size.OldValue.Value.Height - size.NewValue.Value.Height) / 2;
-        //
-        //     Console.WriteLine($"width: {size.NewValue.Value.Width}");
-        //     Console.WriteLine($"height: {size.NewValue.Value.Height}");
-        //
-        //     // TODO: set the height and width so the elements don't get uneven sizes or find the perfect width and height so it looks good
-        //     
-        //     Position = new PixelPoint(Position.X + (int)x, Position.Y + (int)y);
-        // });
     }
-
-    // private void ResetValues()
-    // {
-    //     // var input = await File.ReadAllLinesAsync("Assets/sample-input.txt");
-    //     var input = await File.ReadAllLinesAsync("Assets/input.txt");
-    //
-    //     // parse input
-    //     var grid = _solutionService.ParseInput(input);
-    //
-    //     // set rows and columns
-    //     _rows = grid.GetLength(0);
-    //     _columns = grid.GetLength(1); 
-    // }
 
     private async void StartAdventOfCode()
     {

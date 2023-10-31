@@ -27,6 +27,13 @@ internal static class Program
 
         Log.Logger.Information("args: {AllArguments}", string.Join(", ", args));
 
+        Log.Logger.Verbose("verbose");
+        Log.Logger.Information("info");
+        Log.Logger.Warning("warn");
+        Log.Logger.Error("error");
+        Log.Logger.Fatal("fatal");
+        Log.Logger.Debug("debug");
+
         var solutionService = ActivatorUtilities.CreateInstance<SolutionService>(host.Services);
 
         string[] input;

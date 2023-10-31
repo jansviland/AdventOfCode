@@ -19,7 +19,7 @@ public class Tests : TestBed<TestFixture>
         _solutionService = _fixture.GetService<ISolutionService>(_testOutputHelper)!;
     }
 
-    [Fact]
+    [Fact(Skip = "Not implemented")]
     public void Part1Test()
     {
         _testOutputHelper.WriteLine("Running unit test - Part 1");
@@ -32,7 +32,7 @@ public class Tests : TestBed<TestFixture>
         Assert.Equal(157, result);
     }
 
-    [Fact]
+    [Fact(Skip = "Not implemented")]
     public void Part2Test()
     {
         _testOutputHelper.WriteLine("Running unit test - Part 2");

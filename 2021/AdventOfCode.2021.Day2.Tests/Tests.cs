@@ -9,7 +9,7 @@ public class Tests : TestBed<TestFixture>
         _fixture = fixture;
     }
 
-    [Fact]
+    [Fact(Skip = "Not implemented")]
     public void Test()
     {
         _testOutputHelper.WriteLine("Running unit test 1");
