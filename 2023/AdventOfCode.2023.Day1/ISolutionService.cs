@@ -1,3 +1,5 @@
+using Algorithms;
+
 namespace AdventOfCode._2023.Day1;
 
 public interface ISolutionService
@@ -19,6 +21,8 @@ public class SolutionService : ISolutionService
     {
         _logger.LogInformation("Solving - 2023 - Day 1 - Part 1");
         _logger.LogInformation("Input contains {Input} values", input.Length);
+
+        BinarySearch.FindIndex(input, "test");
 
         throw new NotImplementedException();
 

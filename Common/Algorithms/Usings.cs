@@ -6,7 +6,3 @@ global using System.Net;
 global using System.Reflection;
 global using System.Threading.Tasks;
 global using System.Text;
-
-global using Microsoft.Extensions.Logging;
-
-global using System.Runtime.InteropServices;
