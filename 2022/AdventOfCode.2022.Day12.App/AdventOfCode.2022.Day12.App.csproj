@@ -9,6 +9,7 @@
         <RootNamespace>AdventOfCode._2022.Day12.App</RootNamespace>
         <Version>1.0.1</Version>
         <ApplicationIcon>Assets\icon.ico</ApplicationIcon>
+        <EnableWindowsTargeting>true</EnableWindowsTargeting>
     </PropertyGroup>
 
     <ItemGroup>
