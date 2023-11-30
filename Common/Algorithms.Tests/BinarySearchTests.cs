@@ -1,6 +1,6 @@
 namespace Algorithms.Tests;
 
-public class UnitTest1
+public class BinarySearchTests
 {
     [Fact]
     public void BinarySearch_SimpleIntList_ShouldFindIndex()
