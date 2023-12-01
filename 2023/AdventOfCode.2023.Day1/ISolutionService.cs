@@ -42,14 +42,13 @@ public class SolutionService : ISolutionService
                 }
             }
 
-
             sum += int.Parse(first + "" + last);
         }
 
         return sum;
     }
 
-    // TODO: can be improved by skipping ahead when we find a word match, when we find "five", we can skip ahead 4 characters. Now we are checking the same characters multiple times.
+    // TODO: second possible improvement is to look for the first word starting from the start of the string, then look for the second word starting from the end of the string, going backwards.
     private static char? LookForMatch(string line, int index)
     {
         var c = line[index];
@@ -74,7 +73,7 @@ public class SolutionService : ISolutionService
 
     public int RunPart2(string[] input)
     {
-        _logger.LogInformation("Solving - 2023 - day 1 - Part 2");
+        _logger.LogInformation("Solving - 2023 - Day 1 - Part 2");
         _logger.LogInformation("Input contains {Input} values", input.Length);
 
         var sum = 0;
@@ -100,7 +99,6 @@ public class SolutionService : ISolutionService
                     last = c;
                 }
             }
-
 
             sum += int.Parse(first + "" + last);
         }
