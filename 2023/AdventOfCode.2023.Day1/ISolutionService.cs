@@ -52,7 +52,7 @@ public class SolutionService : ISolutionService
     private static char? LookForMatch(string line, int index)
     {
         var c = line[index];
-        if (c >= '0' && c <= '9')
+        if (char.IsDigit(c))
         {
             return c;
         }
