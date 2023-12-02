@@ -15,7 +15,7 @@ public class SolutionService : ISolutionService
         _logger = logger;
     }
 
-    public (int, int, int) GetMaxCubes(string game)
+    public static (int, int, int) GetMaxCubes(string game)
     {
         var red = 0;
         var green = 0;
@@ -34,21 +34,20 @@ public class SolutionService : ISolutionService
                 var count = int.Parse(splitColors[0]);
                 var color = splitColors[1];
 
-                if (color == "red")
+                switch (color)
                 {
-                    red = Math.Max(red, count);
-                }
-                else if (color == "green")
-                {
-                    green = Math.Max(green, count);
-                }
-                else if (color == "blue")
-                {
-                    blue = Math.Max(blue, count);
+                    case "red":
+                        red = Math.Max(red, count);
+                        break;
+                    case "green":
+                        green = Math.Max(green, count);
+                        break;
+                    case "blue":
+                        blue = Math.Max(blue, count);
+                        break;
                 }
             }
         }
-
 
         return (red, green, blue);
     }
