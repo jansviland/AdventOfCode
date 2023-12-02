@@ -15,7 +15,7 @@ public class SolutionService : ISolutionService
         _logger = logger;
     }
 
-    public static (int, int, int) GetMaxCubes(string game)
+    private static (int, int, int) GetMaxCubes(string game)
     {
         var red = 0;
         var green = 0;
