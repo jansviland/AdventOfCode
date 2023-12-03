@@ -42,7 +42,7 @@ public class Tests : TestBed<TestFixture>
         // assert
         Assert.Equal(4, result);
     }
-    
+
     [Fact]
     public void Part1TestEdgeCases2()
     {
@@ -77,6 +77,7 @@ public class Tests : TestBed<TestFixture>
         // assert
         Assert.Equal(4, result);
     }
+
     [Fact]
     public void Part1TestEdgeCases4()
     {
@@ -96,6 +97,24 @@ public class Tests : TestBed<TestFixture>
     }
 
     [Fact]
+    public void Part1TestEdgeCases5()
+    {
+        // arrange
+        var input = new string[]
+        {
+            "...",
+            ".*.",
+            "123"
+        };
+
+        // act
+        var result = _solutionService.RunPart1(input);
+
+        // assert
+        Assert.Equal(123, result);
+    }
+
+    [Fact]
     public void Part2Test()
     {
         // arrange
@@ -105,6 +124,6 @@ public class Tests : TestBed<TestFixture>
         var result = _solutionService.RunPart2(_input);
 
         // assert
-        Assert.Equal(2286, result);
+        Assert.Equal(467835, result);
     }
 }
