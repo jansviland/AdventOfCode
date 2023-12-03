@@ -250,21 +250,14 @@ public class SolutionService : ISolutionService
             }
         }
 
-        // var count = 0;
-        // var gearNumber = -1;
-
-        // var numbersAdjacent = new List<int>();
+        // store the gear position and the adjacent numbers
         var gearAndAdjacentNumbers = new Dictionary<string, int[]>();
-        
 
         // start at the top left corner
         for (var y = 0; y < grid.GetLength(0); y++)
         {
             int[]? closestGearPosition = null;
             var numberString = "";
-            
-            var firstGear = 0;
-            var secondGear = 0;
 
             var line = input[y];
             for (var x = 0; x < line.Length; x++)
@@ -282,7 +275,6 @@ public class SolutionService : ISolutionService
                     // only check if we haven't already found an adjacent symbol (only one part of the number needs to be adjacent)
                     if (closestGearPosition == null)
                     {
-                        // TODO: return the unique x, y coordinates of the gear symbol.
                         closestGearPosition = FindAdjacentGear(grid, x, y);
                     }
                 }
@@ -306,55 +298,31 @@ public class SolutionService : ISolutionService
                     Console.Write(character);
                 }
 
-                // we have three separate conditions for when to add the number to the list of numbers:
-                // 1. we have reached the end of the number, so add it to the list of numbers (if it is adjacent to a symbol)
-                // 2. we have reached the end of row along the x axis, so add the number to the list of numbers (if it is adjacent to a symbol)
-                // 3. we have reached the end of column along the y axis, so add the number to the list of numbers (if it is adjacent to a symbol)
                 if (!char.IsDigit(character) || x == line.Length - 1)
                 {
                     // we have reached the end of the number, so add it to the list of numbers
                     if (numberString.Length > 0 && closestGearPosition != null)
                     {
                         var number = int.Parse(numberString);
-                        
+
+                        // save gear coordinates as "x, y"
                         var gearPosition = $"{closestGearPosition[0]},{closestGearPosition[1]}";
-                        if (gearAndAdjacentNumbers.ContainsKey(gearPosition))
+                        if (gearAndAdjacentNumbers.TryGetValue(gearPosition, out var adjacentNumber))
                         {
-                            gearAndAdjacentNumbers[gearPosition][1] = number;
+                            // if already exist, sat the second number
+                            adjacentNumber[1] = number;
                         }
                         else
                         {
+                            // if not exist, set the first number, and the second number to 0
                             gearAndAdjacentNumbers.Add(gearPosition, new int[] { number, 0 });
                         }
-                        
-                        
-                        // if (firstGear == 0)
-                        // {
-                        //     firstGear = number;
-                        //     
-                        //     
-                        //     // _logger.LogInformation("firstGear: {FirstGear}, is adjacent to gear number: {GearNumber}", firstGear, gearNumber);
-                        // }
-                        // else if (secondGear == 0)
-                        // {
-                        //     // TODO: only add numbers together if both gears are adjacent to gear symbobl
-                        //
-                        //     secondGear = number;
-                        //     // _logger.LogInformation("secondGear: {SecondGear}, is adjacent to gear number: {GearNumber}", secondGear, gearNumber);
-                        //     
-                        //     
-                        //
-                        //     // count += firstGear * secondGear;
-                        //     firstGear = 0;
-                        //     secondGear = 0;
-                        // }
                     }
 
                     // reset
                     numberString = "";
                     closestGearPosition = null;
                 }
-
             }
 
             if (printGrid)
@@ -367,8 +335,8 @@ public class SolutionService : ISolutionService
         foreach (var gearPos in gearAndAdjacentNumbers.Keys)
         {
             var gear = gearAndAdjacentNumbers[gearPos];
-            _logger.LogInformation("gear: {Gear}, Numbers: {GearNumbers}, Result: {Result}", gearPos, string.Join(", ", gear), gear[0] * gear[1]);
-            
+            _logger.LogInformation("Gear: {Gear}, Numbers: {GearNumbers}, Result: {Result}", gearPos, string.Join(", ", gear), gear[0] * gear[1]);
+
             sum += gear[0] * gear[1];
         }
 
