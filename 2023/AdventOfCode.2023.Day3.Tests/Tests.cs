@@ -26,6 +26,76 @@ public class Tests : TestBed<TestFixture>
     }
 
     [Fact]
+    public void Part1TestEdgeCases1()
+    {
+        // arrange
+        var input = new string[]
+        {
+            "...",
+            "...",
+            ".*4"
+        };
+
+        // act
+        var result = _solutionService.RunPart1(input);
+
+        // assert
+        Assert.Equal(4, result);
+    }
+    
+    [Fact]
+    public void Part1TestEdgeCases2()
+    {
+        // arrange
+        var input = new string[]
+        {
+            "...",
+            "...",
+            "4*."
+        };
+
+        // act
+        var result = _solutionService.RunPart1(input);
+
+        // assert
+        Assert.Equal(4, result);
+    }
+    [Fact]
+    public void Part1TestEdgeCases3()
+    {
+        // arrange
+        var input = new string[]
+        {
+            "4..",
+            "*..",
+            "..."
+        };
+
+        // act
+        var result = _solutionService.RunPart1(input);
+
+        // assert
+        Assert.Equal(4, result);
+    }
+    [Fact]
+    public void Part1TestEdgeCases4()
+    {
+        // arrange
+        var input = new string[]
+        {
+            ".*4",
+            "...",
+            "..."
+        };
+
+        // act
+        var result = _solutionService.RunPart1(input);
+
+        // assert
+        Assert.Equal(4, result);
+    }
+
+    [Fact]
     public void Part2Test()
     {
         // arrange

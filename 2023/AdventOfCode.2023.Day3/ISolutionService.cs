@@ -2,66 +2,23 @@ namespace AdventOfCode._2023.Day3;
 
 public interface ISolutionService
 {
-    public int RunPart1(string[] input);
+    public int RunPart1(string[] input, bool printGrid = false);
     public int RunPart2(string[] input);
 }
 
 public class SolutionService : ISolutionService
 {
     private readonly ILogger<SolutionService> _logger;
-    private readonly char[] symbols = new char[] { '#', '$', '%', '^', '&', '*', '@', '!', '/', '\'', '+', '-', '=', '?', '<', '>', '~', '`', '|', '\\', '(', ')', '[', ']', '{', '}'  };
+    // private readonly char[] symbols = new char[] { '#', '$', '%', '^', '&', '*', '@', '!', '/', '\'', '+', '-', '=', '?', '<', '>', '~', '`', '|', '\\', '(', ')', '[', ']', '{', '}'  };
 
     public SolutionService(ILogger<SolutionService> logger)
     {
         _logger = logger;
     }
 
-    public bool IsAdjacent(char[,] grid, int x, int y)
+    private bool IsSymbol(char c)
     {
-        // check one left
-        if (x > 0 && symbols.Contains(grid[y, x - 1]))
-        {
-            return true;
-        }
-
-        // check one right
-        if (x < grid.GetLength(1) - 1 && symbols.Contains(grid[y, x + 1]))
-        {
-            return true;
-        }
-
-        // check one up
-        if (y > 0 && symbols.Contains(grid[y - 1, x]))
-        {
-            return true;
-        }
-
-        // check one down
-        if (y < grid.GetLength(0) - 1 && symbols.Contains(grid[y + 1, x]))
-        {
-            return true;
-        }
-
-        // check one up and one left
-        if (x > 0 && y > 0 && symbols.Contains(grid[y - 1, x - 1]))
-        {
-            return true;
-        }
-
-        // check one up and one right
-        if (x < grid.GetLength(1) - 1 && y > 0 && symbols.Contains(grid[y - 1, x + 1]))
-        {
-            return true;
-        }
-
-        // check one down and one left
-        if (x > 0 && y < grid.GetLength(0) - 1 && symbols.Contains(grid[y + 1, x - 1]))
-        {
-            return true;
-        }
-
-        // check one down and one right
-        if (x < grid.GetLength(1) - 1 && y < grid.GetLength(0) - 1 && symbols.Contains(grid[y + 1, x + 1]))
+        if (c != '.' && !char.IsDigit(c))
         {
             return true;
         }
@@ -69,7 +26,60 @@ public class SolutionService : ISolutionService
         return false;
     }
 
-    public int RunPart1(string[] input)
+    public bool IsAdjacent(char[,] grid, int x, int y)
+    {
+        // check one left
+        if (x > 0 && IsSymbol(grid[y, x - 1]))
+        {
+            return true;
+        }
+
+        // check one right
+        if (x < grid.GetLength(1) - 1 && IsSymbol(grid[y, x + 1]))
+        {
+            return true;
+        }
+
+        // check one up
+        if (y > 0 && IsSymbol(grid[y - 1, x]))
+        {
+            return true;
+        }
+
+        // check one down
+        if (y < grid.GetLength(0) - 1 && IsSymbol(grid[y + 1, x]))
+        {
+            return true;
+        }
+
+        // check one up and one left
+        if (x > 0 && y > 0 && IsSymbol(grid[y - 1, x - 1]))
+        {
+            return true;
+        }
+
+        // check one up and one right
+        if (x < grid.GetLength(1) - 1 && y > 0 && IsSymbol(grid[y - 1, x + 1]))
+        {
+            return true;
+        }
+
+        // check one down and one left
+        if (x > 0 && y < grid.GetLength(0) - 1 && IsSymbol(grid[y + 1, x - 1]))
+        {
+            return true;
+        }
+
+        // check one down and one right
+        if (x < grid.GetLength(1) - 1 && y < grid.GetLength(0) - 1 && IsSymbol(grid[y + 1, x + 1]))
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    public int RunPart1(string[] input, bool printGrid = false)
     {
         _logger.LogInformation("Solving - 2023 - Day 3 - Part 1");
         _logger.LogInformation("Input contains {Input} values", input.Length);
@@ -112,7 +122,31 @@ public class SolutionService : ISolutionService
                         isAdjacent = IsAdjacent(grid, x, y);
                     }
                 }
-                else if (character == '.' || symbols.Contains(character) || x == line.Length - 1)
+
+                if (printGrid)
+                {
+                    // change color of console output if the character is a symbol
+                    if (IsSymbol(character))
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                    }
+                    else if (isAdjacent)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Green;
+                    }
+                    else
+                    {
+                        Console.ForegroundColor = ConsoleColor.White;
+                    }
+
+                    Console.Write(character);
+                }
+
+                // we have three separate conditions for when to add the number to the list of numbers:
+                // 1. we have reached the end of the number, so add it to the list of numbers (if it is adjacent to a symbol)
+                // 2. we have reached the end of row along the x axis, so add the number to the list of numbers (if it is adjacent to a symbol)
+                // 3. we have reached the end of column along the y axis, so add the number to the list of numbers (if it is adjacent to a symbol)
+                if (!char.IsDigit(character) || x == line.Length - 1 || y == grid.GetLength(0) - 1)
                 {
                     // we have reached the end of the number, so add it to the list of numbers
                     if (numberString.Length > 0 && isAdjacent)
@@ -125,6 +159,11 @@ public class SolutionService : ISolutionService
                     isAdjacent = false;
                 }
 
+            }
+
+            if (printGrid)
+            {
+                Console.WriteLine("");
             }
         }
 

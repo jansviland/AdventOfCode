@@ -39,7 +39,7 @@ internal static class Program
             input = File.ReadAllLines(args[0]);
         }
 
-        var result = svc.RunPart1(input);
+        var result = svc.RunPart1(input, true);
         Log.Logger.Information("result: {Result}", result);
 
         var resultPart2 = svc.RunPart2(input);
