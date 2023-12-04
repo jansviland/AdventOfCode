@@ -36,6 +36,34 @@ public class SolutionService : ISolutionService
         return false;
     }
 
+    // a better approach, with less repetition
+    public List<char> GetAdjacentValues(char[,] grid, int row, int col)
+    {
+        List<char> adjacentValues = new List<char>();
+
+        int numRows = grid.GetLength(0);
+        int numCols = grid.GetLength(1);
+
+        // Define the relative offsets for adjacent cells (8 possible directions).
+        int[] dx = { -1, -1, -1, 0, 0, 1, 1, 1 };
+        int[] dy = { -1, 0, 1, -1, 1, -1, 0, 1 };
+
+        // Check each adjacent cell.
+        for (var i = 0; i < dx.Length; i++)
+        {
+            int newRow = row + dx[i];
+            int newCol = col + dy[i];
+
+            // Check if the adjacent cell is within the grid boundaries.
+            if (newRow >= 0 && newRow < numRows && newCol >= 0 && newCol < numCols)
+            {
+                adjacentValues.Add(grid[newRow, newCol]);
+            }
+        }
+
+        return adjacentValues;
+    }
+    
     public bool IsAdjacent(char[,] grid, int x, int y)
     {
         // check one left
