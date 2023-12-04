@@ -39,11 +39,11 @@ internal static class Program
             input = File.ReadAllLines(args[0]);
         }
 
-        var result = svc.RunPart1(input);
-        Log.Logger.Information("result: {Result}", result);
+        var resultPart1 = svc.RunPart1(input);
+        Log.Logger.Information("result: {Result}", resultPart1);
 
         var resultPart2 = svc.RunPart2(input);
-        Log.Logger.Information("result: {Result}", resultPart2);
+        Log.Logger.Information("result: {Result}", resultPart1);
 
         stopWatch.Stop();
         Log.Logger.Information("Elapsed time: {Elapsed} ms", stopWatch.ElapsedMilliseconds);
