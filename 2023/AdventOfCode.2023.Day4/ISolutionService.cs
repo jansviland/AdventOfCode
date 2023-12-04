@@ -99,7 +99,7 @@ public class SolutionService : ISolutionService
                 var amountOfCurrentCard = cardDictionary[cardNumber];
 
                 // for each match, we win copies of the same number of next cards as the number of matches
-                // in addtion, if we already have several copies of the winning card, we win multiple times 
+                // in addtion, if we already have several copies of the winning card, we win multiple times
                 var cardCount = cardDictionary[cardNumber + count];
                 cardDictionary[cardNumber + count] = cardCount + amountOfCurrentCard;
                 count++;
