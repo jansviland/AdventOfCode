@@ -9,7 +9,6 @@ public interface ISolutionService
 public class SolutionService : ISolutionService
 {
     private readonly ILogger<SolutionService> _logger;
-    // private readonly char[] symbols = new char[] { '#', '$', '%', '^', '&', '*', '@', '!', '/', '\'', '+', '-', '=', '?', '<', '>', '~', '`', '|', '\\', '(', ')', '[', ']', '{', '}'  };
 
     public SolutionService(ILogger<SolutionService> logger)
     {
