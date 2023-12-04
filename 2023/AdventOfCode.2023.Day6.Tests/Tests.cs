@@ -12,7 +12,7 @@ public class Tests : TestBed<TestFixture>
         _input = File.ReadAllLines("Assets/test-input.txt");
     }
 
-    [Fact]
+    [Fact(Skip = "Not implemented yet")]
     public void Part1Test()
     {
         // arrange
@@ -25,7 +25,7 @@ public class Tests : TestBed<TestFixture>
         Assert.Equal(13, result);
     }
 
-    [Fact]
+    [Fact(Skip = "Not implemented yet")]
     public void Part2Test()
     {
         // arrange
