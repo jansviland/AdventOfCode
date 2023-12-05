@@ -1,16 +1,10 @@
 namespace AdventOfCode._2023.Day5;
 
-public interface ISolutionService
+public class SolutionServiceV2 : ISolutionService
 {
-    public long RunPart1(string[] input);
-    public int RunPart2(string[] input);
-}
+    private readonly ILogger<ISolutionService> _logger;
 
-public class SolutionService : ISolutionService
-{
-    private readonly ILogger<SolutionService> _logger;
-
-    public SolutionService(ILogger<SolutionService> logger)
+    public SolutionServiceV2(ILogger<SolutionServiceV2> logger)
     {
         _logger = logger;
     }
@@ -19,6 +13,22 @@ public class SolutionService : ISolutionService
     {
         _logger.LogInformation("Solving - 2023 - Day 5 - Part 1");
         _logger.LogInformation("Input contains {Input} values", input.Length);
+
+        throw new NotImplementedException();
+
+        // TODO: instead of a dictionary, we could use long[] and just add the offset: 
+
+        // so seedToSoil [0, 2, 4, 6, 8] would map [1, 1, 1, 1, 1] to [1, 3, 5, 7, 9]
+
+        // TODO: find the lowest source range start, this is index 0 of the array, 
+        // TODO: find the highest source range start + range length, this is the index of the last element in the array
+        // TODO: then fill the array with 0 values from 0 index to the end of the array
+        // TODO: then fill the array with values, 0 if there is no mapping, offset if there is a source -> destination mapping
+
+        // example: if we have seed 5, then the index 5 of the array should give an offset, lets say -2, then the result position is 3. 
+
+
+        var seedToSoilMap = new long[1000000];
 
         var seedToSoilDictionary = new Dictionary<long, long>();
         var soilToFertilizerDictionary = new Dictionary<long, long>();

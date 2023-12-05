@@ -8,7 +8,7 @@ public interface ISolutionService
 
 public class SolutionService : ISolutionService
 {
-    private readonly ILogger<SolutionService> _logger;
+    private readonly ILogger<ISolutionService> _logger;
 
     public SolutionService(ILogger<SolutionService> logger)
     {
