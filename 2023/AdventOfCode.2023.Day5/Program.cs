@@ -21,13 +21,13 @@ internal static class Program
             .CreateLogger();
 
         var host = Host.CreateDefaultBuilder(args)
-            .ConfigureServices(((_, collection) => { collection.AddTransient<ISolutionService, SolutionServiceV2>(); }))
+            .ConfigureServices(((_, collection) => { collection.AddTransient<ISolutionService, SolutionService>(); }))
             .UseSerilog()
             .Build();
 
         Log.Logger.Information("args: {AllArguments}", string.Join(", ", args));
 
-        var svc = ActivatorUtilities.CreateInstance<SolutionServiceV2>(host.Services);
+        var svc = ActivatorUtilities.CreateInstance<SolutionService>(host.Services);
 
         string[] input;
         if (args.Length == 0)

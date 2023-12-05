@@ -12,6 +12,74 @@ public class Tests : TestBed<TestFixture>
         _input = File.ReadAllLines("Assets/test-input.txt");
     }
 
+    [Theory]
+    [InlineData(79, 81)]
+    [InlineData(14, 14)]
+    [InlineData(55, 57)]
+    [InlineData(13, 13)]
+    public void TestMapping1(long seed, long result)
+    {
+        // arrange
+        var distanceMap = new DistanceMap
+        {
+            Type = 0,
+            Mapping = new List<DistanceMapping>
+            {
+                new DistanceMapping
+                {
+                    DestinationRangeStart = 50,
+                    SourceRangeStart = 98,
+                    RangeLength = 2
+                },
+                new DistanceMapping
+                {
+                    DestinationRangeStart = 52,
+                    SourceRangeStart = 50,
+                    RangeLength = 48
+                }
+            }
+        };
+
+        Assert.Equal(result, _solutionService.GetNewPosition(seed, distanceMap));
+    }
+
+    [Theory]
+    [InlineData(81, 81)]
+    [InlineData(14, 53)]
+    [InlineData(57, 57)]
+    [InlineData(13, 52)]
+    public void TestMapping2(long seed, long result)
+    {
+        // arrange
+        var distanceMap = new DistanceMap
+        {
+            Type = 1,
+            Mapping = new List<DistanceMapping>
+            {
+                new DistanceMapping
+                {
+                    DestinationRangeStart = 0,
+                    SourceRangeStart = 15,
+                    RangeLength = 37
+                },
+                new DistanceMapping
+                {
+                    DestinationRangeStart = 37,
+                    SourceRangeStart = 52,
+                    RangeLength = 2
+                },
+                new DistanceMapping
+                {
+                    DestinationRangeStart = 39,
+                    SourceRangeStart = 0,
+                    RangeLength = 15
+                },
+            }
+        };
+
+        Assert.Equal(result, _solutionService.GetNewPosition(seed, distanceMap));
+    }
+
     [Fact]
     public void Part1Test()
     {
@@ -35,6 +103,6 @@ public class Tests : TestBed<TestFixture>
         int result = _solutionService.RunPart2(_input);
 
         // assert
-        Assert.Equal(30, result);
+        Assert.Equal(46, result);
     }
 }
