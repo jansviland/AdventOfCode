@@ -3,7 +3,7 @@ namespace AdventOfCode._2023.Day5;
 public interface ISolutionService
 {
     public long RunPart1(string[] input);
-    public int RunPart2(string[] input);
+    public long RunPart2(string[] input);
     public long GetNewPosition(long position, DistanceMap distanceMap);
 }
 
@@ -41,21 +41,21 @@ public class SolutionService : ISolutionService
 {
     private readonly ILogger<ISolutionService> _logger;
 
+    private long[] seeds;
+    private List<DistanceMap> distanceMaps;
+
     public SolutionService(ILogger<SolutionService> logger)
     {
         _logger = logger;
     }
 
-    public long RunPart1(string[] input)
+    private void ParseInput(string[] input)
     {
-        _logger.LogInformation("Solving - 2023 - Day 5 - Part 1");
-        _logger.LogInformation("Input contains {Input} values", input.Length);
-
         // parse input
-        long[] seeds = input[0].Split(':').Last().Trim().Split(' ').Select(long.Parse).ToArray();
+        seeds = input[0].Split(':').Last().Trim().Split(' ').Select(long.Parse).ToArray();
 
         var currentMap = 0;
-        var distanceMaps = new List<DistanceMap>();
+        distanceMaps = new List<DistanceMap>();
 
         for (var i = 3; i < input.Length; i++)
         {
@@ -96,10 +96,19 @@ public class SolutionService : ISolutionService
                 });
             }
         }
+    }
+
+    public long RunPart1(string[] input)
+    {
+        _logger.LogInformation("Solving - 2023 - Day 5 - Part 1");
+        _logger.LogInformation("Input contains {Input} values", input.Length);
+
+        ParseInput(input);
 
         var sb = new StringBuilder();
 
         var lowestLocation = long.MaxValue;
+
         for (var i = 0; i < seeds.Length; i++)
         {
             var startPosition = seeds[i];
@@ -140,11 +149,63 @@ public class SolutionService : ISolutionService
         return position;
     }
 
-    public int RunPart2(string[] input)
+    public long RunPart2(string[] input)
     {
         _logger.LogInformation("Solving - 2023 - Day 5 - Part 2");
         _logger.LogInformation("Input contains {Input} values", input.Length);
 
-        throw new NotImplementedException();
+        ParseInput(input);
+
+        // var sb = new StringBuilder();
+
+        var moreSeeds = new List<long>();
+        for (long i = seeds[0]; i < seeds[0] + seeds[1]; i++)
+        {
+            moreSeeds.Add(i);
+        }
+
+        for (long i = seeds[2]; i < seeds[2] + seeds[3]; i++)
+        {
+            moreSeeds.Add(i);
+        }
+
+        var lowestLocation = long.MaxValue;
+
+        Parallel.ForEach(moreSeeds, (seed) =>
+        {
+            var startPosition = seed;
+            foreach (var distanceMap in distanceMaps)
+            {
+                long endPosition = GetNewPosition(startPosition, distanceMap);
+                startPosition = endPosition;
+            }
+
+            lowestLocation = Math.Min(lowestLocation, startPosition);
+        });
+
+        // foreach (long seed in moreSeeds)
+        // {
+        //     var startPosition = seed;
+        //
+        //     // sb.Append($"Seed {startPosition}, ");
+        //
+        //     // If it does note exist, it´s one to one
+        //     foreach (var distanceMap in distanceMaps)
+        //     {
+        //         long endPosition = GetNewPosition(startPosition, distanceMap);
+        //
+        //         // var type = (Type)distanceMap.Type;
+        //         // sb.Append($"{type} {endPosition}, ");
+        //
+        //         startPosition = endPosition;
+        //     }
+        //
+        //     lowestLocation = Math.Min(lowestLocation, startPosition);
+        //
+        //     // _logger.LogInformation(sb.ToString());
+        //     // sb.Clear();
+        // }
+
+        return lowestLocation;
     }
 }

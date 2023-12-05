@@ -93,14 +93,14 @@ public class Tests : TestBed<TestFixture>
         Assert.Equal(35, result);
     }
 
-    [Fact(Skip = "Not implemented yet")]
+    [Fact]
     public void Part2Test()
     {
         // arrange
         _testOutputHelper.WriteLine("Running unit test - Part 2");
 
         // act
-        int result = _solutionService.RunPart2(_input);
+        long result = _solutionService.RunPart2(_input);
 
         // assert
         Assert.Equal(46, result);
