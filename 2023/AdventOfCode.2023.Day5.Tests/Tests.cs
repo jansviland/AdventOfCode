@@ -12,14 +12,14 @@ public class Tests : TestBed<TestFixture>
         _input = File.ReadAllLines("Assets/test-input.txt");
     }
 
-    [Fact(Skip = "Not implemented yet")]
+    [Fact]
     public void Part1Test()
     {
         // arrange
         _testOutputHelper.WriteLine("Running unit test - Part 1");
 
         // act
-        int result = _solutionService.RunPart1(_input);
+        long result = _solutionService.RunPart1(_input);
 
         // assert
         Assert.Equal(35, result);
