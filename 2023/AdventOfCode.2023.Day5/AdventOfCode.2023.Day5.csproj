@@ -6,6 +6,7 @@
         <RootNamespace>AdventOfCode._2023.Day5</RootNamespace>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <gcAllowVeryLargeObjects>true</gcAllowVeryLargeObjects>
     </PropertyGroup>
 
     <ItemGroup>

@@ -1,5 +1,20 @@
 namespace AdventOfCode._2023.Day5;
 
+public class DistanceMap
+{
+    public int Type { get; set; }
+    public List<DistanceMapElement> Elements { get; set; }
+}
+
+public class DistanceMapElement
+{
+    public int Type { get; set; }
+
+    public long DestinationRangeStart { get; set; }
+    public long SourceRangeStart { get; set; }
+    public long RangeLength { get; set; }
+}
+
 public class SolutionServiceV2 : ISolutionService
 {
     private readonly ILogger<ISolutionService> _logger;
@@ -14,7 +29,8 @@ public class SolutionServiceV2 : ISolutionService
         _logger.LogInformation("Solving - 2023 - Day 5 - Part 1");
         _logger.LogInformation("Input contains {Input} values", input.Length);
 
-        throw new NotImplementedException();
+
+        // throw new NotImplementedException();
 
         // TODO: instead of a dictionary, we could use long[] and just add the offset: 
 
@@ -27,16 +43,7 @@ public class SolutionServiceV2 : ISolutionService
 
         // example: if we have seed 5, then the index 5 of the array should give an offset, lets say -2, then the result position is 3. 
 
-
-        var seedToSoilMap = new long[1000000];
-
-        var seedToSoilDictionary = new Dictionary<long, long>();
-        var soilToFertilizerDictionary = new Dictionary<long, long>();
-        var fertilizerToWaterDictionary = new Dictionary<long, long>();
-        var waterToLightDictionary = new Dictionary<long, long>();
-        var lightToTemperatureDictionary = new Dictionary<long, long>();
-        var tempratureToHumidityDictionary = new Dictionary<long, long>();
-        var humidityToLocationDictionary = new Dictionary<long, long>();
+        var maxArraySize = 2121546655;
 
         // parse input
         long[] seeds = input[0].Split(':').Last().Trim().Split(' ').Select(long.Parse).ToArray();
@@ -45,6 +52,7 @@ public class SolutionServiceV2 : ISolutionService
         // 1 : Soil to fertilizer
         // 2 : Fertilizer to water
         var currentMap = 0;
+        var distanceMaps = new List<DistanceMap>();
 
         for (var i = 3; i < input.Length; i++)
         {
@@ -66,56 +74,26 @@ public class SolutionServiceV2 : ISolutionService
                 long sourceRangeStart = values[1];
                 long rangeLength = values[2];
 
-                // seed to soil
-                if (currentMap == 0)
+                // TODO:
+                var distanceMap = new DistanceMap
                 {
-                    for (var j = 0; j < rangeLength; j++)
+                    Type = currentMap,
+                    Elements = new List<DistanceMapElement>
                     {
-                        seedToSoilDictionary.Add(sourceRangeStart + j, destinationRangeStart + j);
+                        new()
+                        {
+                            Type = currentMap,
+                            DestinationRangeStart = destinationRangeStart,
+                            SourceRangeStart = sourceRangeStart,
+                            RangeLength = rangeLength
+                        }
                     }
-                }
-                else if (currentMap == 1)
-                {
-                    for (var j = 0; j < rangeLength; j++)
-                    {
-                        soilToFertilizerDictionary.Add(sourceRangeStart + j, destinationRangeStart + j);
-                    }
-                }
-                else if (currentMap == 2)
-                {
-                    for (var j = 0; j < rangeLength; j++)
-                    {
-                        fertilizerToWaterDictionary.Add(sourceRangeStart + j, destinationRangeStart + j);
-                    }
-                }
-                else if (currentMap == 3)
-                {
-                    for (var j = 0; j < rangeLength; j++)
-                    {
-                        waterToLightDictionary.Add(sourceRangeStart + j, destinationRangeStart + j);
-                    }
-                }
-                else if (currentMap == 4)
-                {
-                    for (var j = 0; j < rangeLength; j++)
-                    {
-                        lightToTemperatureDictionary.Add(sourceRangeStart + j, destinationRangeStart + j);
-                    }
-                }
-                else if (currentMap == 5)
-                {
-                    for (var j = 0; j < rangeLength; j++)
-                    {
-                        tempratureToHumidityDictionary.Add(sourceRangeStart + j, destinationRangeStart + j);
-                    }
-                }
-                else if (currentMap == 6)
-                {
-                    for (var j = 0; j < rangeLength; j++)
-                    {
-                        humidityToLocationDictionary.Add(sourceRangeStart + j, destinationRangeStart + j);
-                    }
-                }
+                    // DestinationRangeStart = destinationRangeStart,
+                    // SourceRangeStart = sourceRangeStart,
+                    // RangeLength = rangeLength
+                };
+
+                distanceMaps.Add(distanceMap);
             }
         }
 
@@ -124,21 +102,43 @@ public class SolutionServiceV2 : ISolutionService
         {
             // If it does note exist, it´s one to one
 
-            long seed = seeds[i];
-            long soil = seedToSoilDictionary.TryGetValue(seed, out long value) ? value : seed;
-            long fertilizer = soilToFertilizerDictionary.TryGetValue(soil, out value) ? value : soil;
-            long water = fertilizerToWaterDictionary.TryGetValue(fertilizer, out value) ? value : fertilizer;
-            long light = waterToLightDictionary.TryGetValue(water, out value) ? value : water;
-            long temperature = lightToTemperatureDictionary.TryGetValue(light, out value) ? value : light;
-            long humidity = tempratureToHumidityDictionary.TryGetValue(temperature, out value) ? value : temperature;
-            long location = humidityToLocationDictionary.TryGetValue(humidity, out value) ? value : humidity;
+            long offset = GetOffset(seeds[i], distanceMaps);
+            // long soil = seedToSoilMap[seed] == 0 ? seed : seedToSoilMap[seed];
+            // long fertilizer = soilToFertilizerMap[soil] == 0 ? soil : soilToFertilizerMap[soil];
+            // long water = fertilizerToWaterMap[fertilizer] == 0 ? fertilizer : fertilizerToWaterMap[fertilizer];
+            // long light = waterToLightMap[water] == 0 ? water : waterToLightMap[water];
+            // long temperature = lightToTemperatureMap[light] == 0 ? light : lightToTemperatureMap[light];
+            // long humidity = tempratureToHumidityMap[temperature] == 0 ? temperature : tempratureToHumidityMap[temperature];
+            // long location = humidityToLocationMap[humidity] == 0 ? humidity : humidityToLocationMap[humidity];
 
-            _logger.LogInformation("Seed {Seed} -> Soil {Soil} -> Fertilizer {Fertilizer} -> Water {Water} -> Light {Light} -> Temperature {Temperature} -> Humidity {Humidity} -> Light {Light2}", seed, soil, fertilizer, water, light, temperature, humidity, location);
+            // long soil = seedToSoilDictionary.TryGetValue(seed, out long value) ? value : seed;
+            // long fertilizer = soilToFertilizerDictionary.TryGetValue(soil, out value) ? value : soil;
+            // long water = fertilizerToWaterDictionary.TryGetValue(fertilizer, out value) ? value : fertilizer;
+            // long light = waterToLightDictionary.TryGetValue(water, out value) ? value : water;
+            // long temperature = lightToTemperatureDictionary.TryGetValue(light, out value) ? value : light;
+            // long humidity = tempratureToHumidityDictionary.TryGetValue(temperature, out value) ? value : temperature;
+            // long location = humidityToLocationDictionary.TryGetValue(humidity, out value) ? value : humidity;
 
-            lowestLocation = Math.Min(lowestLocation, location);
+            // _logger.LogInformation("Seed {Seed} -> Soil {Soil} -> Fertilizer {Fertilizer} -> Water {Water} -> Light {Light} -> Temperature {Temperature} -> Humidity {Humidity} -> Light {Light2}", seed, soil, fertilizer, water, light, temperature, humidity, location);
+            //
+            lowestLocation = Math.Min(lowestLocation, offset);
         }
 
         return lowestLocation;
+    }
+
+    private long GetOffset(long seed, List<DistanceMap> distanceMaps)
+    {
+        long offset = 0;
+        foreach (var distanceMap in distanceMaps)
+        {
+            if (seed >= distanceMap.SourceRangeStart && seed <= distanceMap.SourceRangeStart + distanceMap.RangeLength)
+            {
+                offset = distanceMap.DestinationRangeStart - distanceMap.SourceRangeStart;
+            }
+        }
+
+        return offset;
     }
 
     public int RunPart2(string[] input)
