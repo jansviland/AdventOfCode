@@ -19,10 +19,10 @@ public class Tests : TestBed<TestFixture>
         _testOutputHelper.WriteLine("Running unit test - Part 1");
 
         // act
-        var result = _solutionService.RunPart1(_input);
+        int result = _solutionService.RunPart1(_input);
 
         // assert
-        Assert.Equal(13, result);
+        Assert.Equal(35, result);
     }
 
     [Fact(Skip = "Not implemented yet")]
@@ -32,7 +32,7 @@ public class Tests : TestBed<TestFixture>
         _testOutputHelper.WriteLine("Running unit test - Part 2");
 
         // act
-        var result = _solutionService.RunPart2(_input);
+        int result = _solutionService.RunPart2(_input);
 
         // assert
         Assert.Equal(30, result);
