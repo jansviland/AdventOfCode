@@ -156,24 +156,23 @@ public class SolutionService : ISolutionService
 
         ParseInput(input);
 
-        // var sb = new StringBuilder();
-
         var moreSeeds = new List<long>();
-        for (long i = seeds[0]; i < seeds[0] + seeds[1]; i++)
+        for (var i = 0; i < seeds.Length - 1; i += 2)
         {
-            moreSeeds.Add(i);
+            long startPosition = seeds[i];
+            long range = seeds[i + 1];
+
+            for (long y = startPosition; y < startPosition + range; y++)
+            {
+                moreSeeds.Add(y);
+            }
         }
 
-        for (long i = seeds[2]; i < seeds[2] + seeds[3]; i++)
-        {
-            moreSeeds.Add(i);
-        }
-
+        // BUG: This is not working, get's the same result as part 1. Not sure why...
         var lowestLocation = long.MaxValue;
-
         Parallel.ForEach(moreSeeds, (seed) =>
         {
-            var startPosition = seed;
+            long startPosition = seed;
             foreach (var distanceMap in distanceMaps)
             {
                 long endPosition = GetNewPosition(startPosition, distanceMap);
@@ -182,29 +181,6 @@ public class SolutionService : ISolutionService
 
             lowestLocation = Math.Min(lowestLocation, startPosition);
         });
-
-        // foreach (long seed in moreSeeds)
-        // {
-        //     var startPosition = seed;
-        //
-        //     // sb.Append($"Seed {startPosition}, ");
-        //
-        //     // If it does note exist, it´s one to one
-        //     foreach (var distanceMap in distanceMaps)
-        //     {
-        //         long endPosition = GetNewPosition(startPosition, distanceMap);
-        //
-        //         // var type = (Type)distanceMap.Type;
-        //         // sb.Append($"{type} {endPosition}, ");
-        //
-        //         startPosition = endPosition;
-        //     }
-        //
-        //     lowestLocation = Math.Min(lowestLocation, startPosition);
-        //
-        //     // _logger.LogInformation(sb.ToString());
-        //     // sb.Clear();
-        // }
 
         return lowestLocation;
     }
