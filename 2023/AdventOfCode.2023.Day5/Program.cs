@@ -43,7 +43,7 @@ internal static class Program
         Log.Logger.Information("result: {Result}", resultPart1);
 
         var resultPart2 = svc.RunPart2(input);
-        Log.Logger.Information("result: {Result}", resultPart1);
+        Log.Logger.Information("result: {Result}", resultPart2);
 
         stopWatch.Stop();
         Log.Logger.Information("Elapsed time: {Elapsed} ms", stopWatch.ElapsedMilliseconds);

@@ -40,10 +40,16 @@ internal static class Program
         }
 
         var resultPart1 = svc.RunPart1(input);
+
+        Log.Logger.Information("------------------------------------");
         Log.Logger.Information("result: {Result}", resultPart1);
+        Log.Logger.Information("------------------------------------");
 
         var resultPart2 = svc.RunPart2(input);
+
+        Log.Logger.Information("------------------------------------");
         Log.Logger.Information("result: {Result}", resultPart2);
+        Log.Logger.Information("------------------------------------");
 
         stopWatch.Stop();
         Log.Logger.Information("Elapsed time: {Elapsed} ms", stopWatch.ElapsedMilliseconds);
