@@ -62,6 +62,8 @@ public class Hand : HandBase, IComparable<Hand>
 
 public class HandWithJoker : HandBase, IComparable<HandWithJoker>
 {
+    public string CardsReplacedJoker { get; set; } = string.Empty;
+
     public int CompareTo(HandWithJoker? other)
     {
         if (other == null)
@@ -106,8 +108,6 @@ public class SolutionService : ISolutionService
 
     public int GetRank(Hand hand)
     {
-        var rank = 0;
-
         // group by card
         var groups = hand.Cards
             .GroupBy(x => x)
@@ -162,135 +162,46 @@ public class SolutionService : ISolutionService
 
     public int GetRank(HandWithJoker hand)
     {
-        var rank = 0;
+        int jokerAmount = hand.Cards.Count(x => x == 'J');
 
-        var jokerAmount = hand.Cards.Count(x => x == 'J');
+        // use a copy of the hand, to not change the original
+        var handCopy = hand.Cards;
 
-        // group by card
-        var groups = hand.Cards
-            .GroupBy(x => x)
-            .ToList();
-
-        // all cards are the same, AAAAA, five of a kind
-        if (groups.Count == 1)
+        if (jokerAmount > 0)
         {
-            return HandRank.FiveOfAKind.GetHashCode();
-        }
-        // only two groups, AAAA4, four of a kind or AAA44, full house, AAAJ4, four of a kind with joker
-        else if (groups.Count == 2)
-        {
-            // check if four of a kind or full house
-            if (groups.Any(x => x.Count() == 4))
-            {
-                // JJJJ8, five of a kind
-                if (jokerAmount > 0)
-                {
-                    return HandRank.FiveOfAKind.GetHashCode();
-                }
+            // can just replace the jokers with the most common card
+            IGrouping<char, char>? mostCommonCard = handCopy
+                .Where(x => x != 'J')
+                .GroupBy(x => x)
+                .MaxBy(x => x.Count());
 
-                // four of a kind
-                return HandRank.FourOfAKind.GetHashCode();
+            // JJJJJJ - five of a kind
+            if (mostCommonCard == null)
+            {
+                hand.CardsReplacedJoker = "AAAAA";
+                return HandRank.FiveOfAKind.GetHashCode();
             }
 
-            if (jokerAmount > 0)
-            {
-                // JJTTJ,
-                if (jokerAmount == 3)
-                {
-                    return HandRank.FiveOfAKind.GetHashCode();
-                }
-                if (jokerAmount == 2)
-                {
-                    return HandRank.FiveOfAKind.GetHashCode();
-                }
-                if (jokerAmount == 1)
-                {
-                    return HandRank.FourOfAKind.GetHashCode();
-                }
-            }
+            var old = hand.Cards;
 
-            return HandRank.FullHouse.GetHashCode();
-        }
-        // three groups, AAABC, three of a kind or AABBC, two pair, 
-        else if (groups.Count == 3)
-        {
-            // check if three of a kind or two pair
-            if (groups.Any(x => x.Count() == 3))
-            {
-                if (jokerAmount > 0)
-                {
-                    // JJ4QJ,
-                    if (jokerAmount == 3)
-                    {
-                        return HandRank.FourOfAKind.GetHashCode();
-                    }
-                    if (jokerAmount == 2)
-                    {
-                        return HandRank.FourOfAKind.GetHashCode();
-                    }
-                    // if one joker, then it's a pair
-                    if (jokerAmount == 1)
-                    {
-                        return HandRank.FourOfAKind.GetHashCode();
-                    }
-                }
+            // use handCopy to replace the jokers, keep the original hand since we still want to compare jokers to other cards later
+            // if we replace 3 with J, it should be treated as 3 later. 
+            char mostCommonCardChar = mostCommonCard.Key;
+            handCopy = hand.Cards.Replace("J", mostCommonCardChar.ToString());
 
-                // three of a kind
-                return HandRank.ThreeOfAKind.GetHashCode();
-            }
+            hand.CardsReplacedJoker = handCopy;
 
-            if (jokerAmount > 0)
-            {
-                // JJTTJ five of a kind
-                if (jokerAmount == 2)
-                {
-                    return HandRank.FiveOfAKind.GetHashCode();
-                }
-                // T88TJ should be full house
-                if (jokerAmount == 1)
-                {
-                    return HandRank.FullHouse.GetHashCode();
-                }
-            }
-
-            return HandRank.TwoPair.GetHashCode();
-        }
-        // four groups, AABCD, one pair
-        else if (groups.Count == 4)
-        {
-            if (jokerAmount > 0)
-            {
-                // if two jokers, then it's a three of a kind
-                // JJ45A, three of a kind
-                if (jokerAmount == 2)
-                {
-                    return HandRank.ThreeOfAKind.GetHashCode();
-                }
-                if (jokerAmount == 1)
-                {
-                    return HandRank.ThreeOfAKind.GetHashCode();
-                }
-            }
-
-            // check if one pair
-            return HandRank.OnePair.GetHashCode();
-        }
-        // five groups, ABCDE, high card
-        else if (groups.Count == 5)
-        {
-            if (jokerAmount > 0)
-            {
-                // if one joker, then it's a pair
-                if (jokerAmount == 1)
-                {
-                    return HandRank.OnePair.GetHashCode();
-                }
-            }
-
-            return HandRank.HighCard.GetHashCode();
+            _logger.LogInformation("Hand {Old} - {New}", old, hand.Cards);
         }
 
-        return 0;
+        var updatedHand = new Hand
+        {
+            Rank = 0,
+            Cards = handCopy,
+            Bet = hand.Bet
+        };
+
+        return GetRank(updatedHand);
     }
 
     public int RunPart1(string[] input)
@@ -357,7 +268,7 @@ public class SolutionService : ISolutionService
 
             if (hand.Cards.Count(x => x == 'J') > 1)
             {
-                _logger.LogInformation("Joker found in hand {Hand}, Type {Type}, Rank {Rank}", hand.Cards, handType, handOrder);
+                _logger.LogInformation("Joker found in hand {Hand}, new Hand {ReplacedHand}, Type {Type}, Rank {Rank}", hand.Cards, hand.CardsReplacedJoker, handType, handOrder);
             }
 
             count += hand.Bet * handOrder;
