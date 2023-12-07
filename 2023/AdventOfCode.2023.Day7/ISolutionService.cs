@@ -84,9 +84,9 @@ public class HandWithJoker : HandBase, IComparable<HandWithJoker>
                 if (c != otherCard)
                 {
                     // set the order of cards here
-                    var order = "J23456789TQKA";
-                    var index = order.IndexOf(c);
-                    var otherIndex = order.IndexOf(otherCard);
+                    const string order = "J23456789TQKA";
+                    int index = order.IndexOf(c);
+                    int otherIndex = order.IndexOf(otherCard);
 
                     return index.CompareTo(otherIndex);
                 }
@@ -124,11 +124,9 @@ public class SolutionService : ISolutionService
             // check if four of a kind or full house
             if (groups.Any(x => x.Count() == 4))
             {
-                // four of a kind
                 return HandRank.FourOfAKind.GetHashCode();
             }
 
-            // full house
             return HandRank.FullHouse.GetHashCode();
         }
         // three groups, AAABC, three of a kind or AABBC, two pair
@@ -137,23 +135,19 @@ public class SolutionService : ISolutionService
             // check if three of a kind or two pair
             if (groups.Any(x => x.Count() == 3))
             {
-                // three of a kind
                 return HandRank.ThreeOfAKind.GetHashCode();
             }
 
-            // two pair
             return HandRank.TwoPair.GetHashCode();
         }
         // four groups, AABCD, one pair
         else if (groups.Count == 4)
         {
-            // check if one pair
             return HandRank.OnePair.GetHashCode();
         }
         // five groups, ABCDE, high card
         else if (groups.Count == 5)
         {
-            // check if high card
             return HandRank.HighCard.GetHashCode();
         }
 
@@ -182,8 +176,6 @@ public class SolutionService : ISolutionService
                 return HandRank.FiveOfAKind.GetHashCode();
             }
 
-            var old = hand.Cards;
-
             // use handCopy to replace the jokers, keep the original hand since we still want to compare jokers to other cards later
             // if we replace 3 with J, it should be treated as 3 later. 
             char mostCommonCardChar = mostCommonCard.Key;
@@ -191,7 +183,7 @@ public class SolutionService : ISolutionService
 
             hand.CardsReplacedJoker = handCopy;
 
-            _logger.LogInformation("Hand {Old} - {New}", old, hand.Cards);
+            // _logger.LogInformation("Hand {Old} - {New}", old, hand.Cards);
         }
 
         var updatedHand = new Hand
@@ -261,7 +253,7 @@ public class SolutionService : ISolutionService
         var count = 0;
         for (var i = 0; i < hands.Count; i++)
         {
-            var handOrder = i + 1;
+            int handOrder = i + 1;
             var hand = hands[i];
 
             string? handType = Enum.GetName(typeof(HandRank), hand.Rank);
