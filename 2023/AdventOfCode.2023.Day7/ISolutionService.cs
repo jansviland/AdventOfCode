@@ -6,6 +6,18 @@ public interface ISolutionService
     public int RunPart2(string[] input);
 }
 
+public enum HandRank
+{
+    Unknown = 0,
+    HighCard = 60,
+    OnePair = 70,
+    TwoPair = 80,
+    ThreeOfAKind = 85,
+    FullHouse = 90,
+    FourOfAKind = 95,
+    FiveOfAKind = 100
+}
+
 public class HandBase
 {
     public string Cards { get; set; } = string.Empty;
@@ -116,6 +128,7 @@ public class SolutionService : ISolutionService
                 return 95;
             }
 
+            // full house
             return 90;
         }
         // three groups, AAABC, three of a kind or AABBC, two pair, 
@@ -128,6 +141,7 @@ public class SolutionService : ISolutionService
                 return 85;
             }
 
+            // two pair
             return 80;
         }
         // four groups, AABCD, one pair
@@ -160,7 +174,7 @@ public class SolutionService : ISolutionService
         // all cards are the same, AAAAA, five of a kind
         if (groups.Count == 1)
         {
-            return 100;
+            return HandRank.FiveOfAKind.GetHashCode();
         }
         // only two groups, AAAA4, four of a kind or AAA44, full house, AAAJ4, four of a kind with joker
         else if (groups.Count == 2)
@@ -168,11 +182,34 @@ public class SolutionService : ISolutionService
             // check if four of a kind or full house
             if (groups.Any(x => x.Count() == 4))
             {
+                // JJJJ8, five of a kind
+                if (jokerAmount > 0)
+                {
+                    return HandRank.FiveOfAKind.GetHashCode();
+                }
+
                 // four of a kind
-                return 95;
+                return HandRank.FourOfAKind.GetHashCode();
             }
 
-            return 90;
+            if (jokerAmount > 0)
+            {
+                // JJTTJ,
+                if (jokerAmount == 3)
+                {
+                    return HandRank.FiveOfAKind.GetHashCode();
+                }
+                if (jokerAmount == 2)
+                {
+                    return HandRank.FiveOfAKind.GetHashCode();
+                }
+                if (jokerAmount == 1)
+                {
+                    return HandRank.FourOfAKind.GetHashCode();
+                }
+            }
+
+            return HandRank.FullHouse.GetHashCode();
         }
         // three groups, AAABC, three of a kind or AABBC, two pair, 
         else if (groups.Count == 3)
@@ -180,17 +217,63 @@ public class SolutionService : ISolutionService
             // check if three of a kind or two pair
             if (groups.Any(x => x.Count() == 3))
             {
+                if (jokerAmount > 0)
+                {
+                    // JJ4QJ,
+                    if (jokerAmount == 3)
+                    {
+                        return HandRank.FourOfAKind.GetHashCode();
+                    }
+                    if (jokerAmount == 2)
+                    {
+                        return HandRank.FourOfAKind.GetHashCode();
+                    }
+                    // if one joker, then it's a pair
+                    if (jokerAmount == 1)
+                    {
+                        return HandRank.FourOfAKind.GetHashCode();
+                    }
+                }
+
                 // three of a kind
-                return 85;
+                return HandRank.ThreeOfAKind.GetHashCode();
             }
 
-            return 80;
+            if (jokerAmount > 0)
+            {
+                // JJTTJ five of a kind
+                if (jokerAmount == 2)
+                {
+                    return HandRank.FiveOfAKind.GetHashCode();
+                }
+                // T88TJ should be full house
+                if (jokerAmount == 1)
+                {
+                    return HandRank.FullHouse.GetHashCode();
+                }
+            }
+
+            return HandRank.TwoPair.GetHashCode();
         }
         // four groups, AABCD, one pair
         else if (groups.Count == 4)
         {
+            if (jokerAmount > 0)
+            {
+                // if two jokers, then it's a three of a kind
+                // JJ45A, three of a kind
+                if (jokerAmount == 2)
+                {
+                    return HandRank.ThreeOfAKind.GetHashCode();
+                }
+                if (jokerAmount == 1)
+                {
+                    return HandRank.ThreeOfAKind.GetHashCode();
+                }
+            }
+
             // check if one pair
-            return 70;
+            return HandRank.OnePair.GetHashCode();
         }
         // five groups, ABCDE, high card
         else if (groups.Count == 5)
@@ -200,17 +283,11 @@ public class SolutionService : ISolutionService
                 // if one joker, then it's a pair
                 if (jokerAmount == 1)
                 {
-                    return 70;
-                }
-
-                // if two jokers, then it's a three of a kind
-                if (jokerAmount == 2)
-                {
-                    return 85;
+                    return HandRank.OnePair.GetHashCode();
                 }
             }
 
-            return 60;
+            return HandRank.HighCard.GetHashCode();
         }
 
         return 0;
@@ -273,15 +350,17 @@ public class SolutionService : ISolutionService
         var count = 0;
         for (var i = 0; i < hands.Count; i++)
         {
-            var rank = i + 1;
+            var handOrder = i + 1;
             var hand = hands[i];
 
-            if (hand.Cards.Count(x => x == 'J') > 0)
+            string? handType = Enum.GetName(typeof(HandRank), hand.Rank);
+
+            if (hand.Cards.Count(x => x == 'J') > 1)
             {
-                _logger.LogInformation("Joker found in hand {Hand}, Rank {Rank}", hand.Cards, rank);
+                _logger.LogInformation("Joker found in hand {Hand}, Type {Type}, Rank {Rank}", hand.Cards, handType, handOrder);
             }
 
-            count += hand.Bet * rank;
+            count += hand.Bet * handOrder;
         }
 
         return count;
