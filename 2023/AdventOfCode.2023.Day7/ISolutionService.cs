@@ -116,7 +116,7 @@ public class SolutionService : ISolutionService
         // all cards are the same, AAAAA, five of a kind
         if (groups.Count == 1)
         {
-            return 100;
+            return HandRank.FiveOfAKind.GetHashCode();
         }
         // only two groups, AAAAB, four of a kind or AAABB, full house
         else if (groups.Count == 2)
@@ -125,39 +125,39 @@ public class SolutionService : ISolutionService
             if (groups.Any(x => x.Count() == 4))
             {
                 // four of a kind
-                return 95;
+                return HandRank.FourOfAKind.GetHashCode();
             }
 
             // full house
-            return 90;
+            return HandRank.FullHouse.GetHashCode();
         }
-        // three groups, AAABC, three of a kind or AABBC, two pair, 
+        // three groups, AAABC, three of a kind or AABBC, two pair
         else if (groups.Count == 3)
         {
             // check if three of a kind or two pair
             if (groups.Any(x => x.Count() == 3))
             {
                 // three of a kind
-                return 85;
+                return HandRank.ThreeOfAKind.GetHashCode();
             }
 
             // two pair
-            return 80;
+            return HandRank.TwoPair.GetHashCode();
         }
         // four groups, AABCD, one pair
         else if (groups.Count == 4)
         {
             // check if one pair
-            return 70;
+            return HandRank.OnePair.GetHashCode();
         }
         // five groups, ABCDE, high card
         else if (groups.Count == 5)
         {
             // check if high card
-            return 60;
+            return HandRank.HighCard.GetHashCode();
         }
 
-        return 0;
+        return HandRank.Unknown.GetHashCode();
     }
 
     public int GetRank(HandWithJoker hand)
@@ -165,7 +165,7 @@ public class SolutionService : ISolutionService
         int jokerAmount = hand.Cards.Count(x => x == 'J');
 
         // use a copy of the hand, to not change the original
-        var handCopy = hand.Cards;
+        string handCopy = hand.Cards;
 
         if (jokerAmount > 0)
         {

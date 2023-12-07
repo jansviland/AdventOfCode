@@ -25,7 +25,7 @@ public class Tests : TestBed<TestFixture>
         Assert.Equal(6440, result);
     }
 
-    [Fact(Skip = "Not implemented yet")]
+    [Fact]
     public void Part2Test()
     {
         // arrange
@@ -35,6 +35,6 @@ public class Tests : TestBed<TestFixture>
         var result = _solutionService.RunPart2(_input);
 
         // assert
-        Assert.Equal(30, result);
+        Assert.Equal(5905, result);
     }
 }
