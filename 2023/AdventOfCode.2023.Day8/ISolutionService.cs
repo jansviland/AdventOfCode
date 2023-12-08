@@ -1,3 +1,5 @@
+using Algorithms;
+
 namespace AdventOfCode._2023.Day8;
 
 public interface ISolutionService
@@ -214,11 +216,8 @@ public class SolutionService : ISolutionService
             _logger.LogInformation("Node {Node} is {Steps} steps from Z", node.OriginalValue, node.stepsToZ);
         }
 
-        // used calculator..
-
         // TODO: find least common multiple of all steps to Z
         // TODO: implement Euclidean algorithm
-        // 8245452805243
-        return 0;
+        return EuclideanAlgorithm.LeastCommonMultiple<long>(startNodes.Select(x => x.stepsToZ).ToArray());
     }
 }
