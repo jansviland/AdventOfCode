@@ -1,4 +1,4 @@
-namespace AdventOfCode._2023.Day9.Tests;
+namespace AdventOfCode._2023.Day10.Tests;
 
 public class Tests : TestBed<TestFixture>
 {
@@ -16,7 +16,7 @@ public class Tests : TestBed<TestFixture>
     public void Part1Test()
     {
         // arrange
-        _testOutputHelper.WriteLine("Running unit test - 2023 - Day 9 - Part 1");
+        _testOutputHelper.WriteLine("Running unit test - 2023 - Day 10 - Part 1");
 
         // act
         var result = _solutionService.RunPart1(_input);
@@ -29,7 +29,7 @@ public class Tests : TestBed<TestFixture>
     public void Part2Test()
     {
         // arrange
-        _testOutputHelper.WriteLine("Running unit test - 2023 - Day 9 - Part 2");
+        _testOutputHelper.WriteLine("Running unit test - 2023 - Day 10 - Part 2");
 
         // act
         var result = _solutionService.RunPart2(_input);
