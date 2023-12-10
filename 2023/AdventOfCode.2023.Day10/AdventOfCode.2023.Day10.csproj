@@ -26,4 +26,8 @@
         </None>
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\..\Common\Grid\Grid.csproj" />
+    </ItemGroup>
+
 </Project>

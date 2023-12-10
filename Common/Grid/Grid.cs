@@ -1,4 +1,4 @@
-﻿namespace Grid;
+﻿namespace Common;
 
 public static class Grid
 {
@@ -19,9 +19,9 @@ public static class Grid
         return grid;
     }
 
-    public static Span<T> GetAdjacentValues<T>(this T[,] grid, int row, int col)
+    public static List<T> GetAdjacentValues<T>(this T[,] grid, int row, int col)
     {
-        var adjacentValues = new Span<T>();
+        var adjacentValues = new List<T>();
 
         int numRows = grid.GetLength(0);
         int numCols = grid.GetLength(1);
@@ -39,10 +39,32 @@ public static class Grid
             // Check if the adjacent cell is within the grid boundaries.
             if (newRow >= 0 && newRow < numRows && newCol >= 0 && newCol < numCols)
             {
-                adjacentValues[i] = grid[newRow, newCol];
+                // adjacentValues[i] = grid[newRow, newCol];
+                adjacentValues.Add(grid[newRow, newCol]);
             }
         }
 
         return adjacentValues;
+    }
+
+    /// <summary>
+    /// return row and column of the first occurrence of c in grid
+    /// </summary>
+    public static (int, int) Find<T>(this T[,] grid, T c) where T : IComparable<T>
+    {
+        for (var x = 0; x < grid.GetLength(0); x++)
+        {
+            for (var y = 0; y < grid.GetLength(1); y++)
+            {
+                if (grid[x, y].Equals(c))
+                {
+                    // return grid[row, col];
+                    return (x, y);
+                    // return (col, row);
+                }
+            }
+        }
+
+        throw new Exception($"Could not find {c} in grid");
     }
 }
