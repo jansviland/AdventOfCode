@@ -17,7 +17,7 @@ public class SolutionService : ISolutionService
 
     private void Print(List<int[]> lines)
     {
-        var spacing = "  ";
+        var spacing = "     ";
 
         _logger.LogInformation("--------------------");
 

@@ -7,12 +7,20 @@ public interface ISolutionService
     public int RunPart2(string[] input);
 }
 
+public enum Direction
+{
+    North,
+    South,
+    East,
+    West
+}
+
 public class Cell : IComparable<Cell>
 {
     public char Value { get; set; }
     public int X { get; set; }
     public int Y { get; set; }
-    public int Distance { get; set; }
+    public int Distance { get; set; } = 0;
 
     public int CompareTo(Cell? other)
     {
@@ -31,21 +39,21 @@ public class SolutionService : ISolutionService
 
     public Cell[,] CreateGrid(string[] input)
     {
-        var grid = new Cell[input.Length, input[0].Length];
+        var grid = new Cell[input[0].Length, input.Length];
 
-        for (var row = 0; row < input.Length; row++)
+        for (var y = 0; y < input.Length; y++)
         {
-            string line = input[row];
-            for (var col = 0; col < line.Length; col++)
+            string line = input[y];
+            for (var x = 0; x < line.Length; x++)
             {
                 var cell = new Cell
                 {
-                    Value = line[col],
-                    X = row,
-                    Y = col
+                    Value = line[x],
+                    X = x,
+                    Y = y
                 };
 
-                grid[row, col] = cell;
+                grid[x, y] = cell;
             }
         }
 
@@ -54,12 +62,20 @@ public class SolutionService : ISolutionService
 
     public void PrintGrid(Cell[,] grid)
     {
+        var space = "";
         var sb = new StringBuilder();
-        for (var row = 0; row < grid.GetLength(0); row++)
+        for (var y = 0; y < grid.GetLength(1); y++)
         {
-            for (var col = 0; col < grid.GetLength(1); col++)
+            for (var x = 0; x < grid.GetLength(0); x++)
             {
-                sb.Append(grid[row, col].Value);
+                if (grid[x, y].Distance > 0)
+                {
+                    sb.Append(grid[x, y].Distance + space);
+                }
+                else
+                {
+                    sb.Append(grid[x, y].Value + space);
+                }
             }
             _logger.LogInformation(sb.ToString());
             sb.Clear();
@@ -78,16 +94,40 @@ public class SolutionService : ISolutionService
 
         throw new NotImplementedException();
     }
+
+    public Cell Find(Cell[,] grid, char c)
+    {
+        for (var y = 0; y < grid.GetLength(1); y++)
+        {
+            for (var x = 0; x < grid.GetLength(0); x++)
+            {
+                if (grid[x, y].Value.Equals(c))
+                {
+                    return grid[x, y];
+                }
+            }
+        }
+
+        throw new Exception($"Could not find {c} in grid");
+    }
+
     public Cell[,] GetAllDistances(Cell[,] grid)
     {
         // find S
-        var start = Common.Grid.Find(grid, 'S');
-        _logger.LogInformation("Start is at {Start}", start);
+        var start = Find(grid, 'S');
+        _logger.LogInformation("Start is at {X}, {Y}", start.X, start.Y);
 
         var possiblePaths = new Stack<Cell>();
         possiblePaths.Push(start);
 
         var visited = new HashSet<Cell>();
+
+        var northConnectors = new List<char> { '|', 'F', '7' };
+        var southConnectors = new List<char> { '|', 'L', 'J' };
+        var westConnectors = new List<char> { '-', 'F', 'L' };
+        var eastConnectors = new List<char> { '-', '7', 'J' };
+
+        int step = 0;
 
         // loop through all possible paths, find next possible paths
         while (possiblePaths.Count > 0)
@@ -107,39 +147,131 @@ public class SolutionService : ISolutionService
             visited.Add(current);
             possiblePaths.Pop();
 
-            var type = grid[x, y].Value;
             var distance = grid[x, y].Distance + 1;
 
+            Cell? north = null;
+            Cell? south = null;
+            Cell? east = null;
+            Cell? west = null;
+
+            // north
+            if (y - 1 >= 0)
+            {
+                north = grid[x, y - 1];
+            }
+            // south
+            if (y + 1 < grid.GetLength(1))
+            {
+                south = grid[x, y + 1];
+            }
+            // west
+            if (x - 1 >= 0)
+            {
+                west = grid[x - 1, y];
+            }
+            // east
+            if (x + 1 < grid.GetLength(0))
+            {
+                east = grid[x + 1, y];
+            }
+
+            var directions = new List<Direction>();
+
+            var type = grid[x, y].Value;
             switch (type)
             {
                 case 'S':
-                    possiblePaths.Push(new Cell { X = x + 1, Y = y, Distance = distance });
-                    possiblePaths.Push(new Cell { X = x - 1, Y = y, Distance = distance });
-                    possiblePaths.Push(new Cell { X = x, Y = y + 1, Distance = distance });
-                    possiblePaths.Push(new Cell { X = x, Y = y - 1, Distance = distance });
+
+                    directions.Add(Direction.North);
+                    directions.Add(Direction.South);
+                    directions.Add(Direction.East);
+                    directions.Add(Direction.West);
                     break;
+
                 case '|':
                 {
-                    possiblePaths.Push(new Cell { X = x, Y = y + 1, Distance = distance });
-                    possiblePaths.Push(new Cell { X = x, Y = y - 1, Distance = distance });
+                    directions.Add(Direction.North);
+                    directions.Add(Direction.South);
                     break;
                 }
                 case '-':
-                    possiblePaths.Push(new Cell { X = x + 1, Y = y, Distance = distance });
-                    possiblePaths.Push(new Cell { X = x - 1, Y = y, Distance = distance });
+
+                    directions.Add(Direction.East);
+                    directions.Add(Direction.West);
+                    break;
+
+                case 'L':
+
+                    directions.Add(Direction.North);
+                    directions.Add(Direction.East);
+                    break;
+
+                case 'J':
+
+                    directions.Add(Direction.North);
+                    directions.Add(Direction.West);
+                    break;
+
+                case 'F':
+
+                    directions.Add(Direction.South);
+                    directions.Add(Direction.East);
+                    break;
+
+                case '7':
+
+                    directions.Add(Direction.South);
+                    directions.Add(Direction.West);
                     break;
             }
 
-            // remove visited from possible paths
-            foreach (var visitedCell in visited)
+            // process directions
+            if (directions.Contains(Direction.North))
             {
-                if (possiblePaths.Contains(visitedCell))
+                // north
+                if (north != null && !visited.Contains(north) && northConnectors.Contains(north.Value))
                 {
-                    possiblePaths.Remove(visitedCell);
+                    grid[x, y - 1].Distance = distance;
+                    possiblePaths.Push(grid[x, y - 1]);
+                }
+            }
+            if (directions.Contains(Direction.South))
+            {
+                // south
+                if (south != null && !visited.Contains(south) && southConnectors.Contains(south.Value))
+                {
+                    grid[x, y + 1].Distance = distance;
+                    possiblePaths.Push(grid[x, y + 1]);
+                }
+            }
+            if (directions.Contains(Direction.West))
+            {
+                // west
+                if (west != null && !visited.Contains(west) && westConnectors.Contains(west.Value))
+                {
+                    grid[x - 1, y].Distance = distance;
+                    possiblePaths.Push(grid[x - 1, y]);
+                }
+            }
+            if (directions.Contains(Direction.East))
+            {
+                // east
+                if (east != null && !visited.Contains(east) && eastConnectors.Contains(east.Value))
+                {
+                    grid[x + 1, y].Distance = distance;
+                    possiblePaths.Push(grid[x + 1, y]);
                 }
             }
 
+            // _logger.LogInformation("Step {Step}", step);
+            // _logger.LogInformation("--------------------");
+            // PrintGrid(grid);
+            // _logger.LogInformation("--------------------");
+            step++;
+
         }
+
+        PrintGrid(grid);
 
         // var adjacentValues = Common.Grid.GetAdjacentValues(grid, start.Item1, start.Item2);
 
