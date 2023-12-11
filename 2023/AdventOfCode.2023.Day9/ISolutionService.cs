@@ -50,13 +50,28 @@ public class SolutionService : ISolutionService
         var diff = -1;
         var currentLine = firstLine;
 
-        while (diff != 0)
+        while (diff != 0 && currentLine.Length > 1)
         {
             // create new array, all values are diff
             var newLine = new int[currentLine.Length - 1];
             for (int i = 0; i < currentLine.Length - 1; i++)
             {
-                diff = currentLine[i + 1] - currentLine[i];
+ 
+                var a = currentLine[i + 1];
+                var b = currentLine[i];
+                
+                // find distance between two numbers
+                if (a > b)
+                {
+                    diff = a - b;
+                }
+                else
+                {
+                    diff = b - a;
+                }
+
+                // diff = currentLine[i + 1] - currentLine[i];
+                // diff = Math.Abs(currentLine[i + 1] - currentLine[i]);
                 newLine[i] = diff;
             }
             lines.Add(newLine);

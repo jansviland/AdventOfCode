@@ -4,6 +4,8 @@ public interface ISolutionService
 {
     public int RunPart1(string[] input);
     public Cell[,] GetAllDistances(Cell[,] grid, bool forwards = true);
+    public bool IsInside(Cell cell, Cell[,] grid);
+    public Cell[,] CreateGrid(string[] input);
     public int RunPart2(string[] input);
 }
 
@@ -23,13 +25,12 @@ public class Cell : IComparable<Cell>
         return pipeValues.Contains(Value);
     }
 
-    // TODO
     public bool IsInsidePipe { get; set; } = false;
 
     public char Value { get; set; }
     public int X { get; set; }
     public int Y { get; set; }
-    public int Distance { get; set; } = 0;
+    public int Steps { get; set; } = 0;
     public int DistanceToS { get; set; } = 0;
 
     public int CompareTo(Cell? other)
@@ -80,10 +81,9 @@ public class SolutionService : ISolutionService
         {
             for (var x = 0; x < grid.GetLength(0); x++)
             {
-
-                if (grid[x, y].Distance > 0 && type == 0)
+                if (grid[x, y].Steps > 0 && type == 0)
                 {
-                    var value = (grid[x, y].Distance % 100).ToString();
+                    var value = (grid[x, y].Steps % 100).ToString();
                     sb.Append(value.PadLeft(padding));
 
                     Console.ForegroundColor = ConsoleColor.Green;
@@ -100,10 +100,11 @@ public class SolutionService : ISolutionService
                 else
                 {
                     // sb.Append(grid[x, y].Value + space);
+                    var value = grid[x, y].Value.ToString();
 
                     if (grid[x, y].IsPipe())
                     {
-                        var value = grid[x, y].Value.ToString();
+                        // var value = grid[x, y].Value.ToString();
                         sb.Append(value.PadLeft(padding));
 
                         Console.ForegroundColor = ConsoleColor.Red;
@@ -111,7 +112,8 @@ public class SolutionService : ISolutionService
                     }
                     else
                     {
-                        sb.Append("#".PadLeft(padding));
+                        // sb.Append("#".PadLeft(padding));
+                        sb.Append(value.PadLeft(padding));
 
                         if (grid[x, y].IsInsidePipe)
                         {
@@ -126,26 +128,23 @@ public class SolutionService : ISolutionService
                         // Console.ForegroundColor = ConsoleColor.Yellow;
                         Console.Write("#".PadLeft(padding));
                     }
-
                 }
             }
 
-            // count the number of # in the line, where there are numbers to the left and right
-            // var count = 0;
-            // var middle = false;
-            // for (var x = 0; x < grid.GetLength(0); x++)
-            // {
-            //     var current = grid[x, y];
-            //     
-            // }
 
-        
             Console.ForegroundColor = ConsoleColor.White;
-            Console.WriteLine(" --- " + countFill + " ---");
+
+            var countFillText = " --- " + countFill + " ---";
             countFill = 0;
 
-            // _logger.LogInformation(sb.ToString());
-            Console.WriteLine();
+            // Console.WriteLine(countFillText);
+            // Console.WriteLine();
+
+            // for testing (this shows up when running unit tests)
+            _logger.LogInformation(sb + countFillText);
+
+            // for running in console
+
             sb.Clear();
         }
 
@@ -168,7 +167,7 @@ public class SolutionService : ISolutionService
         {
             for (var x = 0; x < distances.GetLength(0); x++)
             {
-                if (distances[x, y].Distance > furthest.Distance)
+                if (distances[x, y].Steps > furthest.Steps)
                 {
                     furthest = distances[x, y];
                 }
@@ -177,9 +176,9 @@ public class SolutionService : ISolutionService
 
         PrintGrid(grid);
 
-        _logger.LogInformation("Furthest is {X}, {Y} with distance {Distance}, steps {Distance}", furthest.X, furthest.Y, furthest.DistanceToS, furthest.Distance);
+        _logger.LogInformation("Furthest is {X}, {Y} with distance {Distance}, steps {Distance}", furthest.X, furthest.Y, furthest.DistanceToS, furthest.Steps);
 
-        return furthest.Distance;
+        return furthest.Steps;
     }
 
     public Cell Find(Cell[,] grid, char c)
@@ -235,7 +234,7 @@ public class SolutionService : ISolutionService
             visited.Add(current);
             possiblePaths.Remove(current);
 
-            var distance = grid[x, y].Distance + 1;
+            var stepsTaken = grid[x, y].Steps + 1;
 
             Cell? north = null;
             Cell? south = null;
@@ -319,7 +318,7 @@ public class SolutionService : ISolutionService
                 // north
                 if (north != null && !visited.Contains(north) && northConnectors.Contains(north.Value))
                 {
-                    grid[x, y - 1].Distance = distance;
+                    grid[x, y - 1].Steps = stepsTaken;
                     grid[x, y - 1].DistanceToS = Math.Abs(start.X - x) + Math.Abs(start.Y - (y - 1));
                     possiblePaths.AddFirst(grid[x, y - 1]);
                 }
@@ -329,7 +328,7 @@ public class SolutionService : ISolutionService
                 // south
                 if (south != null && !visited.Contains(south) && southConnectors.Contains(south.Value))
                 {
-                    grid[x, y + 1].Distance = distance;
+                    grid[x, y + 1].Steps = stepsTaken;
                     grid[x, y + 1].DistanceToS = Math.Abs(start.X - x) + Math.Abs(start.Y - (y - 1));
                     possiblePaths.AddFirst(grid[x, y + 1]);
                 }
@@ -339,7 +338,7 @@ public class SolutionService : ISolutionService
                 // west
                 if (west != null && !visited.Contains(west) && westConnectors.Contains(west.Value))
                 {
-                    grid[x - 1, y].Distance = distance;
+                    grid[x - 1, y].Steps = stepsTaken;
                     grid[x - 1, y].DistanceToS = Math.Abs(start.X - x) + Math.Abs(start.Y - (y - 1));
                     possiblePaths.AddFirst(grid[x - 1, y]);
                 }
@@ -349,7 +348,7 @@ public class SolutionService : ISolutionService
                 // east
                 if (east != null && !visited.Contains(east) && eastConnectors.Contains(east.Value))
                 {
-                    grid[x + 1, y].Distance = distance;
+                    grid[x + 1, y].Steps = stepsTaken;
                     grid[x + 1, y].DistanceToS = Math.Abs(start.X - x) + Math.Abs(start.Y - (y - 1));
                     possiblePaths.AddFirst(grid[x + 1, y]);
                 }
@@ -368,21 +367,137 @@ public class SolutionService : ISolutionService
         return grid;
     }
 
+    public bool IsInside(Cell cell, Cell[,] grid)
+    {
+        PrintGrid(grid);
+
+        var possiblePaths = new LinkedList<Cell>();
+        possiblePaths.AddFirst(cell);
+
+        var visited = new HashSet<Cell>();
+
+        int[] dy = { 0, 0, -1, 1, };
+        int[] dx = { -1, 1, 0, 0, };
+        Direction[] directions = { Direction.West, Direction.East, Direction.North, Direction.South, };
+
+        while (possiblePaths.Count > 0)
+        {
+            // move in all directions and look for .
+            var current = possiblePaths.Last.Value;
+            for (var i = 0; i < dx.Length; i++)
+            {
+                var x = current.X + dx[i];
+                var y = current.Y + dy[i];
+                var direction = directions[i];
+                var step = current.Steps + 1;
+
+                // check if position is valid
+                if (x < 0 || x >= grid.GetLength(0) || y < 0 || y >= grid.GetLength(1))
+                {
+                    // found edge of grid
+                    return false;
+                }
+
+                visited.Add(current);
+                possiblePaths.Remove(current);
+
+                switch (current.Value)
+                {
+                    case '.': // can move in all directions
+                        break;
+                    case '|': // can move north and south
+                    if (direction != Direction.North && direction != Direction.South)
+                        {
+                            continue;
+                        }
+                        break;
+                    case '-': // can move east and west
+                        break;
+                    case 'L': // can move north and east
+                        if (direction == Direction.North || direction == Direction.East)
+                        {
+                            continue;
+                        }
+                        break;
+                    case 'J': // can move north and west
+                        if (direction == Direction.North || direction == Direction.West)
+                        {
+                            continue;
+                        }
+                        break;
+                    case 'F': // can move south and east
+                        if (direction == Direction.South || direction == Direction.East)
+                        {
+                            continue;
+                        }
+                        break;
+                    case '7': // can move south and west
+                        if (direction == Direction.South || direction == Direction.West)
+                        {
+                            continue;
+                        }
+                        break;
+                }
+                
+                // does not work correctly, if you go along a pipe upwards, you can not go left or right
+                if (grid[x, y].Value.Equals('.') && !visited.Contains(grid[x, y]))
+                {
+                    grid[x, y].Steps = step;
+                    possiblePaths.AddFirst(grid[x, y]);
+                }
+
+                // TODO:
+                // In fact, there doesn't even need to be a full tile path to the outside for tiles to count as outside the loop -
+                // squeezing between pipes is also allowed! Here, I is still within the loop and O is still outside the loop:
+
+                // TODO: if we are going up or down, we can go along pipe 'F' and '7' and 'L' and 'J', '|'
+                var upDownPipeValues = new char[] { '|', 'F', '7', 'L', 'J', };
+                if ((direction == Direction.North || direction == Direction.South) && upDownPipeValues.Contains(grid[x, y].Value) && !visited.Contains(grid[x, y]))
+                {
+                    grid[x, y].Steps = step;
+                    possiblePaths.AddFirst(grid[x, y]);
+                }
+            }
+
+            _logger.LogInformation("--------------------");
+            PrintGrid(grid);
+        }
+
+        return true;
+    }
+
     public int RunPart2(string[] input)
     {
         _logger.LogInformation("Solving - 2023 - Day 10 - Part 2");
         _logger.LogInformation("Input contains {Input} values", input.Length);
 
         var grid = CreateGrid(input);
-        Cell[,] distances = GetAllDistances(grid, true);
+        // Cell[,] distances = GetAllDistances(grid, true);
 
-        PrintGrid(grid);
+        // PrintGrid(grid, 2);
 
         // flood fill algorithm?
         // for each . element, check if it's "inside" a pipe, meaning it has a number to the left and right, and above and below
         // continue to move left, right, top, bottom, until you hit a pipe. If you hit a pipe in all four directions, it's inside a pipe
+        var count = 0;
+        for (var y = 0; y < grid.GetLength(1); y++)
+        {
+            for (var x = 0; x < grid.GetLength(0); x++)
+            {
+                var cell = grid[x, y];
+                if (cell.Value.Equals('.'))
+                {
+                    if (IsInside(cell, grid))
+                    {
+                        count++;
+                        cell.IsInsidePipe = true;
+                    }
+                }
+            }
+        }
 
+        PrintGrid(grid);
 
-        throw new NotImplementedException();
+        return count;
     }
 }
