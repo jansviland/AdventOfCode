@@ -3,7 +3,27 @@
 This is my solutions to the [Advent of Code](http://adventofcode.com/) puzzles. I have used C# and TDD to solve
 the puzzles.
 
-# Demo
+# Demo of some of the solutions
+
+## 2023 - Day 10 - Demo
+
+![png](./wiki/2023-day10-part-1-solution.PNG)
+
+## 2023 - Day 7 - Demo
+
+![png](./wiki/2023-day7-solution.PNG)
+
+## 2023 - Day 6 - Demo
+
+![png](./wiki/2023-day6-part-2-solution.PNG)
+
+## 2023 - Day 5 - Demo
+
+![png](./wiki/2023-day5-part-1-solution.PNG)
+
+## 2023 - Day 3 - Demo
+
+![png](./wiki/2023-day3-part-1-solution.PNG)
 
 ## 2022 - Day 14 - Demo
 

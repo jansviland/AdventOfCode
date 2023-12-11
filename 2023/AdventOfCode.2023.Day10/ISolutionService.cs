@@ -3,7 +3,7 @@ namespace AdventOfCode._2023.Day10;
 public interface ISolutionService
 {
     public int RunPart1(string[] input);
-    public Cell[,] GetAllDistances(Cell[,] grid);
+    public Cell[,] GetAllDistances(Cell[,] grid, bool forwards = true);
     public int RunPart2(string[] input);
 }
 
@@ -21,6 +21,7 @@ public class Cell : IComparable<Cell>
     public int X { get; set; }
     public int Y { get; set; }
     public int Distance { get; set; } = 0;
+    public int DistanceToS { get; set; } = 0;
 
     public int CompareTo(Cell? other)
     {
@@ -60,21 +61,35 @@ public class SolutionService : ISolutionService
         return grid;
     }
 
-    public void PrintGrid(Cell[,] grid)
+    public void PrintGrid(Cell[,] grid, int type = 0)
     {
-        var space = "";
+        // var space = " ";
+        var padding = 3;
         var sb = new StringBuilder();
         for (var y = 0; y < grid.GetLength(1); y++)
         {
             for (var x = 0; x < grid.GetLength(0); x++)
             {
-                if (grid[x, y].Distance > 0)
+
+                if (grid[x, y].Distance > 0 && type == 0)
                 {
-                    sb.Append(grid[x, y].Distance + space);
+                    // var value = "#";
+                    var value = (grid[x, y].Distance % 100).ToString();
+                    // var value = (grid[x, y].DistanceToS % 100).ToString();
+                    sb.Append(value.PadLeft(padding));
+                }
+                else if (grid[x, y].DistanceToS > 0 && type == 1)
+                {
+                    // var value = "#";
+                    // var value = (grid[x, y].Distance % 100).ToString();
+                    var value = (grid[x, y].DistanceToS % 100).ToString();
+                    sb.Append(value.PadLeft(padding));
                 }
                 else
                 {
-                    sb.Append(grid[x, y].Value + space);
+                    var value = grid[x, y].Value.ToString();
+                    // sb.Append(grid[x, y].Value + space);
+                    sb.Append(value.PadLeft(padding));
                 }
             }
             _logger.LogInformation(sb.ToString());
@@ -90,9 +105,25 @@ public class SolutionService : ISolutionService
         var grid = CreateGrid(input);
         PrintGrid(grid);
 
-        var distances = GetAllDistances(grid);
+        // for each cell, find distance to S, using manhattan distance
+        // the cell that is the furthest away is the answer (that has a distance > 0)
 
-        throw new NotImplementedException();
+        Cell furthest = new Cell();
+        var distances = GetAllDistances(grid, true);
+        for (var y = 0; y < distances.GetLength(1); y++)
+        {
+            for (var x = 0; x < distances.GetLength(0); x++)
+            {
+                if (distances[x, y].Distance > furthest.Distance)
+                {
+                    furthest = distances[x, y];
+                }
+            }
+        }
+
+        _logger.LogInformation("Furthest is {X}, {Y} with distance {Distance}, steps {Distance}", furthest.X, furthest.Y, furthest.DistanceToS, furthest.Distance);
+
+        return furthest.Distance;
     }
 
     public Cell Find(Cell[,] grid, char c)
@@ -111,14 +142,14 @@ public class SolutionService : ISolutionService
         throw new Exception($"Could not find {c} in grid");
     }
 
-    public Cell[,] GetAllDistances(Cell[,] grid)
+    public Cell[,] GetAllDistances(Cell[,] grid, bool forwards = true)
     {
         // find S
         var start = Find(grid, 'S');
         _logger.LogInformation("Start is at {X}, {Y}", start.X, start.Y);
 
-        var possiblePaths = new Stack<Cell>();
-        possiblePaths.Push(start);
+        var possiblePaths = new LinkedList<Cell>();
+        possiblePaths.AddFirst(start);
 
         var visited = new HashSet<Cell>();
 
@@ -132,7 +163,8 @@ public class SolutionService : ISolutionService
         // loop through all possible paths, find next possible paths
         while (possiblePaths.Count > 0)
         {
-            var current = possiblePaths.Peek();
+            // can go in two directions, forward or backwards, by starting with Last or First
+            var current = forwards ? possiblePaths.Last.Value : possiblePaths.First.Value;
 
             var x = current.X;
             var y = current.Y;
@@ -140,12 +172,12 @@ public class SolutionService : ISolutionService
             // check if position is valid
             if (x < 0 || x >= grid.GetLength(0) || y < 0 || y >= grid.GetLength(1))
             {
-                possiblePaths.Pop();
+                possiblePaths.Remove(current);
                 continue;
             }
 
             visited.Add(current);
-            possiblePaths.Pop();
+            possiblePaths.Remove(current);
 
             var distance = grid[x, y].Distance + 1;
 
@@ -232,7 +264,8 @@ public class SolutionService : ISolutionService
                 if (north != null && !visited.Contains(north) && northConnectors.Contains(north.Value))
                 {
                     grid[x, y - 1].Distance = distance;
-                    possiblePaths.Push(grid[x, y - 1]);
+                    grid[x, y - 1].DistanceToS = Math.Abs(start.X - x) + Math.Abs(start.Y - (y - 1));
+                    possiblePaths.AddFirst(grid[x, y - 1]);
                 }
             }
             if (directions.Contains(Direction.South))
@@ -241,7 +274,8 @@ public class SolutionService : ISolutionService
                 if (south != null && !visited.Contains(south) && southConnectors.Contains(south.Value))
                 {
                     grid[x, y + 1].Distance = distance;
-                    possiblePaths.Push(grid[x, y + 1]);
+                    grid[x, y + 1].DistanceToS = Math.Abs(start.X - x) + Math.Abs(start.Y - (y - 1));
+                    possiblePaths.AddFirst(grid[x, y + 1]);
                 }
             }
             if (directions.Contains(Direction.West))
@@ -250,7 +284,8 @@ public class SolutionService : ISolutionService
                 if (west != null && !visited.Contains(west) && westConnectors.Contains(west.Value))
                 {
                     grid[x - 1, y].Distance = distance;
-                    possiblePaths.Push(grid[x - 1, y]);
+                    grid[x - 1, y].DistanceToS = Math.Abs(start.X - x) + Math.Abs(start.Y - (y - 1));
+                    possiblePaths.AddFirst(grid[x - 1, y]);
                 }
             }
             if (directions.Contains(Direction.East))
@@ -259,7 +294,8 @@ public class SolutionService : ISolutionService
                 if (east != null && !visited.Contains(east) && eastConnectors.Contains(east.Value))
                 {
                     grid[x + 1, y].Distance = distance;
-                    possiblePaths.Push(grid[x + 1, y]);
+                    grid[x + 1, y].DistanceToS = Math.Abs(start.X - x) + Math.Abs(start.Y - (y - 1));
+                    possiblePaths.AddFirst(grid[x + 1, y]);
                 }
             }
 
@@ -273,10 +309,7 @@ public class SolutionService : ISolutionService
 
         PrintGrid(grid);
 
-        // var adjacentValues = Common.Grid.GetAdjacentValues(grid, start.Item1, start.Item2);
-
-
-        throw new NotImplementedException();
+        return grid;
     }
 
     public int RunPart2(string[] input)
