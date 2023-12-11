@@ -17,6 +17,12 @@ public enum Direction
 
 public class Cell : IComparable<Cell>
 {
+    public bool IsPipe()
+    {
+        var pipeValues = new char[] { '|', 'F', '7', '-', 'L', 'J', };
+        return pipeValues.Contains(Value);
+    }
+
     public char Value { get; set; }
     public int X { get; set; }
     public int Y { get; set; }
@@ -77,6 +83,9 @@ public class SolutionService : ISolutionService
                     var value = (grid[x, y].Distance % 100).ToString();
                     // var value = (grid[x, y].DistanceToS % 100).ToString();
                     sb.Append(value.PadLeft(padding));
+
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.Write(value.PadLeft(padding));
                 }
                 else if (grid[x, y].DistanceToS > 0 && type == 1)
                 {
@@ -84,17 +93,52 @@ public class SolutionService : ISolutionService
                     // var value = (grid[x, y].Distance % 100).ToString();
                     var value = (grid[x, y].DistanceToS % 100).ToString();
                     sb.Append(value.PadLeft(padding));
+
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.Write(value.PadLeft(padding));
                 }
+                // else if (grid[x, y].Distance > 0 && type == 2)
+                // {
+                //     var value = "#";
+                //     sb.Append(value.PadLeft(padding));
+                //
+                //     Console.ForegroundColor = ConsoleColor.Green;
+                //     Console.Write(value.PadLeft(padding));
+                // }
+                // else if (type == 2)
+                // {
+                //     var value = "X";
+                //     sb.Append(value.PadLeft(padding));
+                //
+                //     Console.ForegroundColor = ConsoleColor.Red;
+                //     Console.Write(value.PadLeft(padding));
+                // }
                 else
                 {
                     var value = grid[x, y].Value.ToString();
                     // sb.Append(grid[x, y].Value + space);
                     sb.Append(value.PadLeft(padding));
+
+                    if (grid[x, y].IsPipe())
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.Write(value.PadLeft(padding));
+                    }
+                    else
+                    {
+                        Console.ForegroundColor = ConsoleColor.Yellow;
+                        Console.Write("1".PadLeft(padding));
+                    }
+
                 }
             }
-            _logger.LogInformation(sb.ToString());
+
+            // _logger.LogInformation(sb.ToString());
+            Console.WriteLine();
             sb.Clear();
         }
+
+        Console.ForegroundColor = ConsoleColor.White;
     }
 
     public int RunPart1(string[] input)
@@ -103,13 +147,12 @@ public class SolutionService : ISolutionService
         _logger.LogInformation("Input contains {Input} values", input.Length);
 
         var grid = CreateGrid(input);
-        PrintGrid(grid);
 
         // for each cell, find distance to S, using manhattan distance
         // the cell that is the furthest away is the answer (that has a distance > 0)
 
         Cell furthest = new Cell();
-        var distances = GetAllDistances(grid, true);
+        Cell[,] distances = GetAllDistances(grid, true);
         for (var y = 0; y < distances.GetLength(1); y++)
         {
             for (var x = 0; x < distances.GetLength(0); x++)
@@ -120,6 +163,8 @@ public class SolutionService : ISolutionService
                 }
             }
         }
+
+        PrintGrid(grid);
 
         _logger.LogInformation("Furthest is {X}, {Y} with distance {Distance}, steps {Distance}", furthest.X, furthest.Y, furthest.DistanceToS, furthest.Distance);
 
@@ -158,7 +203,7 @@ public class SolutionService : ISolutionService
         var westConnectors = new List<char> { '-', 'F', 'L' };
         var eastConnectors = new List<char> { '-', '7', 'J' };
 
-        int step = 0;
+        // int step = 0;
 
         // loop through all possible paths, find next possible paths
         while (possiblePaths.Count > 0)
@@ -303,11 +348,11 @@ public class SolutionService : ISolutionService
             // _logger.LogInformation("--------------------");
             // PrintGrid(grid);
             // _logger.LogInformation("--------------------");
-            step++;
+            // step++;
 
         }
 
-        PrintGrid(grid);
+        // PrintGrid(grid);
 
         return grid;
     }
@@ -316,6 +361,14 @@ public class SolutionService : ISolutionService
     {
         _logger.LogInformation("Solving - 2023 - Day 10 - Part 2");
         _logger.LogInformation("Input contains {Input} values", input.Length);
+
+        var grid = CreateGrid(input);
+        Cell[,] distances = GetAllDistances(grid, true);
+
+        PrintGrid(grid);
+
+        // flood fill algorithm?
+
 
         throw new NotImplementedException();
     }
