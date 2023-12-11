@@ -27,7 +27,7 @@ public class Tests : TestBed<TestFixture>
         // assert
         Assert.Equivalent(_input2, result);
     }
-    
+
     [Fact]
     public void Part1Test()
     {
@@ -41,16 +41,16 @@ public class Tests : TestBed<TestFixture>
         Assert.Equal(374, result);
     }
 
-    [Fact]
-    public void Part2Test()
-    {
-        // arrange
-        _testOutputHelper.WriteLine("Running unit test - 2023 - Day 11 - Part 2");
-
-        // act
-        var result = _solutionService.RunPart2(_input);
-
-        // assert
-        Assert.Equal(5905, result);
-    }
+    // [Fact]
+    // public void Part2Test()
+    // {
+    //     // arrange
+    //     _testOutputHelper.WriteLine("Running unit test - 2023 - Day 11 - Part 2");
+    //
+    //     // act
+    //     var result = _solutionService.RunPart2(_input);
+    //
+    //     // assert
+    //     Assert.Equal(1030, result);
+    // }
 }

@@ -81,6 +81,16 @@ public class SolutionService : ISolutionService
         _logger.LogInformation("Solving - 2023 - Day 11 - Part 2");
         _logger.LogInformation("Input contains {Input} values", input.Length);
 
+        /*
+            1 -> 8890760
+            10 -> 16 010 894 - diff: 7 120 134
+            100 -> 87 212 234 - diff: 71 201 340
+            1000 -> 799 225 634 - diff: 712 013 400
+            10 000 -> 7 919 359 634 - diff: 7 120 134 000
+            100 000 -> 79 120 699 634 - diff: 71 201 340 000
+            1 000 000 -> 791 134 099 634
+         */
+
         throw new NotImplementedException();
     }
 
@@ -133,8 +143,10 @@ public class SolutionService : ISolutionService
             }
             else
             {
-                newRows.Add(line);
-                newRows.Add(line);
+                for (var i = 0; i < 1000; i++)
+                {
+                    newRows.Add(line);
+                }
             }
         }
 
