@@ -23,6 +23,9 @@ public class Cell : IComparable<Cell>
         return pipeValues.Contains(Value);
     }
 
+    // TODO
+    public bool IsInsidePipe { get; set; } = false;
+
     public char Value { get; set; }
     public int X { get; set; }
     public int Y { get; set; }
@@ -69,8 +72,9 @@ public class SolutionService : ISolutionService
 
     public void PrintGrid(Cell[,] grid, int type = 0)
     {
-        // var space = " ";
-        var padding = 3;
+        var countFill = 0;
+
+        const int padding = 3;
         var sb = new StringBuilder();
         for (var y = 0; y < grid.GetLength(1); y++)
         {
@@ -79,9 +83,7 @@ public class SolutionService : ISolutionService
 
                 if (grid[x, y].Distance > 0 && type == 0)
                 {
-                    // var value = "#";
                     var value = (grid[x, y].Distance % 100).ToString();
-                    // var value = (grid[x, y].DistanceToS % 100).ToString();
                     sb.Append(value.PadLeft(padding));
 
                     Console.ForegroundColor = ConsoleColor.Green;
@@ -89,56 +91,65 @@ public class SolutionService : ISolutionService
                 }
                 else if (grid[x, y].DistanceToS > 0 && type == 1)
                 {
-                    // var value = "#";
-                    // var value = (grid[x, y].Distance % 100).ToString();
                     var value = (grid[x, y].DistanceToS % 100).ToString();
                     sb.Append(value.PadLeft(padding));
 
                     Console.ForegroundColor = ConsoleColor.Green;
                     Console.Write(value.PadLeft(padding));
                 }
-                // else if (grid[x, y].Distance > 0 && type == 2)
-                // {
-                //     var value = "#";
-                //     sb.Append(value.PadLeft(padding));
-                //
-                //     Console.ForegroundColor = ConsoleColor.Green;
-                //     Console.Write(value.PadLeft(padding));
-                // }
-                // else if (type == 2)
-                // {
-                //     var value = "X";
-                //     sb.Append(value.PadLeft(padding));
-                //
-                //     Console.ForegroundColor = ConsoleColor.Red;
-                //     Console.Write(value.PadLeft(padding));
-                // }
                 else
                 {
-                    var value = grid[x, y].Value.ToString();
                     // sb.Append(grid[x, y].Value + space);
-                    sb.Append(value.PadLeft(padding));
 
                     if (grid[x, y].IsPipe())
                     {
+                        var value = grid[x, y].Value.ToString();
+                        sb.Append(value.PadLeft(padding));
+
                         Console.ForegroundColor = ConsoleColor.Red;
                         Console.Write(value.PadLeft(padding));
                     }
                     else
                     {
-                        Console.ForegroundColor = ConsoleColor.Yellow;
-                        Console.Write("1".PadLeft(padding));
+                        sb.Append("#".PadLeft(padding));
+
+                        if (grid[x, y].IsInsidePipe)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Yellow;
+                            countFill++;
+                        }
+                        else
+                        {
+                            Console.ForegroundColor = ConsoleColor.White;
+                        }
+
+                        // Console.ForegroundColor = ConsoleColor.Yellow;
+                        Console.Write("#".PadLeft(padding));
                     }
 
                 }
             }
+
+            // count the number of # in the line, where there are numbers to the left and right
+            // var count = 0;
+            // var middle = false;
+            // for (var x = 0; x < grid.GetLength(0); x++)
+            // {
+            //     var current = grid[x, y];
+            //     
+            // }
+
+        
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine(" --- " + countFill + " ---");
+            countFill = 0;
 
             // _logger.LogInformation(sb.ToString());
             Console.WriteLine();
             sb.Clear();
         }
 
-        Console.ForegroundColor = ConsoleColor.White;
+        // Console.ForegroundColor = ConsoleColor.White;
     }
 
     public int RunPart1(string[] input)
@@ -368,6 +379,8 @@ public class SolutionService : ISolutionService
         PrintGrid(grid);
 
         // flood fill algorithm?
+        // for each . element, check if it's "inside" a pipe, meaning it has a number to the left and right, and above and below
+        // continue to move left, right, top, bottom, until you hit a pipe. If you hit a pipe in all four directions, it's inside a pipe
 
 
         throw new NotImplementedException();
