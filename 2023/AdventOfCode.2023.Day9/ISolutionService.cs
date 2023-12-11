@@ -61,14 +61,15 @@ public class SolutionService : ISolutionService
                 var b = currentLine[i];
                 
                 // find distance between two numbers
-                if (a > b)
-                {
-                    diff = a - b;
-                }
-                else
-                {
-                    diff = b - a;
-                }
+                // if (a > b)
+                // {
+                //     diff = a - b;
+                // }
+                // else
+                // {
+                //     diff = b - a;
+                // }
+                diff = a - b;
 
                 // diff = currentLine[i + 1] - currentLine[i];
                 // diff = Math.Abs(currentLine[i + 1] - currentLine[i]);

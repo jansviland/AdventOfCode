@@ -29,18 +29,26 @@ public class Tests : TestBed<TestFixture>
         Assert.Equal(8, result);
     }
 
-    [Fact]
-    public void Part2IsInsideTest()
+    [Theory]
+    [InlineData(2, 6, true)]
+    [InlineData(3, 6, true)]
+    [InlineData(6, 6, true)]
+    [InlineData(7, 6, true)]
+    [InlineData(3, 3, false)]
+    [InlineData(4, 3, false)]
+    [InlineData(5, 3, false)]
+    [InlineData(6, 3, false)]
+    public void Part2IsInsideTest(int x, int y, bool expected)
     {
         // arrange
         var grid = _solutionService.CreateGrid(_input_part2_A);
-        var start = grid[2, 6];
+        var start = grid[x, y];
  
         // act
         var result = _solutionService.IsInside(start, grid);
 
         // assert
-        Assert.True(result);
+        Assert.Equal(expected, result);
     }
 
     [Fact]

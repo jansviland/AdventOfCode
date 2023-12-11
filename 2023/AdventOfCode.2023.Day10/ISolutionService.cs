@@ -401,44 +401,40 @@ public class SolutionService : ISolutionService
                 visited.Add(current);
                 possiblePaths.Remove(current);
 
+                // if (current.IsPipe())
+                // {
+
                 switch (current.Value)
                 {
                     case '.': // can move in all directions
                         break;
                     case '|': // can move north and south
-                    if (direction != Direction.North && direction != Direction.South)
-                        {
+                        if (direction != Direction.North && direction != Direction.South)
                             continue;
-                        }
                         break;
                     case '-': // can move east and west
+                        if (direction != Direction.East && direction != Direction.West)
+                            continue;
                         break;
                     case 'L': // can move north and east
-                        if (direction == Direction.North || direction == Direction.East)
-                        {
+                        if (direction != Direction.North && direction != Direction.East)
                             continue;
-                        }
                         break;
                     case 'J': // can move north and west
-                        if (direction == Direction.North || direction == Direction.West)
-                        {
+                        if (direction != Direction.North && direction != Direction.West)
                             continue;
-                        }
                         break;
                     case 'F': // can move south and east
-                        if (direction == Direction.South || direction == Direction.East)
-                        {
+                        if (direction != Direction.South && direction != Direction.East)
                             continue;
-                        }
                         break;
                     case '7': // can move south and west
-                        if (direction == Direction.South || direction == Direction.West)
-                        {
+                        if (direction != Direction.South && direction != Direction.West)
                             continue;
-                        }
                         break;
                 }
-                
+                // }
+
                 // does not work correctly, if you go along a pipe upwards, you can not go left or right
                 if (grid[x, y].Value.Equals('.') && !visited.Contains(grid[x, y]))
                 {
@@ -453,6 +449,13 @@ public class SolutionService : ISolutionService
                 // TODO: if we are going up or down, we can go along pipe 'F' and '7' and 'L' and 'J', '|'
                 var upDownPipeValues = new char[] { '|', 'F', '7', 'L', 'J', };
                 if ((direction == Direction.North || direction == Direction.South) && upDownPipeValues.Contains(grid[x, y].Value) && !visited.Contains(grid[x, y]))
+                {
+                    grid[x, y].Steps = step;
+                    possiblePaths.AddFirst(grid[x, y]);
+                }
+
+                var leftRightPipeValues = new char[] { '-', 'F', '7', 'L', 'J', };
+                if ((direction == Direction.East || direction == Direction.West) && leftRightPipeValues.Contains(grid[x, y].Value) && !visited.Contains(grid[x, y]))
                 {
                     grid[x, y].Steps = step;
                     possiblePaths.AddFirst(grid[x, y]);
@@ -472,6 +475,10 @@ public class SolutionService : ISolutionService
         _logger.LogInformation("Input contains {Input} values", input.Length);
 
         var grid = CreateGrid(input);
+
+        // TODO: find another way to do this, instead of checking if one value can find a path out of the grid
+        // instead, "fill" the grid and count the number of cells that are not filled.
+
         // Cell[,] distances = GetAllDistances(grid, true);
 
         // PrintGrid(grid, 2);
