@@ -1,3 +1,5 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace AdventOfCode._2023.Day11;
 
 public interface ISolutionService
@@ -22,12 +24,56 @@ public class SolutionService : ISolutionService
         _logger.LogInformation("Input contains {Input} values", input.Length);
 
         var expanded = ExpandGrid(input);
-        var grid = Parse(expanded);
-        
+
+        // find all #, going from top left to bottom right
+        var galaxies = new List<(int, int)>(); // (x, y)
+
+        for (var y = 0; y < expanded.Length; y++)
+        {
+            string s = expanded[y];
+            for (var x = 0; x < s.Length; x++)
+            {
+                if (s[x] == '#')
+                {
+                    galaxies.Add((x, y));
+                }
+            }
+        }
+
+        // only compare the same two galaxies once, store all combinations in a dictionary as key
+        var galaxiesCompared = new Dictionary<string, long>();
+
         // find distances
-        var distances = new Dictionary<(int, int), int>();
-        
-        throw new NotImplementedException();
+        foreach (var galaxy in galaxies)
+        {
+            foreach (var otherGalaxy in galaxies)
+            {
+                if (galaxy == otherGalaxy)
+                {
+                    continue;
+                }
+
+                var uniqeKey = $"{galaxy.Item1},{galaxy.Item2},{otherGalaxy.Item1},{otherGalaxy.Item2}";
+                var uniqeKey2 = $"{otherGalaxy.Item1},{otherGalaxy.Item2},{galaxy.Item1},{galaxy.Item2}";
+
+                if (galaxiesCompared.ContainsKey(uniqeKey) || galaxiesCompared.ContainsKey(uniqeKey2))
+                {
+                }
+                else
+                {
+                    long distance = Distance(galaxy.Item1, galaxy.Item2, otherGalaxy.Item1, otherGalaxy.Item2);
+                    galaxiesCompared.Add(uniqeKey, distance);
+                    galaxiesCompared.Add(uniqeKey2, 0);
+                }
+            }
+        }
+
+        return galaxiesCompared.Values.Sum();
+    }
+
+    public long Distance(int x1, int y1, int x2, int y2)
+    {
+        return Math.Abs(x1 - x2) + Math.Abs(y1 - y2);
     }
 
     public long RunPart2(string[] input)
@@ -52,11 +98,6 @@ public class SolutionService : ISolutionService
         return result;
     }
 
-    /// <summary>
-    /// Transpose a 2D array
-    /// </summary>
-    /// <param name="input"></param>
-    /// <returns></returns>
     public string[] Transpose(string[] input)
     {
         var result = new string[input[0].Length];
