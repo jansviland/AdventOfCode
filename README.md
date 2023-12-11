@@ -7,23 +7,23 @@ the puzzles.
 
 ## 2023 - Day 10 - Demo
 
-![png](./wiki/2023-day10-part-1-solution.PNG)
+![png](./wiki/2023-day10-part-1-solution.png)
 
 ## 2023 - Day 7 - Demo
 
-![png](./wiki/2023-day7-solution.PNG)
+![png](./wiki/2023-day7-solution.png)
 
 ## 2023 - Day 6 - Demo
 
-![png](./wiki/2023-day6-part-2-solution.PNG)
+![png](./wiki/2023-day6-part-2-solution.png)
 
 ## 2023 - Day 5 - Demo
 
-![png](./wiki/2023-day5-part-1-solution.PNG)
+![png](./wiki/2023-day5-part-1-solution.png)
 
 ## 2023 - Day 3 - Demo
 
-![png](./wiki/2023-day3-part-1-solution.PNG)
+![png](./wiki/2023-day3-part-1-solution.png)
 
 ## 2022 - Day 14 - Demo
 
