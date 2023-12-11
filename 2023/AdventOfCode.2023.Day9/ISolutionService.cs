@@ -2,8 +2,8 @@ namespace AdventOfCode._2023.Day9;
 
 public interface ISolutionService
 {
-    public int RunPart1(string[] input);
-    public int RunPart2(string[] input);
+    public long RunPart1(string[] input);
+    public long RunPart2(string[] input);
 }
 
 public class SolutionService : ISolutionService
@@ -15,7 +15,7 @@ public class SolutionService : ISolutionService
         _logger = logger;
     }
 
-    private void Print(List<int[]> lines)
+    private void Print(List<long[]> lines)
     {
         var spacing = "     ";
 
@@ -42,37 +42,30 @@ public class SolutionService : ISolutionService
         }
     }
 
-    private int FinalNumber(int[] firstLine)
+    // alternative solution
+    long[] Diff(long[] numbers) =>
+        numbers.Zip(numbers.Skip(1)).Select(p => p.Second - p.First).ToArray();
+
+    long ExtrapolateRight(long[] numbers) =>
+        !numbers.Any() ? 0 : ExtrapolateRight(Diff(numbers)) + numbers.Last();
+
+    long ExtrapolateLeft(long[] numbers) =>
+        ExtrapolateRight(numbers.Reverse().ToArray());
+
+    private long FinalNumber(IEnumerable<long> firstLine)
     {
-        var lines = new List<int[]>();
-        lines.Add(firstLine);
+        var lines = new List<long[]>();
+        lines.Add(firstLine.ToArray());
 
-        var diff = -1;
-        var currentLine = firstLine;
+        var currentLine = firstLine.ToArray();
 
-        while (diff != 0 && currentLine.Length > 1)
+        while (currentLine.Any(x => x != 0))
         {
             // create new array, all values are diff
-            var newLine = new int[currentLine.Length - 1];
+            var newLine = new long[currentLine.Length - 1];
             for (int i = 0; i < currentLine.Length - 1; i++)
             {
- 
-                var a = currentLine[i + 1];
-                var b = currentLine[i];
-                
-                // find distance between two numbers
-                // if (a > b)
-                // {
-                //     diff = a - b;
-                // }
-                // else
-                // {
-                //     diff = b - a;
-                // }
-                diff = a - b;
-
-                // diff = currentLine[i + 1] - currentLine[i];
-                // diff = Math.Abs(currentLine[i + 1] - currentLine[i]);
+                long diff = currentLine[i + 1] - currentLine[i];
                 newLine[i] = diff;
             }
             lines.Add(newLine);
@@ -81,19 +74,17 @@ public class SolutionService : ISolutionService
             currentLine = newLine;
         }
 
-        Print(lines);
-
         // TODO: add an extra 0 to the last line, then increase all numbers from the bottom going up
         lines.Reverse();
 
         var additional = 1;
 
-        var updatedLines = new List<int[]>();
+        var updatedLines = new List<long[]>();
 
-        var appendNumber = 0;
-        foreach (int[] line in lines)
+        long appendNumber = 0;
+        foreach (long[] line in lines)
         {
-            var newline = new int[line.Length + additional];
+            var newline = new long[line.Length + additional];
 
             for (var i = 0; i < line.Length + additional; i++)
             {
@@ -117,36 +108,52 @@ public class SolutionService : ISolutionService
         return updatedLines.First().Last();
     }
 
-    public int RunPart1(string[] input)
+    public long RunPart1(string[] input)
     {
         _logger.LogInformation("Solving - 2023 - Day 9 - Part 1");
         _logger.LogInformation("Input contains {Input} values", input.Length);
 
-        var list = new List<int[]>();
+        var list = new List<long[]>();
         foreach (string line in input)
         {
             var split = line.Split(" ");
-            var numbers = split.Select(int.Parse).ToArray();
+            var numbers = split.Select(long.Parse).ToArray();
             list.Add(numbers);
         }
 
-        var total = 0;
-        foreach (int[] numbers in list)
+        long total = 0;
+        foreach (long[] numbers in list)
         {
-            var finalNumber = FinalNumber(numbers);
+            var finalNumber1 = FinalNumber(numbers);
+            total += finalNumber1;
+        }
+
+        return total;
+    }
+
+    public long RunPart2(string[] input)
+    {
+        _logger.LogInformation("Solving - 2023 - Day 9 - Part 2");
+        _logger.LogInformation("Input contains {Input} values", input.Length);
+
+        var list = new List<long[]>();
+        foreach (string line in input)
+        {
+            var split = line.Split(" ");
+            var numbers = split.Select(long.Parse).ToArray();
+            list.Add(numbers);
+        }
+
+        long total = 0;
+        foreach (long[] numbers in list)
+        {
+            var finalNumber = FinalNumber(numbers.Reverse());
+            // var finalNumber = ExtrapolateLeft(numbers);
             total += finalNumber;
 
             _logger.LogInformation($"Final number: {finalNumber}");
         }
 
         return total;
-    }
-
-    public int RunPart2(string[] input)
-    {
-        _logger.LogInformation("Solving - 2023 - Day 9 - Part 2");
-        _logger.LogInformation("Input contains {Input} values", input.Length);
-
-        throw new NotImplementedException();
     }
 }
