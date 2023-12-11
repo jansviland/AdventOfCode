@@ -378,17 +378,14 @@ public class SolutionService : ISolutionService
 
         int[] dy = { 0, 0, -1, 1, };
         int[] dx = { -1, 1, 0, 0, };
-        Direction[] directions = { Direction.West, Direction.East, Direction.North, Direction.South, };
 
         while (possiblePaths.Count > 0)
         {
-            // move in all directions and look for .
             var current = possiblePaths.Last.Value;
             for (var i = 0; i < dx.Length; i++)
             {
                 var x = current.X + dx[i];
                 var y = current.Y + dy[i];
-                var direction = directions[i];
                 var step = current.Steps + 1;
 
                 // check if position is valid
@@ -401,61 +398,8 @@ public class SolutionService : ISolutionService
                 visited.Add(current);
                 possiblePaths.Remove(current);
 
-                // if (current.IsPipe())
-                // {
-
-                switch (current.Value)
-                {
-                    case '.': // can move in all directions
-                        break;
-                    case '|': // can move north and south
-                        if (direction != Direction.North && direction != Direction.South)
-                            continue;
-                        break;
-                    case '-': // can move east and west
-                        if (direction != Direction.East && direction != Direction.West)
-                            continue;
-                        break;
-                    case 'L': // can move north and east
-                        if (direction != Direction.North && direction != Direction.East)
-                            continue;
-                        break;
-                    case 'J': // can move north and west
-                        if (direction != Direction.North && direction != Direction.West)
-                            continue;
-                        break;
-                    case 'F': // can move south and east
-                        if (direction != Direction.South && direction != Direction.East)
-                            continue;
-                        break;
-                    case '7': // can move south and west
-                        if (direction != Direction.South && direction != Direction.West)
-                            continue;
-                        break;
-                }
-                // }
-
                 // does not work correctly, if you go along a pipe upwards, you can not go left or right
                 if (grid[x, y].Value.Equals('.') && !visited.Contains(grid[x, y]))
-                {
-                    grid[x, y].Steps = step;
-                    possiblePaths.AddFirst(grid[x, y]);
-                }
-
-                // TODO:
-                // In fact, there doesn't even need to be a full tile path to the outside for tiles to count as outside the loop -
-                // squeezing between pipes is also allowed! Here, I is still within the loop and O is still outside the loop:
-
-                // TODO: if we are going up or down, we can go along pipe 'F' and '7' and 'L' and 'J', '|'
-                var upDownPipeValues = new char[] { '|', 'F', '7', 'L', 'J', };
-                if ((direction == Direction.North || direction == Direction.South) && upDownPipeValues.Contains(grid[x, y].Value) && !visited.Contains(grid[x, y]))
-                {
-                    grid[x, y].Steps = step;
-                    possiblePaths.AddFirst(grid[x, y]);
-                }
-
-                var leftRightPipeValues = new char[] { '-', 'F', '7', 'L', 'J', };
-                if ((direction == Direction.East || direction == Direction.West) && leftRightPipeValues.Contains(grid[x, y].Value) && !visited.Contains(grid[x, y]))
                 {
                     grid[x, y].Steps = step;
                     possiblePaths.AddFirst(grid[x, y]);
@@ -476,16 +420,21 @@ public class SolutionService : ISolutionService
 
         var grid = CreateGrid(input);
 
-        // TODO: find another way to do this, instead of checking if one value can find a path out of the grid
-        // instead, "fill" the grid and count the number of cells that are not filled.
+        // TODO: convert all pipes to 3x3 pipes
+        /*
+              ...          .|.        ...
+        .  >  ...    |  >  .|.   - >  ---
+              ...          .|.        ...
 
-        // Cell[,] distances = GetAllDistances(grid, true);
+              ...         .|.         ...         .|.
+        F  >  .F-   L  >  .L-   7  >  -7.   J  >  -J.
+              .|.         ...         .|.         ...
 
-        // PrintGrid(grid, 2);
+         */
+        // TODO: then we can simply follow the empty . cells.
 
-        // flood fill algorithm?
-        // for each . element, check if it's "inside" a pipe, meaning it has a number to the left and right, and above and below
-        // continue to move left, right, top, bottom, until you hit a pipe. If you hit a pipe in all four directions, it's inside a pipe
+        // https://www.reddit.com/r/adventofcode/comments/18fuxcu/2023_day_10_part_2_anyone_else_used_3x3_pipes/
+
         var count = 0;
         for (var y = 0; y < grid.GetLength(1); y++)
         {
