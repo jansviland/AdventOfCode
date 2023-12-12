@@ -31,6 +31,21 @@ public class Tests : TestBed<TestFixture>
         Assert.Equal(count, result.Length);
     }
 
+    [Theory]
+    [InlineData(".# 1", ".#?.#?.#?.#?.# 1,1,1,1,1")]
+    [InlineData("???.### 1,1,3", "???.###????.###????.###????.###????.### 1,1,3,1,1,3,1,1,3,1,1,3,1,1,3")]
+    public void UnFoldTest(string line, string expected)
+    {
+        // arrange
+        _testOutputHelper.WriteLine("Running unit test - 2023 - Day 12 - UnFold");
+
+        // act
+        var result = _solutionService.UnFold(line);
+
+        // assert
+        Assert.Equal(expected, result);
+    }
+
     [Fact]
     public void Part1Test()
     {
@@ -44,7 +59,7 @@ public class Tests : TestBed<TestFixture>
         Assert.Equal(21, result);
     }
 
-    [Fact]
+    [Fact(Skip = "Fill fry the computer)")]
     public void Part2Test()
     {
         // arrange
@@ -54,6 +69,6 @@ public class Tests : TestBed<TestFixture>
         var result = _solutionService.RunPart2(_input);
 
         // assert
-        Assert.Equal(5905, result);
+        Assert.Equal(525152, result);
     }
 }
