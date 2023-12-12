@@ -12,6 +12,25 @@ public class Tests : TestBed<TestFixture>
         _input = File.ReadAllLines("Assets/test-input.txt");
     }
 
+    [Theory]
+    [InlineData("???.### 1,1,3", 1)]
+    [InlineData(".??..??...?##. 1,1,3", 4)]
+    [InlineData("?#?#?#?#?#?#?#? 1,3,1,6", 1)]
+    [InlineData("????.#...#... 4,1,1", 1)]
+    [InlineData("????.######..#####. 1,6,5", 4)]
+    [InlineData("?###???????? 3,2,1", 10)]
+    public void GetPossibleArrangementsTest(string line, int count)
+    {
+        // arrange
+        _testOutputHelper.WriteLine("Running unit test - 2023 - Day 12 - GetPossibleArrangements");
+
+        // act
+        var result = _solutionService.GetPossibleArrangements(line);
+
+        // assert
+        Assert.Equal(count, result.Length);
+    }
+
     [Fact]
     public void Part1Test()
     {
@@ -22,7 +41,7 @@ public class Tests : TestBed<TestFixture>
         var result = _solutionService.RunPart1(_input);
 
         // assert
-        Assert.Equal(114, result);
+        Assert.Equal(21, result);
     }
 
     [Fact]
