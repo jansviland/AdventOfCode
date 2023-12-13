@@ -31,6 +31,9 @@ public class SolutionService : ISolutionService
 
     public string[] Transpose(string[] input)
     {
+        // var rowMax = input.Length;
+        // var colMax = input[0].Length;
+
         var result = new string[input[0].Length];
         for (var y = 0; y < input.Length; y++)
         {
@@ -78,7 +81,12 @@ public class SolutionService : ISolutionService
             }
         }
 
-        // when we return 5, it means that the mirror reflection is between 4 and 5
+        // only return the position if it exist
+        if (mirrorPosition == mirror[0].Length)
+        {
+            return 0;
+        }
+
         return mirrorPosition;
     }
 
@@ -89,15 +97,25 @@ public class SolutionService : ISolutionService
 
         // https://www.reddit.com/r/adventofcode/comments/18hbc6k/2023_day_13_smoothly_animated_visualization/
 
-        var mirrors = new List<string[]>();
+        var verticalMirrors = new List<string[]>();
+        var horizontalMirrors = new List<string[]>();
 
+        var verticalMirror = true;
         var currentMirror = new List<string>();
         foreach (string line in input)
         {
             if (string.IsNullOrWhiteSpace(line))
             {
-                mirrors.Add(currentMirror.ToArray());
+                if (verticalMirror)
+                {
+                    verticalMirrors.Add(currentMirror.ToArray());
+                }
+                else
+                {
+                    horizontalMirrors.Add(currentMirror.ToArray());
+                }
                 currentMirror = new List<string>();
+                verticalMirror = !verticalMirror;
             }
             else
             {
@@ -106,17 +124,42 @@ public class SolutionService : ISolutionService
         }
 
         // add the last one
-        mirrors.Add(currentMirror.ToArray());
+        if (verticalMirror)
+        {
+            verticalMirrors.Add(currentMirror.ToArray());
+        }
+        else
+        {
+            horizontalMirrors.Add(currentMirror.ToArray());
+        }
+        currentMirror = new List<string>();
+        verticalMirror = !verticalMirror;
 
-        foreach (string[] mirror in mirrors)
+        var allMirrors = new List<string[]>();
+        allMirrors.AddRange(verticalMirrors);
+        allMirrors.AddRange(horizontalMirrors);
+
+        var columnsToTheLeft = 0;
+        foreach (string[] mirror in verticalMirrors)
         {
             var reflection = GetMirrorReflectionIndex(mirror);
+            columnsToTheLeft += reflection;
         }
 
+        // add the last one
+        var rowsAbove = 0;
+        foreach (string[] mirror in horizontalMirrors)
+        {
+            var transposed = Transpose(mirror);
+            var reflection = GetMirrorReflectionIndex(transposed);
+            rowsAbove += reflection * 100;
+        }
+        
+        // TODO: print out the mirrors
 
+        var total = rowsAbove + columnsToTheLeft;
 
-
-        throw new NotImplementedException();
+        return total;
     }
 
     public long RunPart2(string[] input)
