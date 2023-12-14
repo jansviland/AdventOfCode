@@ -31,9 +31,6 @@ public class SolutionService : ISolutionService
 
     public string[] Transpose(string[] input)
     {
-        // var rowMax = input.Length;
-        // var colMax = input[0].Length;
-
         var result = new string[input[0].Length];
         for (var y = 0; y < input.Length; y++)
         {
@@ -70,6 +67,7 @@ public class SolutionService : ISolutionService
                     if (right != left)
                     {
                         mirrorPosition++;
+                        y = 0;
                         break;
                     }
 
@@ -97,69 +95,81 @@ public class SolutionService : ISolutionService
 
         // https://www.reddit.com/r/adventofcode/comments/18hbc6k/2023_day_13_smoothly_animated_visualization/
 
-        var verticalMirrors = new List<string[]>();
-        var horizontalMirrors = new List<string[]>();
-
-        var verticalMirror = true;
+        var allMirrors = new List<string[]>();
         var currentMirror = new List<string>();
+
         foreach (string line in input)
         {
             if (string.IsNullOrWhiteSpace(line))
             {
-                if (verticalMirror)
-                {
-                    verticalMirrors.Add(currentMirror.ToArray());
-                }
-                else
-                {
-                    horizontalMirrors.Add(currentMirror.ToArray());
-                }
+                allMirrors.Add(currentMirror.ToArray());
                 currentMirror = new List<string>();
-                verticalMirror = !verticalMirror;
             }
             else
             {
                 currentMirror.Add(line);
             }
         }
+        allMirrors.Add(currentMirror.ToArray());
 
-        // add the last one
-        if (verticalMirror)
-        {
-            verticalMirrors.Add(currentMirror.ToArray());
-        }
-        else
-        {
-            horizontalMirrors.Add(currentMirror.ToArray());
-        }
-        currentMirror = new List<string>();
-        verticalMirror = !verticalMirror;
-
-        var allMirrors = new List<string[]>();
-        allMirrors.AddRange(verticalMirrors);
-        allMirrors.AddRange(horizontalMirrors);
-
+        var rowsAbove = 0;
         var columnsToTheLeft = 0;
-        foreach (string[] mirror in verticalMirrors)
+        foreach (string[] mirror in allMirrors)
         {
             var reflection = GetMirrorReflectionIndex(mirror);
-            columnsToTheLeft += reflection;
-        }
 
-        // add the last one
-        var rowsAbove = 0;
-        foreach (string[] mirror in horizontalMirrors)
-        {
+            _logger.LogInformation("vertical:");
+            PrintMirror(mirror, reflection);
+
+            columnsToTheLeft += reflection;
+
+            if (reflection != 0)
+            {
+                // if we find a vertical mirror, we can skip the horizontal mirror?
+                continue;
+            }
+
             var transposed = Transpose(mirror);
-            var reflection = GetMirrorReflectionIndex(transposed);
+            reflection = GetMirrorReflectionIndex(transposed);
+
+            _logger.LogInformation("horizontal:");
+            PrintMirror(mirror, reflection, false);
+
             rowsAbove += reflection * 100;
         }
-        
-        // TODO: print out the mirrors
 
         var total = rowsAbove + columnsToTheLeft;
-
         return total;
+    }
+
+    public void PrintMirror(string[] mirror, int reflection, bool vertical = true)
+    {
+        var sb = new StringBuilder();
+
+        _logger.LogInformation("reflection: {Reflection}", reflection);
+
+        sb.AppendLine();
+        for (var i = 0; i < mirror.Length; i++)
+        {
+            var line = mirror[i];
+            if (vertical)
+            {
+                var left = line.Substring(0, reflection);
+                var right = line.Substring(reflection);
+                sb.AppendLine(left + " | " + right);
+            }
+            else
+            {
+                if (i == reflection)
+                {
+                    sb.AppendLine("------------------");
+                }
+                sb.AppendLine(line);
+            }
+        }
+        sb.AppendLine();
+
+        _logger.LogInformation(sb.ToString());
     }
 
     public long RunPart2(string[] input)
