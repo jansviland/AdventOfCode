@@ -1,3 +1,5 @@
+using Microsoft.Extensions.Primitives;
+
 namespace AdventOfCode._2023.Day15;
 
 public interface ISolutionService
@@ -27,14 +29,9 @@ public class SolutionService : ISolutionService
         long sum = 0;
         foreach (string step in steps)
         {
-
             var hash = Hash(step);
-            // _logger.LogInformation("Hash: {Hash}", hash);
-            // _logger.LogInformation("------------------------------------");
-
             sum += hash;
         }
-
 
         return sum;
     }
@@ -48,16 +45,9 @@ public class SolutionService : ISolutionService
             var c = line[i];
             var ascii = (int)c;
 
-            // _logger.LogInformation("Current Value: {Current}, Char: {Char}, ASCII {Ascii}", current, c, ascii);
-
             current += ascii;
-            // _logger.LogInformation("Increase Value to: {Current}", current);
-
             current *= multiplier;
-            // _logger.LogInformation("Multiply Value to: {Current}", current);
-
             current = current % modulo;
-            // _logger.LogInformation("Modulo Value to: {Current}", current);
         }
 
         return current;
@@ -72,11 +62,12 @@ public class SolutionService : ISolutionService
         var steps = line.Split(',');
 
         Box?[] boxes = new Box[256];
-        var lenses = new List<Lens>();
+        var lensesWithoutBox = new List<Lens>();
 
-        // var boxNumber = 0;
         foreach (string step in steps)
         {
+            _logger.LogInformation("----------- Step: {Step} --------------", step);
+
             if (step.IndexOf('=') > 0)
             {
                 var parts = step.Split('=');
@@ -85,10 +76,8 @@ public class SolutionService : ISolutionService
 
                 var boxNumber = Convert.ToInt32(Hash(label));
 
-                _logger.LogInformation("Box: {Box}, Label: {Label}, Value: {Value}", boxNumber, label, value);
-
                 // check if lens already exist, then just add box to it
-                var lens = lenses.Find(l => l.label == label);
+                var lens = lensesWithoutBox.Find(l => l.label == label);
                 if (lens == null)
                 {
                     // if we don't have a lens, create one, with current box number
@@ -103,11 +92,28 @@ public class SolutionService : ISolutionService
                 {
                     // if we have a lens, just update it with correct focal length, box number is already set
                     lens.focalLength = int.Parse(value);
+                    lensesWithoutBox.Remove(lens);
                 }
 
                 if (boxes[lens.boxNumber] != null)
                 {
-                    boxes[lens.boxNumber].Lenses.Add(lens);
+                    // check if box already contain a lens with the same label, if so, remove it and add it to lensesWithoutBox
+                    var findLens = boxes[lens.boxNumber].Lenses.Find(l => l.label == label);
+                    if (findLens != null)
+                    {
+                        lensesWithoutBox.Add(findLens);
+                        boxes[lens.boxNumber].Lenses.Remove(findLens);
+
+                        // add it to the front
+                        boxes[lens.boxNumber].Lenses.Insert(0, lens);
+                    }
+                    else
+                    {
+
+                        // add new lens to box, to the back
+                        boxes[lens.boxNumber].Lenses.Add(lens);
+                    }
+
                     continue;
                 }
 
@@ -119,56 +125,69 @@ public class SolutionService : ISolutionService
                 newBox.Lenses.Add(lens);
 
                 boxes[lens.boxNumber] = newBox;
-
-                _logger.LogInformation("----------- Step {Step} --------------", boxNumber);
-                Print(boxes);
-
-                // boxNumber++;
             }
             else
             {
                 var parts = step.Split('-');
                 var label = parts[0].Trim();
-                
+
                 var boxNumber = Convert.ToInt32(Hash(label));
 
-                _logger.LogInformation("Box: {Box}, Label: {Label}", boxNumber, label);
-
                 // find box, with lens with label, then remove it
-                foreach (var box in boxes)
+                var box = boxes[boxNumber];
+                if (box != null)
                 {
-                    if (box != null)
+                    var findLens = box.Lenses.Find(l => l.label == label);
+                    if (findLens != null)
                     {
-                        var findLens = box.Lenses.Find(l => l.label == label);
-                        if (findLens != null)
-                        {
-                            box.Lenses.Remove(findLens);
+                        box.Lenses.Remove(findLens);
 
-                            findLens.boxNumber = boxNumber;
-                            lenses.Add(findLens);
-                        }
-                        else
+                        findLens.boxNumber = boxNumber;
+                        lensesWithoutBox.Add(findLens);
+                    }
+                    else
+                    {
+                        // we know the box number, but not the focal length, store if for later
+                        var lens = new Lens()
                         {
-                            // we know the box number, but not the focal length, store if for later
-                            var lens = new Lens()
-                            {
-                                label = label,
-                                focalLength = -1,
-                                boxNumber = boxNumber
-                            };
-                            lenses.Add(lens);
-                        }
-
-                        break;
+                            label = label,
+                            focalLength = -1,
+                            boxNumber = boxNumber
+                        };
+                        lensesWithoutBox.Add(lens);
                     }
                 }
+            }
 
-                _logger.LogInformation("----------- Step {Step} --------------", boxNumber);
-                Print(boxes);
+            Print(boxes);
+        }
+
+        Print(boxes);
+
+        var total = 0;
+
+        var sb = new StringBuilder();
+        foreach (var box in boxes)
+        {
+            if (box != null && box.Lenses.Count > 0)
+            {
+                var sum = 0;
+                for (var i = 0; i < box.Lenses.Count; i++)
+                {
+                    var lense = box.Lenses[i];
+                    sum += (box.number + 1) * (i + 1) * lense.focalLength;
+
+                    // rn: 1 (box 0) * 1 (first slot) * 1 (focal length) = 1
+                    sb.AppendLine(lense.label + ": " + (box.number + 1) + " (box " + box.number + ") * " + (i + 1) + " (slot " + i + ") * " + lense.focalLength + " (focal length) = " + sum);
+                }
+
+                total += sum;
             }
         }
 
-        throw new NotImplementedException();
+        _logger.LogInformation(sb.ToString());
+
+        return total;
     }
 
     public void Print(Box[] boxes)
@@ -176,25 +195,20 @@ public class SolutionService : ISolutionService
         var sb = new StringBuilder();
         foreach (var box in boxes)
         {
-            if (box != null)
+            if (box != null && box.Lenses.Count > 0)
             {
                 sb.AppendLine();
-                sb.Append("Box: ");
-                sb.Append(box.number);
-                sb.Append(": ");
+                sb.Append("Box: " + box.number + ": ");
 
                 foreach (var lens in box.Lenses)
                 {
                     sb.Append("[" + lens.label + ": " + lens.focalLength + "]");
                 }
-                // _logger.LogInformation("Box: {Box}, Lenses: {Lenses}", box.number, box.Lenses);
-
             }
         }
 
         sb.AppendLine();
         _logger.LogInformation(sb.ToString());
-
     }
 }
 
