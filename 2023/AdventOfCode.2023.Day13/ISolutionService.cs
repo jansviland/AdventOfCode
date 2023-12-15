@@ -93,8 +93,6 @@ public class SolutionService : ISolutionService
         _logger.LogInformation("Solving - 2023 - Day 13 - Part 1");
         _logger.LogInformation("Input contains {Input} values", input.Length);
 
-        // https://www.reddit.com/r/adventofcode/comments/18hbc6k/2023_day_13_smoothly_animated_visualization/
-
         var allMirrors = new List<string[]>();
         var currentMirror = new List<string>();
 
