@@ -19,7 +19,7 @@ public class Tests : TestBed<TestFixture>
         _testOutputHelper.WriteLine("Running unit test - 2023 - Day 16 - Part 1");
 
         // act
-        var result = _solutionService.RunPart1(_input);
+        var result = _solutionService.RunPart1(_input, false);
 
         // assert
         Assert.Equal(46, result);

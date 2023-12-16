@@ -4,7 +4,7 @@ namespace AdventOfCode._2023.Day16;
 
 public interface ISolutionService
 {
-    public long RunPart1(string[] input);
+    public long RunPart1(string[] input, bool animated = false);
     public long RunPart2(string[] input);
 }
 
@@ -55,16 +55,17 @@ public class SolutionService : ISolutionService
         if (animated)
         {
             Console.WriteLine(sb.ToString());
-            Thread.Sleep(20);
+            Thread.Sleep(10);
             sb.Clear();
         }
         else
         {
             _logger.LogInformation(sb.ToString());
+            sb.Clear();
         }
     }
 
-    public long RunPart1(string[] input)
+    public long RunPart1(string[] input, bool animated = false)
     {
         _logger.LogInformation("Solving - 2023 - Day 16 - Part 1");
         _logger.LogInformation("Input contains {Input} values", input.Length);
@@ -81,23 +82,23 @@ public class SolutionService : ISolutionService
         start.Direction = Direction.Right;
 
         var visited = new HashSet<Cell>();
-        var possibleValues = new List<Cell>();
+        var possibleValues = new Queue<Cell>();
 
-        possibleValues.Add(start);
+        possibleValues.Enqueue(start);
 
         var totalSteps = 0;
 
-        while (possibleValues.Any() && totalSteps++ < 100000)
+        while (possibleValues.Any())
         {
             // Not a good fix, but it works, we can get stuck in a loop.
             // and when we always process the cells in the same order, we never get out of the loop.
             // take a random cell from the stack
-            var random = new Random();
-            var index = random.Next(possibleValues.Count);
-            var current = possibleValues.ElementAt(index);
-            possibleValues.Remove(current);
+            // var random = new Random();
+            // var index = random.Next(possibleValues.Count);
+            // var current = possibleValues.ElementAt(index);
+            // possibleValues.Remove(current);
 
-            // var current = possibleValues.Pop();
+            var current = possibleValues.Dequeue();
             visited.Add(current);
 
             var newPaths = new List<Cell>();
@@ -196,10 +197,28 @@ public class SolutionService : ISolutionService
                             newPaths.Add(down);
                             break;
                         case Direction.Left:
+
+                            if (visited.Contains(up) && visited.Contains(down))
+                            {
+                                continue;
+                            }
+
+                            visited.Add(up);
+                            visited.Add(down);
+
                             newPaths.Add(up);
                             newPaths.Add(down);
                             break;
                         case Direction.Right:
+
+
+                            if (visited.Contains(up) && visited.Contains(down))
+                            {
+                                continue;
+                            }
+                            visited.Add(up);
+                            visited.Add(down);
+
                             newPaths.Add(up);
                             newPaths.Add(down);
                             break;
@@ -212,10 +231,28 @@ public class SolutionService : ISolutionService
                     switch (current.Direction)
                     {
                         case Direction.Up:
+
+                            if (visited.Contains(right) && visited.Contains(left))
+                            {
+                                continue;
+                            }
+
+                            visited.Add(right);
+                            visited.Add(left);
+
                             newPaths.Add(right);
                             newPaths.Add(left);
                             break;
                         case Direction.Down:
+
+                            if (visited.Contains(right) && visited.Contains(left))
+                            {
+                                continue;
+                            }
+
+                            visited.Add(right);
+                            visited.Add(left);
+
                             newPaths.Add(right);
                             newPaths.Add(left);
                             break;
@@ -234,36 +271,43 @@ public class SolutionService : ISolutionService
 
             foreach (var cell in newPaths)
             {
-                // if (visited.Contains(cell))
-                // {
-                //     continue;
-                // }
-
                 cell.Previous = current;
                 cell.Steps = current.Steps + 1;
-                // cell.Direction = current.Direction;
 
-                possibleValues.Add(cell);
+                possibleValues.Enqueue(cell);
             }
 
-            PrintGrid(paddedGrid, true);
+            if (animated)
+            {
+                if (totalSteps % 10 == 0)
+                {
+                    PrintGrid(paddedGrid, true);
+                }
+            }
+
+            // PrintGrid(paddedGrid, true);
+            totalSteps += 1;
         }
 
-        PrintGrid(paddedGrid);
+        // PrintGrid(paddedGrid);
 
-        var count = 1;
-        for (var col = 1; col < paddedGrid.GetLength(1) - 2; col++)
+        var count = 0;
+        for (var col = 1; col < paddedGrid.GetLength(1) - 1; col++)
         {
-            for (var row = 1; row < paddedGrid.GetLength(0) - 2; row++)
+            for (var row = 1; row < paddedGrid.GetLength(0) - 1; row++)
             {
-                if (paddedGrid[row, col].Value == 'X')
+                // if (paddedGrid[row, col].Value == 'X')
+                // {
+                //     break;
+                // }
+                //
+                // if (paddedGrid[row, col].Steps > -1)
+                // {
+                //     count += 1;
+                // }
+                if (paddedGrid[row, col].Steps > -1)
                 {
-                    continue;
-                }
-
-                if (paddedGrid[row, col].Steps != -1)
-                {
-                    count++;
+                    count += 1;
                 }
             }
         }

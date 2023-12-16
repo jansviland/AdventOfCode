@@ -45,7 +45,8 @@ public static class Grid
                     {
                         X = row,
                         Y = col,
-                        Value = paddingValue
+                        Value = paddingValue,
+                        Steps = -1
                     };
                 }
                 else
