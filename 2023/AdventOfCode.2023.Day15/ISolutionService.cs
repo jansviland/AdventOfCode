@@ -92,7 +92,7 @@ public class SolutionService : ISolutionService
                 {
                     // if we have a lens, just update it with correct focal length, box number is already set
                     lens.focalLength = int.Parse(value);
-                    lensesWithoutBox.Remove(lens);
+                    lensesWithoutBox = lensesWithoutBox.Where(l => l.label != label).ToList();
                 }
 
                 if (boxes[lens.boxNumber] != null)
@@ -106,14 +106,18 @@ public class SolutionService : ISolutionService
 
                         // add it to the front
                         boxes[lens.boxNumber].Lenses.Insert(0, lens);
+
+                        // remove lens with same label from lensesWithoutBox
+                        lensesWithoutBox = lensesWithoutBox.Where(l => l.label != label).ToList();
                     }
                     else
                     {
-
                         // add new lens to box, to the back
                         boxes[lens.boxNumber].Lenses.Add(lens);
+                        lensesWithoutBox = lensesWithoutBox.Where(l => l.label != label).ToList();
                     }
 
+                    Print(boxes);
                     continue;
                 }
 
@@ -144,6 +148,8 @@ public class SolutionService : ISolutionService
 
                         findLens.boxNumber = boxNumber;
                         lensesWithoutBox.Add(findLens);
+
+                        lensesWithoutBox = lensesWithoutBox.Where(l => l.label != label).ToList();
                     }
                     else
                     {
@@ -160,9 +166,15 @@ public class SolutionService : ISolutionService
             }
 
             Print(boxes);
+
         }
 
         Print(boxes);
+
+        foreach (var lens in lensesWithoutBox)
+        {
+            _logger.LogInformation("Lens without box: {Lens}", lens.label);
+        }
 
         var total = 0;
 
