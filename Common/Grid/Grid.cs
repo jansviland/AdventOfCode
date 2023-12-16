@@ -1,4 +1,6 @@
-﻿namespace Common;
+﻿using System.Text;
+
+namespace Common;
 
 public enum Direction
 {
@@ -67,16 +69,16 @@ public static class Grid
     {
         var grid = new Cell[input.Length, input[0].Length];
 
-        for (var row = 0; row < input.Length; row++)
+        for (var y = 0; y < input.Length; y++)
         {
-            string line = input[row];
-            for (var col = 0; col < line.Length; col++)
+            string line = input[y];
+            for (var x = 0; x < line.Length; x++)
             {
-                grid[row, col] = new Cell
+                grid[x, y] = new Cell
                 {
-                    X = row,
-                    Y = col,
-                    Value = line[col]
+                    X = x,
+                    Y = y,
+                    Value = line[x]
                 };
             }
         }

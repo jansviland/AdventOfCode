@@ -17,29 +17,33 @@ public class SolutionService : ISolutionService
         _logger = logger;
     }
 
-    public void PrintGrid(Cell[,] grid)
+    public void PrintGrid(Cell[,] grid, bool animated = false)
     {
         var numRows = grid.GetLength(0);
         var numCols = grid.GetLength(1);
 
         var sb = new StringBuilder();
-        sb.AppendLine();
 
-        for (var row = 0; row < numRows; row++)
+        if (animated)
         {
-            for (var col = 0; col < numCols; col++)
-            {
-                var value = "";
+            Console.Clear();
+            Console.SetCursorPosition(0, 0);
+        }
 
-                if (grid[row, col].Steps != -1)
+        for (var y = 0; y < numCols; y++)
+        {
+            sb.Append(y.ToString().PadLeft(3, ' '));
+
+            for (var x = 0; x < numRows; x++)
+            {
+                var value = grid[x, y].Value.ToString();
+                if (grid[x, y].Value == 'X')
                 {
-                    value = grid[row, col].Steps.ToString();
-                    // sb.Append(grid[row, col].Steps);
+                    value = "X";
                 }
-                else
+                else if (grid[x, y].Steps != -1)
                 {
-                    value = grid[row, col].Value.ToString();
-                    // sb.Append(grid[row, col].Value);
+                    value = (grid[x, y].Steps % 100).ToString();
                 }
 
                 sb.Append(value.PadLeft(3, ' '));
@@ -48,7 +52,16 @@ public class SolutionService : ISolutionService
             sb.AppendLine();
         }
 
-        _logger.LogInformation(sb.ToString());
+        if (animated)
+        {
+            Console.WriteLine(sb.ToString());
+            Thread.Sleep(20);
+            sb.Clear();
+        }
+        else
+        {
+            _logger.LogInformation(sb.ToString());
+        }
     }
 
     public long RunPart1(string[] input)
@@ -57,7 +70,7 @@ public class SolutionService : ISolutionService
         _logger.LogInformation("Input contains {Input} values", input.Length);
 
         var grid = Grid.CreateGrid(input);
-        PrintGrid(grid);
+        // PrintGrid(grid);
 
         var paddedGrid = grid.ApplyPadding();
 
@@ -67,16 +80,24 @@ public class SolutionService : ISolutionService
         start.Steps = 0;
         start.Direction = Direction.Right;
 
-        PrintGrid(paddedGrid);
-
-        var possibleValues = new Queue<Cell>();
-        possibleValues.Enqueue(start);
-
         var visited = new HashSet<Cell>();
+        var possibleValues = new List<Cell>();
 
-        while (possibleValues.Any())
+        possibleValues.Add(start);
+
+        var totalSteps = 0;
+
+        while (possibleValues.Any() && totalSteps++ < 100000)
         {
-            var current = possibleValues.Dequeue();
+            // Not a good fix, but it works, we can get stuck in a loop.
+            // and when we always process the cells in the same order, we never get out of the loop.
+            // take a random cell from the stack
+            var random = new Random();
+            var index = random.Next(possibleValues.Count);
+            var current = possibleValues.ElementAt(index);
+            possibleValues.Remove(current);
+
+            // var current = possibleValues.Pop();
             visited.Add(current);
 
             var newPaths = new List<Cell>();
@@ -141,7 +162,7 @@ public class SolutionService : ISolutionService
                     }
                     break;
 
-                case '\'':
+                case '\\':
                     switch (current.Direction)
                     {
                         case Direction.Up:
@@ -191,12 +212,12 @@ public class SolutionService : ISolutionService
                     switch (current.Direction)
                     {
                         case Direction.Up:
-                            newPaths.Add(up);
-                            newPaths.Add(down);
+                            newPaths.Add(right);
+                            newPaths.Add(left);
                             break;
                         case Direction.Down:
-                            newPaths.Add(down);
-                            newPaths.Add(up);
+                            newPaths.Add(right);
+                            newPaths.Add(left);
                             break;
                         case Direction.Left:
                             newPaths.Add(left);
@@ -213,29 +234,48 @@ public class SolutionService : ISolutionService
 
             foreach (var cell in newPaths)
             {
-                if (visited.Contains(cell))
-                {
-                    continue;
-                }
+                // if (visited.Contains(cell))
+                // {
+                //     continue;
+                // }
 
                 cell.Previous = current;
                 cell.Steps = current.Steps + 1;
                 // cell.Direction = current.Direction;
 
-                possibleValues.Enqueue(cell);
+                possibleValues.Add(cell);
             }
 
-            PrintGrid(paddedGrid);
+            PrintGrid(paddedGrid, true);
         }
 
+        PrintGrid(paddedGrid);
 
-        throw new NotImplementedException();
+        var count = 1;
+        for (var col = 1; col < paddedGrid.GetLength(1) - 2; col++)
+        {
+            for (var row = 1; row < paddedGrid.GetLength(0) - 2; row++)
+            {
+                if (paddedGrid[row, col].Value == 'X')
+                {
+                    continue;
+                }
+
+                if (paddedGrid[row, col].Steps != -1)
+                {
+                    count++;
+                }
+            }
+        }
+
+        return count;
     }
 
     public long RunPart2(string[] input)
     {
         _logger.LogInformation("Solving - 2023 - Day 16 - Part 2");
         _logger.LogInformation("Input contains {Input} values", input.Length);
+
 
         throw new NotImplementedException();
     }
