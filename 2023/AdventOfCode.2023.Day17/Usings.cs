@@ -4,6 +4,7 @@ global using System.Collections.Immutable;
 global using System.IO;
 global using System.Linq;
 global using System.Net;
+global using System.Numerics;
 global using System.Reflection;
 global using System.Threading.Tasks;
 global using System.Text;

@@ -21,13 +21,13 @@ internal static class Program
             .CreateLogger();
 
         var host = Host.CreateDefaultBuilder(args)
-            .ConfigureServices(((_, collection) => { collection.AddTransient<ISolutionService, SolutionService>(); }))
+            .ConfigureServices(((_, collection) => { collection.AddTransient<ISolutionService, SolutionServiceV2>(); }))
             .UseSerilog()
             .Build();
 
         Log.Logger.Information("args: {AllArguments}", string.Join(", ", args));
 
-        var svc = ActivatorUtilities.CreateInstance<SolutionService>(host.Services);
+        var svc = ActivatorUtilities.CreateInstance<SolutionServiceV2>(host.Services);
 
         string[] input;
         if (args.Length == 0)
@@ -39,7 +39,7 @@ internal static class Program
             input = File.ReadAllLines(args[0]);
         }
 
-        var resultPart1 = svc.RunPart1(input);
+        var resultPart1 = svc.RunPart1(input, true);
 
         Log.Logger.Information("------------------------------------");
         Log.Logger.Information("result: {Result}", resultPart1);
