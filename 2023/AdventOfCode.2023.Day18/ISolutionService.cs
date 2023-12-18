@@ -69,26 +69,123 @@ public class SolutionService : ISolutionService
         // create grid with a dictionary, Complex (x, y) coordinates as key, DigPlan as value
         var grid = CreateGrid(diggPlans);
 
+        FloodFillRecursive(grid, new Complex(1, 1));
+
+        // PrintGrid(grid);
+
+        // count number of cells with digg plan
+        // FloodFill(grid, new Complex(0, 0));
+
         PrintGrid(grid);
 
-        throw new NotImplementedException();
+        return grid.Count;
     }
 
-    private bool IsInside(Complex position, Dictionary<Complex, DiggPlan> grid)
+    private void FloodFillRecursive(Dictionary<Complex, DiggPlan> grid, Complex current)
     {
         var minX = grid.Keys.Min(x => x.Real);
         var maxX = grid.Keys.Max(x => x.Real);
         var minY = grid.Keys.Min(x => x.Imaginary);
         var maxY = grid.Keys.Max(x => x.Imaginary);
 
-        // check all cells to the left, right, up and down, se a DiggPlan exists in all directions, if so return true
+        if (current.Real >= minX && current.Real <= maxX && current.Imaginary >= minY && current.Imaginary <= maxY)
+        {
+            if (grid.TryGetValue(current, out var _))
+            {
+                return;
+            }
 
-        // check left
-        var pos = position;
-        
-        // https://en.wikipedia.org/wiki/Flood_fill
+            grid.Add(current, new DiggPlan
+            {
+                Direction = Complex.Zero,
+                Meters = -1,
+                Color = "#349308"
+            });
 
-        return false;
+            FloodFillRecursive(grid, current + Left);
+            FloodFillRecursive(grid, current + Right);
+            FloodFillRecursive(grid, current + Up);
+            FloodFillRecursive(grid, current + Down);
+        }
+    }
+
+    IEnumerable<Complex> GetAdjecent(Dictionary<Complex, DiggPlan> grid, Complex pos)
+    {
+        var minX = grid.Keys.Min(x => x.Real);
+        var maxX = grid.Keys.Max(x => x.Real);
+        var minY = grid.Keys.Min(x => x.Imaginary);
+        var maxY = grid.Keys.Max(x => x.Imaginary);
+
+        var dx = new[] { 0, 0, -1, 1 }; // up, down, left, right
+        var dy = new[] { -1, 1, 0, 0 };
+
+        for (var i = 0; i < 4; i++)
+        {
+            var x = pos.Real + dx[i];
+            var y = pos.Imaginary + dy[i];
+            var newPos = new Complex(x, y);
+            if (x >= minX && x <= maxX && y >= minY && y <= maxY)
+            {
+                if (grid.TryGetValue(newPos, out var _))
+                {
+                    yield return newPos;
+                }
+            }
+        }
+    }
+
+    private void FloodFill(Dictionary<Complex, DiggPlan> grid, Complex start)
+    {
+        // var updatedGrid = new Dictionary<Complex, DiggPlan>();
+
+        var queue = new Queue<Complex>();
+        queue.Enqueue(start);
+
+        var visited = new HashSet<Complex>();
+
+        while (queue.Count > 0)
+        {
+            var current = queue.Dequeue();
+            if (visited.Contains(current))
+            {
+                continue;
+            }
+
+            visited.Add(current);
+
+            if (grid.TryGetValue(current, out var _))
+            {
+                // found a wall
+            }
+            else
+            {
+                grid.Add(current, new DiggPlan
+                {
+                    Direction = Complex.Zero,
+                    Meters = -1,
+                    Color = "#349308"
+                });
+            }
+
+            var adjecent = GetAdjecent(grid, current);
+            foreach (var adj in adjecent)
+            {
+                if (visited.Contains(adj))
+                {
+                    continue;
+                }
+
+                queue.Enqueue(adj);
+            }
+
+        }
+
+        grid = grid
+            .OrderBy(x => x.Key.Real)
+            .ThenBy(x => x.Key.Imaginary)
+            .ToDictionary(x => x.Key, x => x.Value);
+
+        // return grid;
     }
 
     private void PrintGrid(Dictionary<Complex, DiggPlan> grid)
@@ -106,17 +203,39 @@ public class SolutionService : ISolutionService
                 if (grid.TryGetValue(pos, out var diggPlan))
                 {
                     Console.Write("#".Pastel(diggPlan.Color));
+                    // _logger.LogInformation("#");
                 }
                 else
                 {
-                    // if (IsInside(pos, grid))
-                    // {
-                    //     Console.Write("#");
-                    // }
-                    // else
-                    // {
-                        Console.Write(" ");
-                    // }
+                    Console.Write(" ");
+                    // _logger.LogInformation(" ");
+                }
+            }
+
+            Console.WriteLine();
+            // _logger.LogInformation("");
+        }
+    }
+
+    private void PrintGrid(Dictionary<Complex, char> grid)
+    {
+        var minX = grid.Keys.Min(x => x.Real);
+        var maxX = grid.Keys.Max(x => x.Real);
+        var minY = grid.Keys.Min(x => x.Imaginary);
+        var maxY = grid.Keys.Max(x => x.Imaginary);
+
+        for (int y = (int)minY; y <= (int)maxY; y++)
+        {
+            for (int x = (int)minX; x <= (int)maxX; x++)
+            {
+                var pos = new Complex(x, y);
+                if (grid.TryGetValue(pos, out var val))
+                {
+                    Console.Write(val);
+                }
+                else
+                {
+                    Console.Write(" ");
                 }
             }
 
