@@ -70,12 +70,12 @@ public class SolutionService : ISolutionService
         // create grid with a dictionary, Complex (x, y) coordinates as key, DigPlan as value
         var grid = CreateGrid(diggPlans);
 
-        FloodFillRecursive(grid, new Complex(1, 1));
+        // FloodFillRecursive(grid, new Complex(1, 1));
 
         // PrintGrid(grid);
 
         // count number of cells with digg plan
-        // FloodFill(grid, new Complex(0, 0));
+        FloodFill(grid, new Complex(1, 1));
 
         PrintGrid(grid);
 
@@ -127,25 +127,20 @@ public class SolutionService : ISolutionService
         var dx = new[] { 0, 0, -1, 1 }; // up, down, left, right
         var dy = new[] { -1, 1, 0, 0 };
 
-        for (var i = 0; i < 4; i++)
+        for (var i = 0; i < dx.Length; i++)
         {
             var x = pos.Real + dx[i];
             var y = pos.Imaginary + dy[i];
             var newPos = new Complex(x, y);
             if (x >= minX && x <= maxX && y >= minY && y <= maxY)
             {
-                if (grid.TryGetValue(newPos, out var _))
-                {
-                    yield return newPos;
-                }
+                yield return newPos;
             }
         }
     }
 
     private void FloodFill(Dictionary<Complex, DiggPlan> grid, Complex start)
     {
-        // var updatedGrid = new Dictionary<Complex, DiggPlan>();
-
         var queue = new Queue<Complex>();
         queue.Enqueue(start);
 
@@ -164,6 +159,7 @@ public class SolutionService : ISolutionService
             if (grid.TryGetValue(current, out var _))
             {
                 // found a wall
+                continue;
             }
             else
             {
@@ -171,29 +167,21 @@ public class SolutionService : ISolutionService
                 {
                     Direction = Complex.Zero,
                     Meters = -1,
-                    Color = "#349308"
+                    Color = "#FF0000"
                 });
             }
 
             var adjecent = GetAdjecent(grid, current);
             foreach (var adj in adjecent)
             {
-                if (visited.Contains(adj))
-                {
-                    continue;
-                }
-
                 queue.Enqueue(adj);
             }
-
         }
 
         grid = grid
             .OrderBy(x => x.Key.Real)
             .ThenBy(x => x.Key.Imaginary)
             .ToDictionary(x => x.Key, x => x.Value);
-
-        // return grid;
     }
 
     private void PrintGrid(Dictionary<Complex, DiggPlan> grid)

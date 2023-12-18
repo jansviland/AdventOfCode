@@ -5,6 +5,10 @@ the puzzles.
 
 # Demo of some of the solutions
 
+## 2023 - Day 18 - Demo
+
+![gif](./wiki/2023-day18-part-1-solution.gif)
+
 ## 2023 - Day 16 - Demo
 
 Not the correct solution, but a nice animation of almost the correct solution :)
