@@ -31,6 +31,7 @@ public class SolutionService : ISolutionService
         { "R", Complex.One },
     };
 
+    private readonly HashSet<Complex> _visited = new();
     private readonly ILogger<ISolutionService> _logger;
     private static readonly StringBuilder _sb = new StringBuilder();
 
@@ -83,6 +84,13 @@ public class SolutionService : ISolutionService
 
     private void FloodFillRecursive(Dictionary<Complex, DiggPlan> grid, Complex current)
     {
+        if (_visited.Contains(current))
+        {
+            return;
+        }
+
+        _visited.Add(current);
+
         var minX = grid.Keys.Min(x => x.Real);
         var maxX = grid.Keys.Max(x => x.Real);
         var minY = grid.Keys.Min(x => x.Imaginary);
@@ -99,7 +107,7 @@ public class SolutionService : ISolutionService
             {
                 Direction = Complex.Zero,
                 Meters = -1,
-                Color = "#349308"
+                Color = "#329390"
             });
 
             FloodFillRecursive(grid, current + Left);
