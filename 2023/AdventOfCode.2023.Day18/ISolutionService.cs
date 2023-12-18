@@ -18,6 +18,11 @@ public class DiggPlan
 
 public class SolutionService : ISolutionService
 {
+    private static readonly Complex Up = -Complex.ImaginaryOne; // - new Complex(0.0, -1.0);
+    private static readonly Complex Down = Complex.ImaginaryOne; // new Complex(0.0, 1.0);
+    private static readonly Complex Left = -Complex.One; // new Complex(-1.0, 0.0);
+    private static readonly Complex Right = Complex.One; // new Complex(1.0, 0.0);
+
     private static readonly Dictionary<string, Complex> Directions = new()
     {
         { "U", -Complex.ImaginaryOne },
@@ -69,6 +74,23 @@ public class SolutionService : ISolutionService
         throw new NotImplementedException();
     }
 
+    private bool IsInside(Complex position, Dictionary<Complex, DiggPlan> grid)
+    {
+        var minX = grid.Keys.Min(x => x.Real);
+        var maxX = grid.Keys.Max(x => x.Real);
+        var minY = grid.Keys.Min(x => x.Imaginary);
+        var maxY = grid.Keys.Max(x => x.Imaginary);
+
+        // check all cells to the left, right, up and down, se a DiggPlan exists in all directions, if so return true
+
+        // check left
+        var pos = position;
+        
+        // https://en.wikipedia.org/wiki/Flood_fill
+
+        return false;
+    }
+
     private void PrintGrid(Dictionary<Complex, DiggPlan> grid)
     {
         var minX = grid.Keys.Min(x => x.Real);
@@ -83,37 +105,23 @@ public class SolutionService : ISolutionService
                 var pos = new Complex(x, y);
                 if (grid.TryGetValue(pos, out var diggPlan))
                 {
-                    // if (tile.Steps > 0)
-                    // {
-                    //     _sb.Append(tile.Steps.ToString().PadLeft(3, ' '));
-                    // }
-                    // else
-                    // {
-                    //     _sb.Append(tile.Value.ToString().PadLeft(3, ' '));
-                    // }
-                    // _sb.Append(tile.Color);
-
                     Console.Write("#".Pastel(diggPlan.Color));
-
-                    // "colorize me".Pastel("#1E90FF");
-                    // var consoleColor = new ConsoleColor();
-                    // consoleColor = Pastel(Color.Fr
-                    // Console.ForegroundColor = diggPlan.Direction
                 }
                 else
                 {
-                    Console.Write(" ");
+                    // if (IsInside(pos, grid))
+                    // {
+                    //     Console.Write("#");
+                    // }
+                    // else
+                    // {
+                        Console.Write(" ");
+                    // }
                 }
-
             }
 
             Console.WriteLine();
-
-            // _sb.AppendLine();
         }
-
-        // Console.WriteLine(_sb.ToString());
-        // _sb.Clear();
     }
 
     private Dictionary<Complex, DiggPlan> CreateGrid(IEnumerable<DiggPlan> diggPlans)
