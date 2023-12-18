@@ -15,7 +15,7 @@ public class SolutionServiceV2 : ISolutionService
     private static readonly Complex Left = -Complex.One; // new Complex(-1.0, 0.0);
     private static readonly Complex Right = Complex.One; // new Complex(1.0, 0.0);
 
-    private static StringBuilder _sb = new StringBuilder();
+    private static readonly StringBuilder _sb = new StringBuilder();
 
     private readonly ILogger<ISolutionService> _logger;
 

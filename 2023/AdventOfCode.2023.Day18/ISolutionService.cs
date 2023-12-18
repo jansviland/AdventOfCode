@@ -1,3 +1,6 @@
+using System.Drawing;
+using Pastel;
+
 namespace AdventOfCode._2023.Day18;
 
 public interface ISolutionService
@@ -15,7 +18,7 @@ public class DiggPlan
 
 public class SolutionService : ISolutionService
 {
-    public static readonly Dictionary<string, Complex> Directions = new()
+    private static readonly Dictionary<string, Complex> Directions = new()
     {
         { "U", -Complex.ImaginaryOne },
         { "D", Complex.ImaginaryOne },
@@ -24,6 +27,7 @@ public class SolutionService : ISolutionService
     };
 
     private readonly ILogger<ISolutionService> _logger;
+    private static readonly StringBuilder _sb = new StringBuilder();
 
     public SolutionService(ILogger<SolutionService> logger)
     {
@@ -45,22 +49,98 @@ public class SolutionService : ISolutionService
             var meters = int.Parse(split[1]);
             var color = split[2];
 
-            _logger.LogInformation("Direction: {Direction}, Meters: {Meters}, Color: {Color}", direction, meters, color);
+            // _logger.LogInformation("Direction: {Direction}, Meters: {Meters}, Color: {Color}", direction, meters, color);
 
             var plan = new DiggPlan
             {
                 Direction = direction,
                 Meters = meters,
-                Color = color
+                Color = color.Substring(1, color.Length - 2)
             };
 
             diggPlans.Add(plan);
         }
 
         // create grid with a dictionary, Complex (x, y) coordinates as key, DigPlan as value
-        var grid = new Dictionary<Complex, DiggPlan>();
+        var grid = CreateGrid(diggPlans);
+
+        PrintGrid(grid);
 
         throw new NotImplementedException();
+    }
+
+    private void PrintGrid(Dictionary<Complex, DiggPlan> grid)
+    {
+        var minX = grid.Keys.Min(x => x.Real);
+        var maxX = grid.Keys.Max(x => x.Real);
+        var minY = grid.Keys.Min(x => x.Imaginary);
+        var maxY = grid.Keys.Max(x => x.Imaginary);
+
+        for (int y = (int)minY; y <= (int)maxY; y++)
+        {
+            for (int x = (int)minX; x <= (int)maxX; x++)
+            {
+                var pos = new Complex(x, y);
+                if (grid.TryGetValue(pos, out var diggPlan))
+                {
+                    // if (tile.Steps > 0)
+                    // {
+                    //     _sb.Append(tile.Steps.ToString().PadLeft(3, ' '));
+                    // }
+                    // else
+                    // {
+                    //     _sb.Append(tile.Value.ToString().PadLeft(3, ' '));
+                    // }
+                    // _sb.Append(tile.Color);
+
+                    Console.Write("#".Pastel(diggPlan.Color));
+
+                    // "colorize me".Pastel("#1E90FF");
+                    // var consoleColor = new ConsoleColor();
+                    // consoleColor = Pastel(Color.Fr
+                    // Console.ForegroundColor = diggPlan.Direction
+                }
+                else
+                {
+                    Console.Write(" ");
+                }
+
+            }
+
+            Console.WriteLine();
+
+            // _sb.AppendLine();
+        }
+
+        // Console.WriteLine(_sb.ToString());
+        // _sb.Clear();
+    }
+
+    private Dictionary<Complex, DiggPlan> CreateGrid(IEnumerable<DiggPlan> diggPlans)
+    {
+        var grid = new Dictionary<Complex, DiggPlan>();
+
+        var currentPosition = Complex.Zero; // (0, 0)
+        foreach (var diggPlan in diggPlans)
+        {
+            var position = currentPosition;
+            var direction = diggPlan.Direction;
+            for (var i = 0; i < diggPlan.Meters; i++)
+            {
+                position += direction;
+                grid.Add(position, diggPlan);
+            }
+
+            currentPosition = position;
+        }
+
+        // order by x, then y
+        grid = grid
+            .OrderBy(x => x.Key.Real)
+            .ThenBy(x => x.Key.Imaginary)
+            .ToDictionary(x => x.Key, x => x.Value);
+
+        return grid;
     }
 
     public long RunPart2(string[] input)
