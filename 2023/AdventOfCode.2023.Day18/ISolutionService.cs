@@ -271,6 +271,8 @@ public class SolutionService : ISolutionService
         _logger.LogInformation("Solving - 2023 - Day 18 - Part 2");
         _logger.LogInformation("Input contains {Input} values", input.Length);
 
+        // https://en.wikipedia.org/wiki/Shoelace_formula
+        
         throw new NotImplementedException();
     }
 }
