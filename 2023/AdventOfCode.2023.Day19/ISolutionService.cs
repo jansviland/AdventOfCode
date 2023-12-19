@@ -35,7 +35,11 @@ public class SolutionService : ISolutionService
             _workflows.Add(split[0], split[1].Substring(0, split[1].Length - 1));
         }
 
-        long total = 0; 
+        // final workflows
+        _workflows.Add("A", "A");
+        _workflows.Add("R", "R");
+
+        long total = 0;
         for (var i = endOfWorkflows; i < input.Length; i++)
         {
             string line = input[i];
@@ -43,31 +47,64 @@ public class SolutionService : ISolutionService
             {
                 continue;
             }
-            
-            var sum = sumOfApproved("in", line);
+
+            var sum = SumOfApproved("in", line.Substring(1, line.Length - 2));
             total += sum;
         }
 
         return total;
     }
 
-    private long sumOfApproved(string workflowKey, string values)
+    private long SumOfApproved(string workflowKey, string values)
     {
         var workflow = _workflows[workflowKey];
         var workFlowSteps = workflow.Split(",");
-        
-        // foreach (var workFlowStep in workFlowSteps)
-        // R - Rejected. Return 0
-        // A - Approved. Return sum of values
-        // a string of letters, like lnx, pv or qqz, go to new workflow with that as key
-        // bigger og equal < or > and a :, compare and go to the key if true
-        
-        var valuesSplit = values.Substring(1, values.Length - 1).Split(",");
-        
-        // if (workflows.ContainsKey(workflow))
-        // {
-        //     return workflows[workflow] == "approved";
-        // }
+
+        for (int i = 0; i < workFlowSteps.Length; i++)
+        {
+            if (workFlowSteps[i] == "R")
+            {
+                return 0;
+            }
+
+            if (workFlowSteps[i] == "A")
+            {
+                var valuesSplit = values.Split(",").Select(x => x.Substring(2)).Select(long.Parse);
+                return valuesSplit.Sum();
+            }
+
+            var workflowCompare = workFlowSteps[i].Split(":");
+            if (workflowCompare.Length == 1)
+            {
+                return SumOfApproved(workflowCompare[0], values);
+            }
+
+            if (workflowCompare.Length == 2)
+            {
+                char compare = workflowCompare[0][0];
+                char operation = workflowCompare[0][1];
+                var value = long.Parse(workflowCompare[0].Substring(2));
+
+                var valuesSplit = values.Split(",");
+                var compareValue = valuesSplit.Where(x => x.IndexOf(compare) != -1).Select(x => x.Substring(2));
+                var compareValueLong = long.Parse(compareValue.First());
+
+                if (operation == '<')
+                {
+                    if (compareValueLong < value)
+                    {
+                        return SumOfApproved(workflowCompare[1], values);
+                    }
+                }
+                else
+                {
+                    if (compareValueLong > value)
+                    {
+                        return SumOfApproved(workflowCompare[1], values);
+                    }
+                }
+            }
+        }
 
         return 0;
     }
