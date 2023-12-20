@@ -114,6 +114,9 @@ public class SolutionService : ISolutionService
         _logger.LogInformation("Solving - 2023 - Day 19 - Part 2");
         _logger.LogInformation("Input contains {Input} values", input.Length);
 
+        // https://en.wikipedia.org/wiki/K-d_tree
+        // https://www.reddit.com/r/adventofcode/comments/18lwcw2/2023_day_19_an_equivalent_part_2_example_spoilers/
+        
         throw new NotImplementedException();
     }
 }
