@@ -32,7 +32,8 @@ internal static class Program
         string[] input;
         if (args.Length == 0)
         {
-            input = File.ReadAllLines("Assets/input.txt");
+            // input = File.ReadAllLines("Assets/input.txt");
+            input = File.ReadAllLines("Assets/test-input.txt");
         }
         else
         {
