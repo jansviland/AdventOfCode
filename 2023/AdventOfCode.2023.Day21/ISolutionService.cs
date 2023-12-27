@@ -104,17 +104,12 @@ public class SolutionService : ISolutionService
 
         if (animated)
         {
-            Thread.Sleep(200);
+            Thread.Sleep(20);
         }
     }
 
-    public long NumberOfSpacesReached(Dictionary<Complex, Tile> grid, Complex startingPoint, int steps)
+    public long NumberOfSpacesReached(Dictionary<Complex, Tile> grid, Complex startingPoint, int maxSteps)
     {
-        var spacesReached = 0;
-        var currentStep = 0;
-        // var currentPoint = startingPoint;
-        // var currentTile = grid[startingPoint];
-
         var q = new Queue<Complex>();
         q.Enqueue(startingPoint);
 
@@ -133,24 +128,29 @@ public class SolutionService : ISolutionService
             var adjacent = new[] { up, down, left, right };
             foreach (var a in adjacent)
             {
-                if (grid.ContainsKey(a))
-                // if (grid.ContainsKey(a) && !seen.Contains(a))
+                // if (grid.ContainsKey(a))
+                if (grid.ContainsKey(a) && !seen.Contains(a))
                 {
                     var tile = grid[a];
                     if (tile.Char == '.')
                     {
+                        if (grid[currentPosition].Steps + 1 > maxSteps)
+                        {
+                            break;
+                        }
 
                         grid[a].Previous = grid[currentPosition];
                         grid[a].Steps = grid[currentPosition].Steps + 1;
 
                         // if steps is less than the given amount of steps, add it to the queue
 
+                        seen.Add(a);
                         q.Enqueue(a);
                     }
                 }
             }
 
-            seen.Add(currentPosition);
+            // seen.Add(currentPosition);
             // grid[currentPosition].Steps++;
 
             // currentSteps++;
@@ -175,7 +175,7 @@ public class SolutionService : ISolutionService
 
         // given an amount of steps, how many spaces / garden plots could be reached
         // from the starting point
-        var spacesReached = NumberOfSpacesReached(grid, startingPoint, 32);
+        var spacesReached = NumberOfSpacesReached(grid, startingPoint, 64);
 
         // create a while loop counting to the given amount of steps
         // for each step, check the 4 adjacent spaces
@@ -184,7 +184,7 @@ public class SolutionService : ISolutionService
 
         // print out a grid, with the current steps and the spaces reached for each step, animate it
 
-        PrintGrid(grid, true, 6);
+        PrintGrid(grid, true);
 
 
         return spacesReached;

@@ -4,7 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 
-namespace AdventOfCode._2023.Day21;
+namespace AdventOfCode._2023.Day22;
 
 internal static class Program
 {
@@ -33,7 +33,6 @@ internal static class Program
         if (args.Length == 0)
         {
             input = File.ReadAllLines("Assets/input.txt");
-            // input = File.ReadAllLines("Assets/test-input.txt");
         }
         else
         {
