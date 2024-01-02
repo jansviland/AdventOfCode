@@ -6,12 +6,14 @@ namespace AdventOfCode._2023.Day22.Unity.Common
     {
         public Transform target; // The tower or object you want to rotate around
         public float distance = 15.0f; // Distance from the target
-        public float speed = 5.0f; // Speed of the rotation
+        public float speed = 50.0f; // Speed of the rotation
+        public float height = 5.0f; // Height above the target
 
         private float angle = 0;
 
         void Update()
         {
+            // rotate
             if (Input.GetKey(KeyCode.RightArrow))
             {
                 angle += speed * Time.deltaTime; // Rotate right
@@ -21,19 +23,30 @@ namespace AdventOfCode._2023.Day22.Unity.Common
                 angle -= speed * Time.deltaTime; // Rotate left
             }
 
+            // move up and down
+            if (Input.GetKey(KeyCode.UpArrow))
+            {
+                height += speed * Time.deltaTime; // Move up
+            }
+            else if (Input.GetKey(KeyCode.DownArrow))
+            {
+                height -= speed * Time.deltaTime; // Move down
+            }
+
+            Debug.Log("Target position: " + target.position);
+            Debug.Log("Angle: " + angle);
+
             // Calculating position based on angle and distance
-            // Vector3 offset = Quaternion.Euler(angle,90, 0) * new Vector3(distance, 0, 0);
-            // transform.position = target.position + offset;
+            Vector3 offset = Quaternion.Euler(0, angle, 0) * new Vector3(0, 0, distance);
+            transform.position = target.position - offset;
 
-            // turn the camera so z is up
-            // transform.rotation = Quaternion.Euler(angle, 90, 0);
-            
+            transform.position = new Vector3(target.position.x + offset.x, height, target.position.z + offset.z);
 
-            Debug.Log("Camera position: " + transform.position);
+            Debug.Log("Updated position: " + transform.position);
             Debug.DrawLine(target.position, transform.position, Color.red); // Draw a line in the Scene window to better see the position of the camera
 
             // Always look at the target
-            // transform.LookAt(target);
+            transform.LookAt(target);
         }
     }
 }
