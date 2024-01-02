@@ -8,6 +8,7 @@ namespace AdventOfCode._2023.Day22.Unity.Common
     {
         public GameObject blockPrefab;
 
+        private int currentLetter = 65; // A = 65 in ASCII, B = 66, etc.
         private const string filePath = "Assets/test-input.txt";
 
         void Start()
@@ -40,6 +41,8 @@ namespace AdventOfCode._2023.Day22.Unity.Common
 
             // Create block
             GameObject block = Instantiate(blockPrefab, midPoint, Quaternion.identity);
+            block.name = "Block " + (char)currentLetter;
+            currentLetter++;
 
             // Calculate scale of the block
             Vector3 scale = new Vector3(Mathf.Max(1, Mathf.Abs(end.x - start.x)),
