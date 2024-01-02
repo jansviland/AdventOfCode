@@ -33,8 +33,8 @@ namespace AdventOfCode._2023.Day22.Unity.Common
                 height -= speed * Time.deltaTime; // Move down
             }
 
-            Debug.Log("Target position: " + target.position);
-            Debug.Log("Angle: " + angle);
+            // Debug.Log("Target position: " + target.position);
+            // Debug.Log("Angle: " + angle);
 
             // Calculating position based on angle and distance
             Vector3 offset = Quaternion.Euler(0, angle, 0) * new Vector3(0, 0, distance);
@@ -42,8 +42,8 @@ namespace AdventOfCode._2023.Day22.Unity.Common
 
             transform.position = new Vector3(target.position.x + offset.x, height, target.position.z + offset.z);
 
-            Debug.Log("Updated position: " + transform.position);
-            Debug.DrawLine(target.position, transform.position, Color.red); // Draw a line in the Scene window to better see the position of the camera
+            // Debug.Log("Updated position: " + transform.position);
+            // Debug.DrawLine(target.position, transform.position, Color.red); // Draw a line in the Scene window to better see the position of the camera
 
             // Always look at the target
             transform.LookAt(target);
