@@ -5,6 +5,12 @@ the puzzles.
 
 # Demo of some of the solutions
 
+## 2023 - Day 22 - Demo
+
+For day 22 I used Unity to create a 3D model to illustrate the solution.
+
+![gif](./wiki/2023-day22-part-1-solution.gif)
+
 ## 2023 - Day 18 - Demo
 
 ![gif](./wiki/2023-day18-part-1-solution.gif)

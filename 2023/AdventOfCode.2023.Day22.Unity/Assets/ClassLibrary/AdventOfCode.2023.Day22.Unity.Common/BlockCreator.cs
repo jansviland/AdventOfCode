@@ -12,7 +12,7 @@ namespace AdventOfCode._2023.Day22.Unity.Common
         private const string filePath = "Assets/input.txt";
         // private const string filePath = "Assets/test-input.txt";
         // private const string filePath = "Assets/test-input2.txt";
-        
+
         void Start()
         {
             CreateBlocksFromFile();
@@ -41,7 +41,7 @@ namespace AdventOfCode._2023.Day22.Unity.Common
             Vector3 start = new Vector3(int.Parse(startPoint[0]), int.Parse(startPoint[2]), int.Parse(startPoint[1]));
             Vector3 end = new Vector3(int.Parse(endPoint[0]), int.Parse(endPoint[2]), int.Parse(endPoint[1]));
             Vector3 midPoint = (start + end) / 2;
-            
+
             // draw the entire block
             Debug.DrawLine(start, end, Color.green, 10f);
 
