@@ -2,9 +2,9 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace AdventOfCodeAdventOfCode._2024.Day01Tests;
+namespace AdventOfCodeAdventOfCode._2024.Day01.Tests;
 
-public class TestFixture : TestBedFixture
+public abstract class TestFixture : TestBedFixture
 {
     protected override void AddServices(IServiceCollection services, IConfiguration? configuration)
         => services

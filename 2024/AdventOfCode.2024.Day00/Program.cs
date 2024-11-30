@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using Serilog;
 
-namespace AdventOfCode._2024.Day0;
+namespace AdventOfCode._2024.Day00;
 
 internal static class Program
 {

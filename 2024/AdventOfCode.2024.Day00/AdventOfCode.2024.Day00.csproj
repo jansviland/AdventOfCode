@@ -4,7 +4,7 @@
         <TargetFramework>net9.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
-        <RootNamespace>AdventOfCode._2024.Day0</RootNamespace>
+        <RootNamespace>AdventOfCode._2024.Day00</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>

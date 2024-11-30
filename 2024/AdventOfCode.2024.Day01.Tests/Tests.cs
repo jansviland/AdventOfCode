@@ -1,6 +1,6 @@
 using AdventOfCode._2024.Day01;
 
-namespace AdventOfCodeAdventOfCode._2024.Day01Tests;
+namespace AdventOfCodeAdventOfCode._2024.Day01.Tests;
 
 public class Tests : TestBed<TestFixture>
 {

@@ -1,4 +1,4 @@
-namespace AdventOfCode._2024.Day0;
+namespace AdventOfCode._2024.Day00;
 
 public interface ISolutionService
 {

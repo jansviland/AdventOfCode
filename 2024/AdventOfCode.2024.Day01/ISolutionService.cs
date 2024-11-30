@@ -17,7 +17,7 @@ public class SolutionService : ISolutionService
 
     public long RunPart1(string[] input)
     {
-        _logger.LogInformation("Solving - 2023 - Day 22 - Part 1");
+        _logger.LogInformation("Solving - {Year} - Day {Day} - Part 1", GetYear(), GetDay());
         _logger.LogInformation("Input contains {Input} values", input.Length);
 
         throw new NotImplementedException();
@@ -25,9 +25,21 @@ public class SolutionService : ISolutionService
 
     public long RunPart2(string[] input)
     {
-        _logger.LogInformation("Solving - 2023 - Day 22 - Part 2");
+        _logger.LogInformation("Solving - {Year} - Day {Day} - Part 2", GetYear(), GetDay());
         _logger.LogInformation("Input contains {Input} values", input.Length);
 
         throw new NotImplementedException();
+    }
+    
+    private int GetYear()
+    {
+        var ns = GetType().Namespace;
+        return int.Parse(ns?.Split('.').ElementAt(1).Replace("_", "")!);
+    }
+    
+    private int GetDay()
+    {
+        var ns = GetType().Namespace;
+        return int.Parse(ns?.Split('.').Last().Replace("Day", "")!);
     }
 }
