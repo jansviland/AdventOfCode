@@ -8,7 +8,7 @@ namespace AdventOfCode._2023.Day22.Unity.Common
     {
         public GameObject blockPrefab;
 
-        private int currentLetter = 65; // A = 65 in ASCII, B = 66, etc.
+        private int blockNumber = 65; // A = 65 in ASCII, B = 66, etc.
         private const string filePath = "Assets/input.txt";
         // private const string filePath = "Assets/test-input.txt";
         // private const string filePath = "Assets/test-input2.txt";
@@ -47,12 +47,22 @@ namespace AdventOfCode._2023.Day22.Unity.Common
 
             // Create block
             GameObject block = Instantiate(blockPrefab, midPoint, Quaternion.identity);
-            block.name = "Block " + (char)currentLetter;
-            currentLetter++;
+            if (blockNumber > 90)
+            {
+                // We start at 65, which is A, then we go to 90, which is Z. After that we just use numbers.
+                block.name = $"Block {blockNumber}";
+            }
+            else
+            {
+                block.name = $"Block {blockNumber}({(char)blockNumber})";
+            }
+            blockNumber++;
 
             // Calculate scale of the block
             Vector3 scale = new Vector3(
-                Mathf.Abs(end.x - start.x) + 1, // Add 1 to account for inclusive end points
+                // When we define: 0, 0, 0 to 0, 2, 0. We want the block to have a length of 3, not 2.
+                // 0 - 2 = -2, Abs(-2) = 2, but we want 3, so we add 1.
+                Mathf.Abs(end.x - start.x) + 1,
                 Mathf.Abs(end.y - start.y) + 1,
                 Mathf.Abs(end.z - start.z) + 1
             );
