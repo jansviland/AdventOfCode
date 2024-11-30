@@ -5,6 +5,7 @@ namespace AdventOfCodeAdventOfCode._2024.Day01.Tests;
 public class Tests : TestBed<TestFixture>
 {
     private readonly ISolutionService _solutionService;
+    private readonly Helper _helper = new();
 
     private readonly string[] _input;
 
@@ -17,8 +18,10 @@ public class Tests : TestBed<TestFixture>
     [Fact]
     public void Part1Test()
     {
+        var year = _helper.GetYear();
+        
         // arrange
-        _testOutputHelper.WriteLine("Running unit test - 2023 - Day 22 - Part 1");
+        _testOutputHelper.WriteLine($"Running unit test - {_helper.GetYear()} - Day {_helper.GetDay()} - Part 1");
 
         // act
         var result = _solutionService.RunPart1(_input);
@@ -31,7 +34,7 @@ public class Tests : TestBed<TestFixture>
     public void Part2Test()
     {
         // arrange
-        _testOutputHelper.WriteLine("Running unit test - 2023 - Day 22 - Part 2");
+        _testOutputHelper.WriteLine($"Running unit test - {_helper.GetYear()} - Day {_helper.GetDay()} - Part 2");
 
         // act
         var result = _solutionService.RunPart2(_input);

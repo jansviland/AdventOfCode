@@ -4,7 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace AdventOfCodeAdventOfCode._2024.Day01.Tests;
 
-public abstract class TestFixture : TestBedFixture
+public class TestFixture : TestBedFixture
 {
     protected override void AddServices(IServiceCollection services, IConfiguration? configuration)
         => services

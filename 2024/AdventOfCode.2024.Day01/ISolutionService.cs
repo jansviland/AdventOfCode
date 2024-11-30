@@ -9,6 +9,7 @@ public interface ISolutionService
 public class SolutionService : ISolutionService
 {
     private readonly ILogger<ISolutionService> _logger;
+    private readonly Helper _helper = new();
 
     public SolutionService(ILogger<SolutionService> logger)
     {
@@ -17,7 +18,7 @@ public class SolutionService : ISolutionService
 
     public long RunPart1(string[] input)
     {
-        _logger.LogInformation("Solving - {Year} - Day {Day} - Part 1", GetYear(), GetDay());
+        _logger.LogInformation("Solving - {Year} - Day {Day} - Part 1", _helper.GetYear(), _helper.GetDay());
         _logger.LogInformation("Input contains {Input} values", input.Length);
 
         throw new NotImplementedException();
@@ -25,21 +26,9 @@ public class SolutionService : ISolutionService
 
     public long RunPart2(string[] input)
     {
-        _logger.LogInformation("Solving - {Year} - Day {Day} - Part 2", GetYear(), GetDay());
+        _logger.LogInformation("Solving - {Year} - Day {Day} - Part 2", _helper.GetYear(), _helper.GetDay());
         _logger.LogInformation("Input contains {Input} values", input.Length);
 
         throw new NotImplementedException();
-    }
-    
-    private int GetYear()
-    {
-        var ns = GetType().Namespace;
-        return int.Parse(ns?.Split('.').ElementAt(1).Replace("_", "")!);
-    }
-    
-    private int GetDay()
-    {
-        var ns = GetType().Namespace;
-        return int.Parse(ns?.Split('.').Last().Replace("Day", "")!);
     }
 }
