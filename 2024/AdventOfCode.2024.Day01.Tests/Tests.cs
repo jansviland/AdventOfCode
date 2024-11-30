@@ -18,8 +18,6 @@ public class Tests : TestBed<TestFixture>
     [Fact]
     public void Part1Test()
     {
-        var year = _helper.GetYear();
-        
         // arrange
         _testOutputHelper.WriteLine($"Running unit test - {_helper.GetYear()} - Day {_helper.GetDay()} - Part 1");
 
