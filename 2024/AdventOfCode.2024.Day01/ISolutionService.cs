@@ -1,3 +1,7 @@
+using System.Collections;
+using System.Globalization;
+using System.Runtime.Intrinsics.X86;
+
 namespace AdventOfCode._2024.Day01;
 
 public interface ISolutionService
@@ -21,7 +25,7 @@ public class SolutionService : ISolutionService
         _logger.LogInformation("Solving - {Year} - Day {Day} - Part 1", _helper.GetYear(), _helper.GetDay());
         _logger.LogInformation("Input contains {Input} values", input.Length);
 
-        throw new NotImplementedException();
+        return Enumerable.Zip(Column(input, 0), Column(input, 1), (l, r) => Math.Abs(l - r)).Sum();
     }
 
     public long RunPart2(string[] input)
@@ -29,6 +33,21 @@ public class SolutionService : ISolutionService
         _logger.LogInformation("Solving - {Year} - Day {Day} - Part 2", _helper.GetYear(), _helper.GetDay());
         _logger.LogInformation("Input contains {Input} values", input.Length);
 
-        throw new NotImplementedException();
+        // get right column and count the number of times each number appears, store in dictionary with number as key, count as value
+        var numberCount = Column(input, 1)
+            .CountBy(x => x)
+            .ToDictionary();
+        
+        // get left column, multiply each number by the count of the number in the right column, sum the results
+        // if the number is not in the dictionary, the count is 0 and we multiply by 0 so it doesn't affect the sum
+        return Column(input, 0)
+            .Select(num => numberCount.GetValueOrDefault(num) * num)
+            .Sum();
     }
+    
+    IEnumerable<int> Column(string[] input, int column) =>
+        from line in input
+        let nums = line.Split("   ").Select(int.Parse).ToArray()
+        orderby nums[column]
+        select nums[column];
 }

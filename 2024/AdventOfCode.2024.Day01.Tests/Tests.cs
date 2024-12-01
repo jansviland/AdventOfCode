@@ -25,7 +25,7 @@ public class Tests : TestBed<TestFixture>
         var result = _solutionService.RunPart1(_input);
 
         // assert
-        Assert.Equal(114, result);
+        Assert.Equal(11, result);
     }
 
     [Fact]
@@ -38,6 +38,6 @@ public class Tests : TestBed<TestFixture>
         var result = _solutionService.RunPart2(_input);
 
         // assert
-        Assert.Equal(5905, result);
+        Assert.Equal(31, result);
     }
 }
