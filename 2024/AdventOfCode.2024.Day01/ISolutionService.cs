@@ -25,7 +25,10 @@ public class SolutionService : ISolutionService
         _logger.LogInformation("Solving - {Year} - Day {Day} - Part 1", _helper.GetYear(), _helper.GetDay());
         _logger.LogInformation("Input contains {Input} values", input.Length);
 
-        return Enumerable.Zip(Column(input, 0), Column(input, 1), (l, r) => Math.Abs(l - r)).Sum();
+        // get left column and right column, subtract each number in the right column from the corresponding number in the left column, sum the results
+        return Column(input, 0)
+            .Zip(Column(input, 1), (l, r) => Math.Abs(l - r))
+            .Sum();
     }
 
     public long RunPart2(string[] input)
@@ -44,8 +47,8 @@ public class SolutionService : ISolutionService
             .Select(num => numberCount.GetValueOrDefault(num) * num)
             .Sum();
     }
-    
-    IEnumerable<int> Column(string[] input, int column) =>
+
+    private static IEnumerable<int> Column(string[] input, int column) =>
         from line in input
         let nums = line.Split("   ").Select(int.Parse).ToArray()
         orderby nums[column]

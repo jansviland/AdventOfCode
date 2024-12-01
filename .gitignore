@@ -113,3 +113,7 @@ ehthumbs.db
 # Crashlytics generated #
 # =============== #
 crashlytics-build.properties
+
+
+# Ignore personal input
+Assets/input.txt
