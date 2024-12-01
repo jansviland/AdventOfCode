@@ -1,157 +1,81 @@
-﻿## --- Day 22: Sand Slabs ---
+﻿# --- Day 1: Historian Hysteria ---
 
-Enough sand has fallen; it can finally filter water for Snow Island.
+The Chief Historian is always present for the big Christmas sleigh launch, but nobody has seen him in months! Last anyone heard, he was visiting locations that are historically significant to the North Pole; a group of Senior Historians has asked you to accompany them as they check the places they think he was most likely to visit.
 
-Well, almost.
+As each location is checked, they will mark it on their list with a star. They figure the Chief Historian must be in one of the first fifty places they'll look, so in order to save Christmas, you need to help them get fifty stars on their list before Santa takes off on December 25th.
 
-The sand has been falling as large compacted bricks of sand, piling up to form an impressive stack here near the edge of
-Island Island. In order to make use of the sand to filter water, some of the bricks will need to be broken apart - nay,
-disintegrated - back into freely flowing sand.
+Collect stars by solving puzzles. Two puzzles will be made available on each day in the Advent calendar; the second puzzle is unlocked when you complete the first. Each puzzle grants one star. Good luck!
 
-The stack is tall enough that you'll have to be careful about choosing which bricks to disintegrate; if you disintegrate
-the wrong brick, large portions of the stack could topple, which sounds pretty dangerous.
+You haven't even left yet and the group of Elvish Senior Historians has already hit a problem: their list of locations to check is currently empty. Eventually, someone decides that the best place to check first would be the Chief Historian's office.
 
-The Elves responsible for water filtering operations took a snapshot of the bricks while they were still falling (your
-puzzle input) which should let you work out which bricks are safe to disintegrate. For example:
+Upon pouring into the office, everyone confirms that the Chief Historian is indeed nowhere to be found. Instead, the Elves discover an assortment of notes and lists of historically significant locations! This seems to be the planning the Chief Historian was doing before he left. Perhaps these notes can be used to determine which locations to search?
 
-```
-1,0,1~1,2,1
-0,0,2~2,0,2
-0,2,3~2,2,3
-0,0,4~0,2,4
-2,0,5~2,2,5
-0,1,6~2,1,6
-1,1,8~1,1,9
-```
+Throughout the Chief's office, the historically significant locations are listed not by name but by a unique number called the location ID. To make sure they don't miss anything, The Historians split into two groups, each searching the office and trying to create their own complete list of location IDs.
 
-Each line of text in the snapshot represents the position of a single brick at the time the snapshot was taken. The
-position is given as two x,y,z coordinates - one for each end of the brick - separated by a tilde (~). Each brick is
-made up of a single straight line of cubes, and the Elves were even careful to choose a time for the snapshot that had
-all of the free-falling bricks at integer positions above the ground, so the whole snapshot is aligned to a
-three-dimensional cube grid.
+There's just one problem: by holding the two lists up side by side (your puzzle input), it quickly becomes clear that the lists aren't very similar. Maybe you can help The Historians reconcile their lists?
 
-A line like 2,2,2~2,2,2 means that both ends of the brick are at the same coordinate - in other words, that the brick is
-a single cube.
+For example:
 
-Lines like 0,0,10~1,0,10 or 0,0,10~0,1,10 both represent bricks that are two cubes in volume, both oriented
-horizontally. The first brick extends in the x direction, while the second brick extends in the y direction.
-
-A line like 0,0,1~0,0,10 represents a ten-cube brick which is oriented vertically. One end of the brick is the cube
-located at 0,0,1, while the other end of the brick is located directly above it at 0,0,10.
-
-The ground is at z=0 and is perfectly flat; the lowest z value a brick can have is therefore 1. So, 5,5,1~5,6,1 and
-0,2,1~0,2,5 are both resting on the ground, but 3,3,2~3,3,3 was above the ground at the time of the snapshot.
-
-Because the snapshot was taken while the bricks were still falling, some bricks will still be in the air; you'll need to
-start by figuring out where they will end up. Bricks are magically stabilized, so they never rotate, even in weird
-situations like where a long horizontal brick is only supported on one end. Two bricks cannot occupy the same position,
-so a falling brick will come to rest upon the first other brick it encounters.
-
-Here is the same example again, this time with each brick given a letter so it can be marked in diagrams:
-
-```
-1,0,1~1,2,1   <- A
-0,0,2~2,0,2   <- B
-0,2,3~2,2,3   <- C
-0,0,4~0,2,4   <- D
-2,0,5~2,2,5   <- E
-0,1,6~2,1,6   <- F
-1,1,8~1,1,9   <- G
+```text
+3   4
+4   3
+2   5
+1   3
+3   9
+3   3
 ```
 
-At the time of the snapshot, from the side so the x axis goes left to right, these bricks are arranged like this:
+Maybe the lists are only off by a small amount! To find out, pair up the numbers and measure how far apart they are. Pair up the smallest number in the left list with the smallest number in the right list, then the second-smallest left number with the second-smallest right number, and so on.
 
-```
-x
-012
-.G. 9
-.G. 8
-... 7
-FFF 6
-..E 5 z
-D.. 4
-CCC 3
-BBB 2
-.A. 1
---- 0
-```
+Within each pair, figure out how far apart the two numbers are; you'll need to add up all of those distances. For example, if you pair up a 3 from the left list with a 7 from the right list, the distance apart is 4; if you pair up a 9 with a 3, the distance apart is 6.
 
-Rotating the perspective 90 degrees so the y axis now goes left to right, the same bricks are arranged like this:
+In the example list above, the pairs and distances would be as follows:
 
-```
-y
-012
-.G. 9
-.G. 8
-... 7
-.F. 6
-EEE 5 z
-DDD 4
-..C 3
-B.. 2
-AAA 1
---- 0
-```
+    The smallest number in the left list is 1, and the smallest number in the right list is 3. The distance between them is 2.
+    The second-smallest number in the left list is 2, and the second-smallest number in the right list is another 3. The distance between them is 1.
+    The third-smallest number in both lists is 3, so the distance between them is 0.
+    The next numbers to pair up are 3 and 4, a distance of 1.
+    The fifth-smallest numbers in each list are 3 and 5, a distance of 2.
+    Finally, the largest number in the left list is 4, while the largest number in the right list is 9; these are a distance 5 apart.
 
-Once all of the bricks fall downward as far as they can go, the stack looks like this, where ? means bricks are hidden
-behind other bricks at that location:
+To find the total distance between the left list and the right list, add up the distances between all of the pairs you found. In the example above, this is 2 + 1 + 0 + 1 + 2 + 5, a total distance of 11!
 
-```
-x
-012
-.G. 6
-.G. 5
-FFF 4
-D.E 3 z
-??? 2
-.A. 1
---- 0
+Your actual left and right lists contain many location IDs. What is the total distance between your lists?
+
+Your puzzle answer was 1530215.
+
+# --- Part Two ---
+
+Your analysis only confirmed what everyone feared: the two lists of location IDs are indeed very different.
+
+Or are they?
+
+The Historians can't agree on which group made the mistakes or how to read most of the Chief's handwriting, but in the commotion you notice an interesting detail: a lot of location IDs appear in both lists! Maybe the other numbers aren't location IDs at all but rather misinterpreted handwriting.
+
+This time, you'll need to figure out exactly how often each number from the left list appears in the right list. Calculate a total similarity score by adding up each number in the left list after multiplying it by the number of times that number appears in the right list.
+
+Here are the same example lists again:
+
+```text
+3   4
+4   3
+2   5
+1   3
+3   9
+3   3
 ```
 
-Again from the side:
+For these example lists, here is the process of finding the similarity score:
 
-```
-y
-012
-.G. 6
-.G. 5
-.F. 4
-??? 3 z
-B.C 2
-AAA 1
---- 0
-```
+    The first number in the left list is 3. It appears in the right list three times, so the similarity score increases by 3 * 3 = 9.
+    The second number in the left list is 4. It appears in the right list once, so the similarity score increases by 4 * 1 = 4.
+    The third number in the left list is 2. It does not appear in the right list, so the similarity score does not increase (2 * 0 = 0).
+    The fourth number, 1, also does not appear in the right list.
+    The fifth number, 3, appears in the right list three times; the similarity score increases by 9.
+    The last number, 3, appears in the right list three times; the similarity score again increases by 9.
 
-Now that all of the bricks have settled, it becomes easier to tell which bricks are supporting which other bricks:
+So, for these example lists, the similarity score at the end of this process is 31 (9 + 4 + 0 + 0 + 9 + 9).
 
-```
-    Brick A is the only brick supporting bricks B and C.
-    Brick B is one of two bricks supporting brick D and brick E.
-    Brick C is the other brick supporting brick D and brick E.
-    Brick D supports brick F.
-    Brick E also supports brick F.
-    Brick F supports brick G.
-    Brick G isn't supporting any bricks.
-```
+Once again consider your left and right lists. What is their similarity score?
 
-Your first task is to figure out which bricks are safe to disintegrate. A brick can be safely disintegrated if, after
-removing it, no other bricks would fall further directly downward. Don't actually disintegrate any bricks - just
-determine what would happen if, for each brick, only that brick were disintegrated. Bricks can be disintegrated even if
-they're completely surrounded by other bricks; you can squeeze between bricks if you need to.
-
-In this example, the bricks can be disintegrated as follows:
-
-```
-    Brick A cannot be disintegrated safely; if it were disintegrated, bricks B and C would both fall.
-    Brick B can be disintegrated; the bricks above it (D and E) would still be supported by brick C.
-    Brick C can be disintegrated; the bricks above it (D and E) would still be supported by brick B.
-    Brick D can be disintegrated; the brick above it (F) would still be supported by brick E.
-    Brick E can be disintegrated; the brick above it (F) would still be supported by brick D.
-    Brick F cannot be disintegrated; the brick above it (G) would fall.
-    Brick G can be disintegrated; it does not support any other bricks.
-```
-
-So, in this example, 5 bricks can be safely disintegrated.
-
-Figure how the blocks will settle based on the snapshot. Once they've settled, consider disintegrating a single brick;
-how many bricks could be safely chosen as the one to get disintegrated?
+Your puzzle answer was 26800609.
