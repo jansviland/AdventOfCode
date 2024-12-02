@@ -38,6 +38,6 @@ public class Tests : TestBed<TestFixture>
         var result = _solutionService.RunPart2(_input);
 
         // assert
-        Assert.Equal(31, result);
+        Assert.Equal(4, result);
     }
 }
