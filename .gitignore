@@ -117,3 +117,5 @@ crashlytics-build.properties
 
 # Ignore personal input
 Assets/input.txt
+
+2024/AdventOfCode.2024.Day02/Assets/input.txt
