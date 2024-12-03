@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <TargetFramework>net9.0</TargetFramework>
-        <RootNamespace>AdventOfCodeAdventOfCode._2024.Day03.Tests</RootNamespace>
+        <RootNamespace>AdventOfCodeAdventOfCode._2024.Day04.Tests</RootNamespace>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <IsPackable>false</IsPackable>
@@ -23,14 +23,11 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\AdventOfCode.2024.Day03\AdventOfCode.2024.Day03.csproj" />
+      <ProjectReference Include="..\AdventOfCode.2024.Day04\AdventOfCode.2024.Day04.csproj" />
     </ItemGroup>
 
     <ItemGroup>
       <None Update="Assets\test-input.txt">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </None>
-      <None Update="Assets\test-input2.txt">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
     </ItemGroup>

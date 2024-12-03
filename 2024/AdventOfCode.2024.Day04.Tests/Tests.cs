@@ -1,6 +1,6 @@
-using AdventOfCode._2024.Day03;
+using AdventOfCode._2024.Day04;
 
-namespace AdventOfCodeAdventOfCode._2024.Day03.Tests;
+namespace AdventOfCodeAdventOfCode._2024.Day04.Tests;
 
 public class Tests : TestBed<TestFixture>
 {
@@ -25,21 +25,19 @@ public class Tests : TestBed<TestFixture>
         var result = _solutionService.RunPart1(_input);
 
         // assert
-        Assert.Equal(161, result);
+        Assert.Equal(18, result);
     }
 
     [Fact]
     public void Part2Test()
     {
-        var input2 = File.ReadAllLines("Assets/test-input2.txt");
-        
         // arrange
         _testOutputHelper.WriteLine($"Running unit test - {_helper.GetYear()} - Day {_helper.GetDay()} - Part 2");
 
         // act
-        var result = _solutionService.RunPart2(input2);
+        var result = _solutionService.RunPart2(_input);
 
         // assert
-        Assert.Equal(48, result);
+        Assert.Equal(4, result);
     }
 }
