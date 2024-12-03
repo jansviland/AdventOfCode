@@ -25,7 +25,7 @@ public class Tests : TestBed<TestFixture>
         var result = _solutionService.RunPart1(_input);
 
         // assert
-        Assert.Equal(2, result);
+        Assert.Equal(161, result);
     }
 
     [Fact]

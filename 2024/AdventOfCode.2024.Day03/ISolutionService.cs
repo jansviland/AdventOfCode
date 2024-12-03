@@ -2,7 +2,7 @@ namespace AdventOfCode._2024.Day03;
 
 public interface ISolutionService
 {
-    public long RunPart1(string[] input);
+    public long RunPart1(string input);
     public long RunPart2(string[] input);
 }
 
@@ -16,15 +16,20 @@ public class SolutionService : ISolutionService
         _logger = logger;
     }
 
-    public long RunPart1(string[] input)
+    public long RunPart1(string input)
     {
         _logger.LogInformation("Solving - {Year} - Day {Day} - Part 1", _helper.GetYear(), _helper.GetDay());
         _logger.LogInformation("Input contains {Input} values", input.Length);
 
-        // get left column and right column, subtract each number in the right column from the corresponding number in the left column, sum the results
-        return Column(input, 0)
-            .Zip(Column(input, 1), (l, r) => Math.Abs(l - r))
-            .Sum();
+        // Regular expression to match mul(number,number)
+        string pattern = @"mul\((\d+),(\d+)\)";
+
+        // Create a Regex object
+        Regex regex = new Regex(pattern);
+
+        // Find matches
+        MatchCollection matches = regex.Matches(input);
+
     }
 
     public long RunPart2(string[] input)
