@@ -31,13 +31,15 @@ public class Tests : TestBed<TestFixture>
     [Fact]
     public void Part2Test()
     {
+        var input2 = File.ReadAllLines("Assets/test-input2.txt");
+        
         // arrange
         _testOutputHelper.WriteLine($"Running unit test - {_helper.GetYear()} - Day {_helper.GetDay()} - Part 2");
 
         // act
-        var result = _solutionService.RunPart2(_input);
+        var result = _solutionService.RunPart2(input2);
 
         // assert
-        Assert.Equal(31, result);
+        Assert.Equal(48, result);
     }
 }
