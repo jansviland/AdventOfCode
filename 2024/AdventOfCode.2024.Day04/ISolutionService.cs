@@ -22,6 +22,8 @@ public class SolutionService : ISolutionService
         _logger.LogInformation("Input contains {Input} values", input.Length);
         
         var regex = new Regex(@"XMAS|SAMX");
+        var regexXmas = new Regex(@"XMAS");
+        var regexSamx = new Regex(@"SAMX");
 
         var result = 0;
         
@@ -96,10 +98,12 @@ public class SolutionService : ISolutionService
         for (var i = 0; i < allLines.Count; i++)
         {
             var count = regex.Matches(allLines[i]).Count;
+            var countXmas = regexXmas.Matches(allLines[i]).Count;
+            var countSamx = regexSamx.Matches(allLines[i]).Count;
             
             _logger.LogInformation("Found {Count} accurences of XMAS or SAMX in line {Line}", count, allLines[i]);
             
-            result += count;
+            result += countXmas + countSamx;
         }
         
         return result;
