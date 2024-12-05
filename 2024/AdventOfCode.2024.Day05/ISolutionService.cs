@@ -56,7 +56,7 @@ public class SolutionService : ISolutionService
         uint total = 0;
         foreach (var r in rows)
         {
-            var isValid = ValidatePage(r, pageRules);
+            var isValid = IsValid(r, pageRules);
             if (isValid)
             {
                 var middleIndex = Math.Floor((double)r.Count / 2);
@@ -75,9 +75,8 @@ public class SolutionService : ISolutionService
         return total;
     }
 
-    private bool ValidatePage(List<uint> row, Dictionary<uint, List<uint>> pageRules)
+    private bool IsValid(List<uint> row, Dictionary<uint, List<uint>> pageRules)
     {
-        var isValid = true;
         for (var i = 0; i < row.Count; i++)
         {
             if (!pageRules.ContainsKey(row[i]))
@@ -85,20 +84,36 @@ public class SolutionService : ISolutionService
                 continue;
             }
 
+            var value = row[i];
             var rules = pageRules[row[i]];
-            _logger.LogInformation("Row: {Row} - Page {Page} - Rules: {Rules}", string.Join(',', row), row[i], string.Join(",", rules));
+            _logger.LogInformation("Row: {Row} - Number {Page} - Subsequent Numbers: {Rules}", string.Join(',', row), row[i], string.Join(",", rules));
+            
+            var left = row.Slice(0, i);
+            var right = row.Slice(i + 1, row.Count - i - 1);
+            
+            _logger.LogInformation("Left: {Left} - Right: {Right}", string.Join(',', left), string.Join(',', right));
+            
+            // check that all the right values exist in rules
+            foreach (var r in right)
+            {
+                if (!rules.Contains(r))
+                {
+                    _logger.LogInformation("{Rule} should be after {Value}", r, value);
+                    return false;
+                }
+            }
 
-            // must check all values before and after
-            // check if they are on the correct place according to the rules
-            
-            // lets take: 75,47,61,53,29 index 2 as an example
-            // 
-            
-            throw new NotImplementedException();
-          
+            foreach (uint l in left)
+            {
+                if (rules.Contains(l))
+                {
+                    _logger.LogInformation("{Rule} can not be follwed by {Value}!", l, value);
+                    return false;
+                }
+            }
         }
 
-        return isValid;
+        return true;
     }
 
     public long RunPart2(string[] input)
