@@ -75,7 +75,7 @@ public static class Grid
             string line = input[y];
             for (var x = 0; x < line.Length; x++)
             {
-                grid[x, y] = new Cell
+                grid[y, x] = new Cell
                 {
                     X = x,
                     Y = y,
