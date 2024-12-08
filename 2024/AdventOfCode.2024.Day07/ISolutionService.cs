@@ -13,8 +13,8 @@ public class SolutionService : ISolutionService
     private readonly ILogger<ISolutionService> _logger;
     private readonly Helper _helper = new();
 
-    private readonly StringBuilder sb = new(); 
-    
+    private readonly StringBuilder sb = new();
+
     public SolutionService(ILogger<SolutionService> logger)
     {
         _logger = logger;
@@ -49,15 +49,15 @@ public class SolutionService : ISolutionService
         var variations = GenerateCombinations(values.Length - 1, operators);
 
         // possible combinations is 2 ^ (n - 1)
-        var possibleVariations = (int)Math.Pow(2, values.Length - 1);
+        var possibleVariations = (int)Math.Pow(operators.Length, values.Length - 1);
         var currentVariation = 0;
 
         // _logger.LogInformation("Found {Variations} variations for {Values}", possibleVariations, string.Join(",", values));
-        
+
         while (currentVariation != possibleVariations)
         {
             ulong currentResult = values[0];
-            
+
             sb.Append($"{values[0]}");
             for (var i = 1; i < values.Length; i++)
             {
@@ -74,19 +74,19 @@ public class SolutionService : ISolutionService
             }
 
             sb.Append($" = {currentResult}");
-            
+
             if (currentResult == result)
             {
                 sb.Append(": Found a match!");
                 _logger.LogInformation(sb.ToString());
                 sb.Clear();
-                
+
                 return true;
             }
             else
             {
-                // sb.Append(": No match");
-                // _logger.LogInformation(sb.ToString());
+                sb.Append(": No match");
+                _logger.LogInformation(sb.ToString());
                 sb.Clear();
             }
 
@@ -123,8 +123,61 @@ public class SolutionService : ISolutionService
         _logger.LogInformation("Solving - {Year} - Day {Day} - Part 2", _helper.GetYear(), _helper.GetDay());
         _logger.LogInformation("Input contains {Input} values", input.Length);
 
-        throw new NotImplementedException();
+        ulong total = 0;
+        for (var i = 0; i < input.Length; i++)
+        {
+            var split = input[i].Split(":");
+            ulong result = ulong.Parse(split[0]);
+            ulong[] values = split[1].Split(" ").Where(x => !string.IsNullOrEmpty(x)).Select(ulong.Parse).ToArray();
+            
+            // _logger.LogInformation("Line {Line}/{Total}", i, input.Length);
+            
+            var combinations = GenerateCombinations(values);
+
+            foreach (string com in combinations)
+            {
+                _logger.LogInformation("--------------------");
+                _logger.LogInformation("{Result}: {com}", result, com);
+                var comValues = com.Split(" ").Select(ulong.Parse).ToArray();
+                
+                // 7290: 6 8 6 15
+                // this should be correct with 6 * 8 || 6 * 15
+                // or 6 * 86 * 15, but this is equal to 7740?
+                
+                if (IsValueValid(result, comValues))
+                {
+                    total += result;
+                    break;
+                }
+            }
+        }
+
+        return total;
     }
+    
+    static List<string> GenerateCombinations(ulong[] numbers)
+    {
+        var results = new List<string>();
+        Generate(numbers, 0, "", results);
+        return results;
+    }
+    
+    static void Generate(ulong[] numbers, int index, string current, List<string> results)
+    {
+        if (index == numbers.Length)
+        {
+            results.Add(current);
+            return;
+        }
 
+        for (int i = index; i < numbers.Length; i++)
+        {
+            // Create a group by concatenating numbers from index to i
+            string group = string.Join("", numbers[index..(i + 1)]);
 
+            // Recurse with the group added to the current combination
+            string next = string.IsNullOrEmpty(current) ? group : current + " " + group;
+            Generate(numbers, i + 1, next, results);
+        }
+    }
 }
