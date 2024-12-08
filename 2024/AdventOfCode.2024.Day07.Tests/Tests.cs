@@ -22,10 +22,10 @@ public class Tests : TestBed<TestFixture>
         _testOutputHelper.WriteLine($"Running unit test - {_helper.GetYear()} - Day {_helper.GetDay()} - Part 1");
 
         // act
-        var result = _solutionService.RunPart1(_input);
+        ulong result = _solutionService.RunPart1(_input);
 
         // assert
-        Assert.Equal(11, result);
+        Assert.Equal(3749UL, result);
     }
 
     [Fact]
@@ -38,6 +38,6 @@ public class Tests : TestBed<TestFixture>
         var result = _solutionService.RunPart2(_input);
 
         // assert
-        Assert.Equal(31, result);
+        Assert.Equal(31UL, result);
     }
 }
