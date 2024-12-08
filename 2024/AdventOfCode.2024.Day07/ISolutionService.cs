@@ -85,8 +85,66 @@ public class SolutionService : ISolutionService
             }
             else
             {
-                sb.Append(": No match");
+                // sb.Append(": No match");
+                // _logger.LogInformation(sb.ToString());
+                sb.Clear();
+            }
+
+            currentVariation++;
+        }
+
+        return false;
+    }
+    
+    private bool IsValueValidPart2(ulong result, ulong[] values)
+    {
+        char[] operators = ['+', '*', '|'];
+        var variations = GenerateCombinations(values.Length - 1, operators);
+
+        // possible combinations is 2 ^ (n - 1)
+        var possibleVariations = (int)Math.Pow(operators.Length, values.Length - 1);
+        var currentVariation = 0;
+
+        // _logger.LogInformation("Found {Variations} variations for {Values}", possibleVariations, string.Join(",", values));
+
+        while (currentVariation != possibleVariations)
+        {
+            ulong currentResult = values[0];
+
+            sb.Append($"{values[0]}");
+            for (var i = 1; i < values.Length; i++)
+            {
+                if (variations[currentVariation][i - 1] == '+')
+                {
+                    currentResult += values[i];
+                    sb.Append($" + {values[i]}");
+                }
+                else if (variations[currentVariation][i - 1] == '*')
+                {
+                    currentResult *= values[i];
+                    sb.Append($" * {values[i]}");
+                }
+                else
+                {
+                    currentResult = ulong.Parse($"{currentResult}{values[i]}");
+                    sb.Append($" || {values[i]}");
+                }
+            }
+
+            sb.Append($" = {currentResult}");
+
+            if (currentResult == result)
+            {
+                sb.Append(": Found a match!");
                 _logger.LogInformation(sb.ToString());
+                sb.Clear();
+
+                return true;
+            }
+            else
+            {
+                // sb.Append(": No match");
+                // _logger.LogInformation(sb.ToString());
                 sb.Clear();
             }
 
@@ -129,26 +187,12 @@ public class SolutionService : ISolutionService
             var split = input[i].Split(":");
             ulong result = ulong.Parse(split[0]);
             ulong[] values = split[1].Split(" ").Where(x => !string.IsNullOrEmpty(x)).Select(ulong.Parse).ToArray();
-            
-            // _logger.LogInformation("Line {Line}/{Total}", i, input.Length);
-            
-            var combinations = GenerateCombinations(values);
 
-            foreach (string com in combinations)
+            if (IsValueValidPart2(result, values))
             {
-                _logger.LogInformation("--------------------");
-                _logger.LogInformation("{Result}: {com}", result, com);
-                var comValues = com.Split(" ").Select(ulong.Parse).ToArray();
-                
-                // 7290: 6 8 6 15
-                // this should be correct with 6 * 8 || 6 * 15
-                // or 6 * 86 * 15, but this is equal to 7740?
-                
-                if (IsValueValid(result, comValues))
-                {
-                    total += result;
-                    break;
-                }
+                var percentage = (double)i / input.Length;
+                _logger.LogInformation("Line {Line}/{Total} - {Percentage:P}", i, input.Length, percentage);
+                total += result;
             }
         }
 
