@@ -52,6 +52,14 @@ public class Tests : TestBed<TestFixture>
         var result = _solutionService.CalcChecksum(line);
         Assert.Equal(expected, result);
     }
+    
+    [Theory]
+    [InlineData("[0][0]...[1][1][1]...[2]...[3][3][3].[4][4].[5][5][5][5].[6][6][6][6].[7][7][7].[8][8][8][8][9][9]", "[0][0][9][9][2][1][1][1][7][7][7].[4][4].[3][3][3]....[5][5][5][5].[6][6][6][6].....[8][8][8][8]..")]
+    public void ReOrderPart2Test(string line, string expected)
+    {
+        var result = _solutionService.ReOrderPart2(line);
+        Assert.Equal(expected, result);
+    }
 
     [Fact]
     public void Part2Test()
