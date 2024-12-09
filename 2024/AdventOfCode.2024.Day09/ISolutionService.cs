@@ -3,11 +3,12 @@ namespace AdventOfCode._2024.Day09;
 public interface ISolutionService
 {
     ulong RunPart1(string[] input);
-    long RunPart2(string[] input);
-    
+    ulong RunPart2(string[] input);
+
     string ParseLine(string line);
     string ReOrder(string line);
     ulong CalcChecksum(string line);
+    string ReOrderPart2(string line);
 }
 
 public class SolutionService : ISolutionService
@@ -33,22 +34,24 @@ public class SolutionService : ISolutionService
 
         var checksum = CalcChecksum(reordered);
         _logger.LogInformation("Checksum: {Checksum}", checksum);
-        
+
         return checksum;
     }
 
     public ulong CalcChecksum(string line)
     {
-        var integers = line.Replace(".", string.Empty).Split(['[', ']'], StringSplitOptions.RemoveEmptyEntries)
+        var integers = line
+            .Replace(".", "[0]")
+            .Split(['[', ']'], StringSplitOptions.RemoveEmptyEntries)
             .Select(int.Parse)
             .ToList();
-        
+
         ulong count = 0;
         for (var i = 0; i < integers.Count; i++)
         {
-            count += (ulong) (integers[i] * i);
+            count += (ulong)(integers[i] * i);
         }
-        
+
         return count;
     }
 
@@ -56,20 +59,17 @@ public class SolutionService : ISolutionService
     {
         int i = 0;
         int removedCount = 0;
-        
+
         var sb = new StringBuilder();
         var currentLine = line;
 
         while (currentLine.Length > 0 && i < currentLine.Length)
         {
             var lastOpening = currentLine.LastIndexOf('[');
-            
-            // take first empty . from the front
-            // take first number from the back
+
             if (line[i] != '.' || i > lastOpening)
             {
                 sb.Append(currentLine[i]);
-                i++;
             }
             else
             {
@@ -78,17 +78,22 @@ public class SolutionService : ISolutionService
                 var lastNumber = currentLine.Substring(lastOpening + 1, lastClosing - lastOpening - 1);
 
                 sb.Append('[' + lastNumber + ']');
-                
+
                 currentLine = currentLine.Substring(0, lastOpening);
                 removedCount++;
-                
-                i++;
+
             }
+            i++;
         }
-        
+
         sb.Append(string.Concat(Enumerable.Repeat('.', removedCount)));
 
         return sb.ToString();
+    }
+
+    public string ReOrderPart2(string line)
+    {
+        throw new NotImplementedException();
     }
 
     public string ParseLine(string line)
@@ -118,7 +123,7 @@ public class SolutionService : ISolutionService
         return sb.ToString();
     }
 
-    public long RunPart2(string[] input)
+    public ulong RunPart2(string[] input)
     {
         _logger.LogInformation("Solving - {Year} - Day {Day} - Part 2", _helper.GetYear(), _helper.GetDay());
         _logger.LogInformation("Input contains {Input} values", input.Length);
