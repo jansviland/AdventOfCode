@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Globalization;
 using System.Runtime.Intrinsics.X86;
-using Grid;
+using Common;
 
 namespace AdventOfCode._2024.Day10;
 

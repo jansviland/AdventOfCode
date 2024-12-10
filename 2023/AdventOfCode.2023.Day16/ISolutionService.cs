@@ -1,3 +1,4 @@
+
 using Common;
 
 namespace AdventOfCode._2023.Day16;

@@ -1,6 +1,6 @@
 ﻿using System.Numerics;
 
-namespace Grid;
+namespace Common;
 
 public record Coor<T>(T Y, T X) where T : INumber<T>
 {
