@@ -148,9 +148,9 @@ public class SolutionService : ISolutionService
                     sb.Append(string.Concat(Enumerable.Repeat('.', missingDots)));
 
                     currentString = currentString.Substring(gap, currentString.IndexOf("[" + lastNumber + "]", StringComparison.Ordinal) - gap);
-                    
+
                     endOfString.Append(string.Concat(Enumerable.Repeat('.', amount)));
-                    
+
                     foundMatch = true;
                 }
                 else
@@ -160,8 +160,16 @@ public class SolutionService : ISolutionService
                     // move on to the next number from the back
                     currentString = currentString.Substring(0, currentString.IndexOf("[" + lastNumber + "]", StringComparison.Ordinal));
                 }
+
+                var end = endOfString.ToString().ToCharArray();
+                Array.Reverse(end);
                 
-                _logger.LogInformation(sb.ToString() + currentString + endOfString.ToString());
+                var endString = new string(end);
+                endString = endString.Replace('[', ']');
+                endString = endString.Replace(']', '[');
+
+
+                _logger.LogInformation(sb.ToString() + currentString + endString);
             }
         }
 
