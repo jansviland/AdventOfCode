@@ -16,6 +16,24 @@ public class Tests : TestBed<TestFixture>
     }
 
     [Fact]
+    public void Blink_1Blink_Test()
+    {
+        var stones = new List<uint> { 125, 17 };
+        var expected = new List<uint> { 253000, 1, 7 };
+
+        Assert.Equal(expected, _solutionService.Blink(stones, 1));
+    }
+
+    [Fact]
+    public void Blink_4Blinks_Test()
+    {
+        var stones = new List<uint> { 125, 17 };
+        var expected = new List<uint> { 512, 72, 2024, 2, 0, 2, 4, 2867, 6032 };
+
+        Assert.Equal(expected, _solutionService.Blink(stones, 4));
+    }
+
+    [Fact]
     public void Part1Test()
     {
         // arrange
@@ -25,7 +43,7 @@ public class Tests : TestBed<TestFixture>
         var result = _solutionService.RunPart1(_input);
 
         // assert
-        Assert.Equal(11, result);
+        Assert.Equal(55312, result);
     }
 
     [Fact]
