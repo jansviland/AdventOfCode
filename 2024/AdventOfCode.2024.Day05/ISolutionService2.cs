@@ -33,6 +33,7 @@ public class SolutionService2 : ISolutionService
         _logger = logger;
     }
 
+    // inspired by premun
     public long RunPart1(string[] input)
     {
         _logger.LogInformation("Solving - {Year} - Day {Day} - Part 1", _helper.GetYear(), _helper.GetDay());
@@ -60,11 +61,7 @@ public class SolutionService2 : ISolutionService
             deps.Add(former);
         }
 
-        
-        _logger.LogInformation($"Part 1: {GetMiddlePage(false, dependentOn, updates)}");
-        _logger.LogInformation($"Part 2: {GetMiddlePage(true, dependentOn, updates)}");
-        
-        return 0;
+        return GetMiddlePage(false, dependentOn, updates);
     }
 
     static int GetMiddlePage(bool takeIncorrectlyReordered, Dictionary<int, HashSet<int>> rules, IEnumerable<int[]> updates)
@@ -77,6 +74,8 @@ public class SolutionService2 : ISolutionService
             {
                 Again:
                 var shouldBeEarlier = rules[update[i]];
+                
+                // similar to bubblesort, where we compare i and i+1 and then swap
                 for (int j = i + 1; j < update.Length; ++j)
                 {
                     if (shouldBeEarlier.Contains(update[j]))
@@ -84,7 +83,7 @@ public class SolutionService2 : ISolutionService
                         isCorrect = false;
                         if (takeIncorrectlyReordered)
                         {
-                            (update[i], update[j]) = (update[j], update[i]);
+                            (update[i], update[j]) = (update[j], update[i]); // swap
                             i = 0;
                             goto Again;
                         }
@@ -112,11 +111,32 @@ public class SolutionService2 : ISolutionService
 
     public long RunPart2(string[] input)
     {
-        
         _logger.LogInformation("Solving - {Year} - Day {Day} - Part 2", _helper.GetYear(), _helper.GetDay());
         _logger.LogInformation("Input contains {Input} values", input.Length);
         
-        throw new NotImplementedException();
+        var rules = input
+            .TakeWhile(l => l.Contains('|')) // parse rules like this "47|53"
+            .Select(l => l.SplitToNumbers("|")) // split into int array
+            .Select(numbers => (First: numbers[0], Second: numbers[1]));
+
+        var updates = input
+            .SkipWhile(l => l.Contains('|'))
+            .SkipWhile(string.IsNullOrEmpty)
+            .Select(l => l.SplitToNumbers());
+        
+        var dependentOn = new Dictionary<int, HashSet<int>>();
+        foreach (var (former, latter) in rules)
+        {
+            if (!dependentOn.TryGetValue(latter, out HashSet<int>? deps))
+            {
+                deps = [];
+                dependentOn[latter] = deps;
+            }
+
+            deps.Add(former);
+        }
+
+        return GetMiddlePage(true, dependentOn, updates);
     }
 }
 

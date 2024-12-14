@@ -8,7 +8,7 @@ public class TestFixture : TestBedFixture
 {
     protected override void AddServices(IServiceCollection services, IConfiguration? configuration)
         => services
-            .AddTransient<ISolutionService, SolutionService2>();
+            .AddTransient<ISolutionService, SolutionService3>();
 
     protected override ValueTask DisposeAsyncCore()
         => new();

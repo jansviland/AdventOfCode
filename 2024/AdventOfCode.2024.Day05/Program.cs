@@ -27,7 +27,7 @@ internal static class Program
 
         Log.Logger.Information("args: {AllArguments}", string.Join(", ", args));
 
-        var svc = ActivatorUtilities.CreateInstance<SolutionService2>(host.Services);
+        var svc = ActivatorUtilities.CreateInstance<SolutionService3>(host.Services);
 
         string[] input;
         if (args.Length == 0)
