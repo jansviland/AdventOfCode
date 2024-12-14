@@ -47,11 +47,10 @@ public class SolutionService3 : ISolutionService
         // ordering rules like 123|456
         var ordering = input.TakeWhile(l => l.Contains("|")).ToHashSet();
         
-        // the pages to update
+        // list of numbers seperated by comma like this: "75,47,61,53,29"
         var updates = input.SkipWhile(l => l.Contains("|")).SkipWhile(string.IsNullOrEmpty).Select(l => l.Split(",")).ToArray();
         
-        // if we want to order 123 and 456, check if we have 123|456, in the page ordering rules
-        // then 123 should be before 456
+        // if we want to order 97 and 75, check if we have 97|75, in the page ordering rules, then 97 should be before 75
         var comparer = Comparer<string>.Create((p1, p2) => ordering.Contains(p1 + "|" + p2) ? -1 : 1);
 
         return (updates, comparer);
