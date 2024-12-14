@@ -1,4 +1,8 @@
-namespace AdventOfCode._2024.Day01;
+using System.Collections;
+using System.Globalization;
+using System.Runtime.Intrinsics.X86;
+
+namespace AdventOfCode._2024.Day13;
 
 public interface ISolutionService
 {
@@ -36,7 +40,7 @@ public class SolutionService : ISolutionService
         var numberCount = Column(input, 1)
             .CountBy(x => x)
             .ToDictionary();
-        
+
         // get left column, multiply each number by the count of the number in the right column, sum the results
         // if the number is not in the dictionary, the count is 0 and we multiply by 0 so it doesn't affect the sum
         return Column(input, 0)
