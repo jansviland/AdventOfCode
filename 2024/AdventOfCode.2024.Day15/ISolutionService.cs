@@ -13,7 +13,10 @@ public class SolutionService : ISolutionService
     private readonly ILogger<ISolutionService> _logger;
     private readonly Helper _helper = new();
 
-    Complex Up = Complex.ImaginaryOne;
+    private Complex Up = -Complex.ImaginaryOne;
+    private Complex Down = Complex.ImaginaryOne;
+    private Complex Right = new Complex(1, 0);
+    private Complex Left = new Complex(-1, 0);
 
     public SolutionService(ILogger<SolutionService> logger)
     {
@@ -29,7 +32,7 @@ public class SolutionService : ISolutionService
         var map = (
             from y in Enumerable.Range(0, input.Length)
             from x in Enumerable.Range(0, input[0].Length)
-            select new KeyValuePair<Complex, char>(Up * y + x, input[y][x])
+            select new KeyValuePair<Complex, char>(Complex.ImaginaryOne * y + x, input[y][x])
         ).ToDictionary();
 
         var start = map.First(x => x.Value == '@').Key;
@@ -41,13 +44,13 @@ public class SolutionService : ISolutionService
     {
         var sb = new StringBuilder();
         sb.Append(Environment.NewLine);
-        
+
         // Determine the bounds of the map
         int minX = (int)map.Keys.Min(c => c.Real);
         int maxX = (int)map.Keys.Max(c => c.Real);
         int minY = (int)map.Keys.Min(c => c.Imaginary);
         int maxY = (int)map.Keys.Max(c => c.Imaginary);
-        
+
         for (var y = minY; y <= maxY; y++)
         {
             for (var x = minX; x <= maxX; x++)
@@ -73,12 +76,78 @@ public class SolutionService : ISolutionService
         _logger.LogInformation("Solving - {Year} - Day {Day} - Part 1", _helper.GetYear(), _helper.GetDay());
         _logger.LogInformation("Input contains {Input} values", input.Length);
 
-        var mapInput = input.TakeWhile(l => l.Contains('#')).ToArray();
+        var mapInput = input
+            .TakeWhile(l => l.Contains('#'))
+            .ToArray();
+
+        var moveInput = input
+            .SkipWhile(l => l.Contains('#'))
+            .SkipWhile(string.IsNullOrWhiteSpace)
+            .SelectMany(s => s) // convert strings to char
+            .ToList();
+
         var (map, start) = ParseMap(mapInput);
 
         PrintMap(map);
 
+        var updatedMap = Move(map, start, moveInput);
+
         throw new NotImplementedException();
+    }
+
+    Complex GetNextPosition(Complex pos, char move)
+    {
+        // attempt to move
+        var nextPos = Complex.NaN;
+
+        switch (move)
+        {
+            case '<': nextPos = pos + Left; break;
+            case '>': nextPos = pos + Right; break;
+            case '^': nextPos = pos - Complex.ImaginaryOne; break;
+            case 'v': nextPos = pos + Complex.ImaginaryOne; break;
+        }
+
+        return nextPos;
+    }
+
+    Dictionary<Complex, char> Move(Dictionary<Complex, char> map, Complex pos, List<char> moves)
+    {
+        var step = 0;
+        while (map.ContainsKey(pos) && step < moves.Count())
+        {
+            var move = moves[step];
+            var nextPos = GetNextPosition(pos, move);
+
+            if (map[nextPos] == '#')
+            {
+                // wall
+            }
+            else if (map[nextPos] == '0')
+            {
+                // box
+                // TODO: attempt to push box forward, check if '.' exist in direction, if so, move the empty space behind
+                // and push box ahead one step
+
+            }
+            else
+            {
+                // empty space
+                pos = nextPos;
+            }
+
+            step++;
+
+            _logger.LogInformation("Step: {Step}, Move {Move}", step, moves[step]);
+
+            // print move
+            var current = map[pos] == '@' ? '.' : map[pos];
+            map[pos] = '@';
+            PrintMap(map);
+            map[pos] = current;
+        }
+
+        return map;
     }
 
     public long RunPart2(string[] input)
