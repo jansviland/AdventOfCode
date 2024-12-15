@@ -16,11 +16,25 @@ public class SolutionService : ISolutionService
         _logger = logger;
     }
 
+    Dictionary<Complex, char> Parse(string[] input)
+    {
+        var map = (
+            from y in Enumerable.Range(0, input.Length)
+            from x in Enumerable.Range(0, input[0].Length)
+            where input[y][x] != '.'
+            select new KeyValuePair<Complex, char>(Complex.ImaginaryOne * y + x, input[y][x])
+        ).ToDictionary();
+
+        return map;
+    }
+
     public long RunPart1(string[] input)
     {
         _logger.LogInformation("Solving - {Year} - Day {Day} - Part 1", _helper.GetYear(), _helper.GetDay());
         _logger.LogInformation("Input contains {Input} values", input.Length);
 
+        var map = Parse(input);
+        
         throw new NotImplementedException();
     }
 

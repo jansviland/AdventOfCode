@@ -15,8 +15,8 @@ public class SolutionService : ISolutionService
 
     private Complex Up = -Complex.ImaginaryOne;
     private Complex Down = Complex.ImaginaryOne;
-    private Complex Right = new Complex(1, 0);
-    private Complex Left = new Complex(-1, 0);
+    private Complex Left = -1;
+    private Complex Right = 1;
 
     public SolutionService(ILogger<SolutionService> logger)
     {
@@ -64,6 +64,7 @@ public class SolutionService : ISolutionService
                 {
                     sb.Append(' ');
                 }
+                sb.Append(' ');
             }
             sb.Append(Environment.NewLine);
         }
@@ -123,11 +124,38 @@ public class SolutionService : ISolutionService
             {
                 // wall
             }
-            else if (map[nextPos] == '0')
+            else if (map[nextPos] == 'O')
             {
                 // box
                 // TODO: attempt to push box forward, check if '.' exist in direction, if so, move the empty space behind
                 // and push box ahead one step
+                var numberOfDotsInDirection = 0;
+                var lookAhead = nextPos;
+
+                // while (map.ContainsKey(lookAhead) && map[lookAhead] != '#')
+                // {
+                //     if (map[lookAhead] == '.')
+                //     {
+                //         numberOfDotsInDirection++;
+                //     }
+                // }
+                //
+                //
+                // var nextNextPos = GetNextPosition(nextPos, move);
+                // if (map.ContainsKey(nextNextPos) && map[nextNextPos] == '.')
+                // {
+                //     // swap box with .
+                //     map[nextPos] = '.';
+                //     map[nextNextPos] = 'O';
+                //
+                //     pos = nextPos;
+                // }
+                // else
+                // {
+                //     
+                // }
+                // while (map[GetNextPosition(boxPos, move) ])
+
 
             }
             else
@@ -138,7 +166,7 @@ public class SolutionService : ISolutionService
 
             step++;
 
-            _logger.LogInformation("Step: {Step}, Move {Move}", step, moves[step]);
+            _logger.LogInformation("Step: {Step}, Move {Move}", step, moves[step - 1]);
 
             // print move
             var current = map[pos] == '@' ? '.' : map[pos];
