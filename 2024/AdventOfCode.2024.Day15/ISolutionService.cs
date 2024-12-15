@@ -1,3 +1,5 @@
+using Microsoft.Extensions.Primitives;
+
 namespace AdventOfCode._2024.Day15;
 
 public interface ISolutionService
@@ -11,9 +13,59 @@ public class SolutionService : ISolutionService
     private readonly ILogger<ISolutionService> _logger;
     private readonly Helper _helper = new();
 
+    Complex Up = Complex.ImaginaryOne;
+
     public SolutionService(ILogger<SolutionService> logger)
     {
         _logger = logger;
+    }
+
+    /// <summary>
+    /// Parse map input
+    /// </summary>
+    /// <returns>Dict with map, complex coordinate as key, char as value. And start pos</returns>
+    public (Dictionary<Complex, char>, Complex) ParseMap(string[] input)
+    {
+        var map = (
+            from y in Enumerable.Range(0, input.Length)
+            from x in Enumerable.Range(0, input[0].Length)
+            select new KeyValuePair<Complex, char>(Up * y + x, input[y][x])
+        ).ToDictionary();
+
+        var start = map.First(x => x.Value == '@').Key;
+
+        return (map, start);
+    }
+
+    public void PrintMap(Dictionary<Complex, char> map)
+    {
+        var sb = new StringBuilder();
+        sb.Append(Environment.NewLine);
+        
+        // Determine the bounds of the map
+        int minX = (int)map.Keys.Min(c => c.Real);
+        int maxX = (int)map.Keys.Max(c => c.Real);
+        int minY = (int)map.Keys.Min(c => c.Imaginary);
+        int maxY = (int)map.Keys.Max(c => c.Imaginary);
+        
+        for (var y = minY; y <= maxY; y++)
+        {
+            for (var x = minX; x <= maxX; x++)
+            {
+                Complex key = new Complex(x, y);
+                if (map.TryGetValue(key, out char value))
+                {
+                    sb.Append(value);
+                }
+                else
+                {
+                    sb.Append(' ');
+                }
+            }
+            sb.Append(Environment.NewLine);
+        }
+
+        _logger.LogInformation(sb.ToString());
     }
 
     public long RunPart1(string[] input)
@@ -21,10 +73,12 @@ public class SolutionService : ISolutionService
         _logger.LogInformation("Solving - {Year} - Day {Day} - Part 1", _helper.GetYear(), _helper.GetDay());
         _logger.LogInformation("Input contains {Input} values", input.Length);
 
-        // get left column and right column, subtract each number in the right column from the corresponding number in the left column, sum the results
-        return Column(input, 0)
-            .Zip(Column(input, 1), (l, r) => Math.Abs(l - r))
-            .Sum();
+        var mapInput = input.TakeWhile(l => l.Contains('#')).ToArray();
+        var (map, start) = ParseMap(mapInput);
+
+        PrintMap(map);
+
+        throw new NotImplementedException();
     }
 
     public long RunPart2(string[] input)
@@ -32,21 +86,7 @@ public class SolutionService : ISolutionService
         _logger.LogInformation("Solving - {Year} - Day {Day} - Part 2", _helper.GetYear(), _helper.GetDay());
         _logger.LogInformation("Input contains {Input} values", input.Length);
 
-        // get right column and count the number of times each number appears, store in dictionary with number as key, count as value
-        var numberCount = Column(input, 1)
-            .CountBy(x => x)
-            .ToDictionary();
-
-        // get left column, multiply each number by the count of the number in the right column, sum the results
-        // if the number is not in the dictionary, the count is 0 and we multiply by 0 so it doesn't affect the sum
-        return Column(input, 0)
-            .Select(num => numberCount.GetValueOrDefault(num) * num)
-            .Sum();
+        throw new NotImplementedException();
     }
 
-    private static IEnumerable<int> Column(string[] input, int column) =>
-        from line in input
-        let nums = line.Split("   ").Select(int.Parse).ToArray()
-        orderby nums[column]
-        select nums[column];
 }
