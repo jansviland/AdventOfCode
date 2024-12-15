@@ -1,14 +1,14 @@
-﻿using AdventOfCode._2024.Day06;
+﻿using AdventOfCode._2024.Day15;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace AdventOfCodeAdventOfCode._2024.Day06.Tests;
+namespace AdventOfCodeAdventOfCode._2024.Day15.Tests;
 
 public class TestFixture : TestBedFixture
 {
     protected override void AddServices(IServiceCollection services, IConfiguration? configuration)
         => services
-            .AddTransient<ISolutionService, SolutionService2>();
+            .AddTransient<ISolutionService, SolutionService>();
 
     protected override ValueTask DisposeAsyncCore()
         => new();

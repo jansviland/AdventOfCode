@@ -4,7 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 
-namespace AdventOfCode._2024.Day06;
+namespace AdventOfCode._2024.Day15;
 
 internal static class Program
 {
@@ -21,13 +21,13 @@ internal static class Program
             .CreateLogger();
 
         var host = Host.CreateDefaultBuilder(args)
-            .ConfigureServices(((_, collection) => { collection.AddTransient<ISolutionService, SolutionService2>(); }))
+            .ConfigureServices(((_, collection) => { collection.AddTransient<ISolutionService, SolutionService>(); }))
             .UseSerilog()
             .Build();
 
         Log.Logger.Information("args: {AllArguments}", string.Join(", ", args));
 
-        var svc = ActivatorUtilities.CreateInstance<SolutionService2>(host.Services);
+        var svc = ActivatorUtilities.CreateInstance<SolutionService>(host.Services);
 
         string[] input;
         if (args.Length == 0)
