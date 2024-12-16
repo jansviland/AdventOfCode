@@ -16,15 +16,155 @@ public class SolutionService : ISolutionService
         _logger = logger;
     }
 
+    (Dictionary<Complex, char> maze, Complex start, Complex end) Parse(string[] input)
+    {
+        var maze = (
+            from y in Enumerable.Range(0, input.Length)
+            from x in Enumerable.Range(0, input[0].Length)
+            select new KeyValuePair<Complex, char>(Complex.ImaginaryOne * y + x, input[y][x])
+        ).ToDictionary();
+
+        var start = maze.First(x => x.Value == 'S').Key;
+        var end = maze.First(x => x.Value == 'E').Key;
+
+        return (maze, start, end);
+    }
+    
+    void PrintMaze(Dictionary<Complex, char> maze, List<Complex> path = null)
+    {
+        int width = (int)maze.Keys.Max(pos => pos.Real) + 1;
+        int height = (int)maze.Keys.Max(pos => pos.Imaginary) + 1;
+
+        var sb = new StringBuilder();
+        sb.Append(Environment.NewLine);
+        
+        for (int y = 0; y < height; y++)
+        {
+            for (int x = 0; x < width; x++)
+            {
+                var pos = new Complex(x, y);
+                if (path != null && path.Contains(pos))
+                {
+                    Console.Write('*'); // Merk stien
+                    sb.Append('*');
+                }
+                else if (maze.ContainsKey(pos))
+                {
+                    Console.Write(maze[pos]);
+                    sb.Append(maze[pos]);
+                }
+                else
+                {
+                    Console.Write(' '); // Tomme områder utenfor labyrinten
+                    sb.Append(' ');
+                }
+                sb.Append(' ');
+            }
+            Console.WriteLine();
+            sb.Append(Environment.NewLine);
+        }
+        
+        _logger.LogInformation(sb.ToString());
+    }
+
+    (List<Complex> path, int steps, int turns) BFS(Dictionary<Complex, char> maze, Complex start, Complex end)
+    {
+        var queue = new Queue<Complex>(); 
+        var visited = new HashSet<Complex>();
+        var parent = new Dictionary<Complex, Complex>();
+        
+        queue.Enqueue(start);
+        visited.Add(start);
+        parent[start] = start; // Start har ingen forelder
+
+        // Definer bevegelser: opp, ned, venstre, høyre
+        var directions = new Complex[]
+        {
+            new Complex(0, 1),  // Opp
+            new Complex(0, -1), // Ned
+            new Complex(-1, 0), // Venstre
+            new Complex(1, 0)   // Høyre
+        };
+        
+        while (queue.Count > 0)
+        {
+            var current = queue.Dequeue();
+
+            if (current == end)
+            {
+                // Rekonstruer stien
+                var path = new List<Complex>();
+                while (!current.Equals(start))
+                {
+                    path.Add(current);
+                    current = parent[current];
+                }
+                path.Add(start);
+                path.Reverse();
+
+                var turnCount = 0;
+                Complex? previousDirection = null;
+                
+                foreach (var node in path.Skip(1)) // Skip first element since no previous direction to compare
+                {
+                    var currentDirection = node - parent[node]; // Get direction of movement
+                    if (previousDirection.HasValue)
+                    {
+                        var angle = AngleBetween(previousDirection.Value, currentDirection);
+                        if (Math.Abs(angle) == 90) // 90-degree turn detected
+                        {
+                            turnCount++;
+                        }
+                    }
+                    previousDirection = currentDirection; // Update direction
+                }
+                
+                return (path, path.Count, turnCount);
+            }
+
+            foreach (var direction in directions)
+            {
+                var neighbor = current + direction;
+
+                // Sjekk om naboen er i labyrinten, ikke en vegg og ikke besøkt
+                if (maze.ContainsKey(neighbor) && maze[neighbor] != '#' && !visited.Contains(neighbor))
+                {
+                    queue.Enqueue(neighbor);
+                    visited.Add(neighbor);
+                    parent[neighbor] = current;
+                }
+            }
+        }
+
+        return ([], 0, 0);
+    }
+    
+    // check angle between two Complex numbers 
+    static double AngleBetween(Complex a, Complex b)
+    {
+        // Using dot product to compute the angle
+        double dot = (a.Real * b.Real) + (a.Imaginary * b.Imaginary);
+        double magA = Math.Sqrt(a.Real * a.Real + a.Imaginary * a.Imaginary);
+        double magB = Math.Sqrt(b.Real * b.Real + b.Imaginary * b.Imaginary);
+        
+        double cosAngle = dot / (magA * magB);
+        return Math.Acos(cosAngle) * (180.0 / Math.PI); // Convert radian to degree
+    }
+    
     public long RunPart1(string[] input)
     {
         _logger.LogInformation("Solving - {Year} - Day {Day} - Part 1", _helper.GetYear(), _helper.GetDay());
         _logger.LogInformation("Input contains {Input} values", input.Length);
 
-        // get left column and right column, subtract each number in the right column from the corresponding number in the left column, sum the results
-        return Column(input, 0)
-            .Zip(Column(input, 1), (l, r) => Math.Abs(l - r))
-            .Sum();
+        var (maze, start, end) = Parse(input);
+
+        PrintMaze(maze);
+
+        var (path, steps, turns) = BFS(maze, start, end);
+        
+        PrintMaze(maze, path);
+
+        return turns * 1000 + steps;
     }
 
     public long RunPart2(string[] input)
@@ -32,21 +172,8 @@ public class SolutionService : ISolutionService
         _logger.LogInformation("Solving - {Year} - Day {Day} - Part 2", _helper.GetYear(), _helper.GetDay());
         _logger.LogInformation("Input contains {Input} values", input.Length);
 
-        // get right column and count the number of times each number appears, store in dictionary with number as key, count as value
-        var numberCount = Column(input, 1)
-            .CountBy(x => x)
-            .ToDictionary();
+        throw new NotImplementedException();
 
-        // get left column, multiply each number by the count of the number in the right column, sum the results
-        // if the number is not in the dictionary, the count is 0 and we multiply by 0 so it doesn't affect the sum
-        return Column(input, 0)
-            .Select(num => numberCount.GetValueOrDefault(num) * num)
-            .Sum();
     }
-
-    private static IEnumerable<int> Column(string[] input, int column) =>
-        from line in input
-        let nums = line.Split("   ").Select(int.Parse).ToArray()
-        orderby nums[column]
-        select nums[column];
 }
+
