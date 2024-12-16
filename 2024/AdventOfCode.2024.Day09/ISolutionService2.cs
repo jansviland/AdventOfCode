@@ -17,12 +17,8 @@ public interface ISolutionService2
 // Ideal for representing lightweight, immutable data structures.
 // Value type because it is declared as a struct, changes to a copy do not affect the original instance.
 // The record keyword introduces value equality and can be made immutable by default 
-record struct Block(int fileId, int length) { }
-
-class Block2
+record struct Block(int fileId, int length)
 {
-    public int field { get; set; }
-    public int length { get; set; }
 }
 
 public class SolutionService2 : ISolutionService2
@@ -35,15 +31,11 @@ public class SolutionService2 : ISolutionService2
         _logger = logger;
     }
 
-    LinkedList<Block> Parse(string input)
-    {
-        // The digits alternate between indicating the length of a file and the length of free space.
-        // i % 2 == 1 (odd numbers), i % 2 == 0 (even numbers)
-        // the current index is every other number, since every other number is free space, so we set fileId to i/2
-        // to get the number from the char element we can do char - '0'
-        return new LinkedList<Block>(input.Select((ch, i) => new Block(i % 2 == 1 ? -1 : i / 2, ch - '0'))); 
-    }
-    
+    // The digits alternate between indicating the length of a file and the length of free space.
+    // i % 2 == 1 (odd numbers), i % 2 == 0 (even numbers)
+    // the current index is every other number, since every other number is free space, so we set fileId to i/2
+    // to get the number from the char element we can do char - '0'
+    LinkedList<Block> Parse(string input) => new LinkedList<Block>(input.Select((ch, i) => new Block(i % 2 == 1 ? -1 : i / 2, ch - '0')));
 
     public ulong RunPart1(string[] input)
     {
@@ -51,9 +43,9 @@ public class SolutionService2 : ISolutionService2
         _logger.LogInformation("Input contains {Input} values", input.Length);
 
         var fs = Parse(input[0]);
-        
+
         // TODO: move last element to first, where there is space (.)
-        
+
         throw new NotImplementedException();
     }
 
