@@ -25,7 +25,7 @@ public class Tests : TestBed<TestFixture>
         var result = _solutionService.RunPart1(_input);
 
         // assert
-        Assert.Equal(1928UL, result);
+        Assert.Equal(1928L, result);
     }
 
     // [Theory]
@@ -71,7 +71,7 @@ public class Tests : TestBed<TestFixture>
         var result = _solutionService.RunPart2(_input);
 
         // assert
-        Assert.Equal(2858UL, result);
+        Assert.Equal(2858L, result);
     }
     
 }
