@@ -28,10 +28,6 @@ public class SolutionService : ISolutionService
     private readonly Complex Left = -Complex.One;
     private readonly Complex Right = Complex.One;
 
-    // Create a live display to update the grid
-    private LiveDisplay _liveDisplay;
-    private int _count = 0;
-
     public SolutionService(ILogger<SolutionService> logger)
     {
         _logger = logger;
@@ -85,81 +81,7 @@ public class SolutionService : ISolutionService
             }
         }
 
-        // Render the canvas
-        // AnsiConsole.Write(canvas);
-
         return canvas;
-
-        // Render the live display
-        // _liveDisplay.Update(canvas);
-    }
-
-    void PrintBlock(Dictionary<Complex, int> map)
-    {
-        // Determine the boundaries of the map
-        var maxX = (int)map.Keys.Max(c => c.Real);
-        var maxY = (int)map.Keys.Max(c => c.Imaginary);
-
-        // Base color for the gradient
-        var baseColor = Color.Blue;
-
-        // Helper function to adjust brightness
-        Color AdjustBrightness(Color baseColor, float factor)
-        {
-            var r = (byte)(baseColor.R + (255 - baseColor.R) * factor);
-            var g = (byte)(baseColor.G + (255 - baseColor.G) * factor);
-            var b = (byte)(baseColor.B + (255 - baseColor.B) * factor);
-            return new Color(r, g, b);
-        }
-
-        // Render the grid using Unicode block characters
-        for (var y = 0; y <= maxY; y++)
-        {
-            for (var x = 0; x <= maxX; x++)
-            {
-                var key = new Complex(x, y);
-                if (map.TryGetValue(key, out int value))
-                {
-                    // Calculate a brightness factor for the current value (0-9)
-                    var brightnessFactor = (float)value / 9;
-
-                    // Adjust the base color brightness
-                    var adjustedColor = AdjustBrightness(baseColor, brightnessFactor);
-
-                    // Write the block character with the adjusted color
-                    AnsiConsole.Markup($"[{adjustedColor.ToMarkup()}]█[/]");
-                }
-                else
-                {
-                    // Render a default placeholder for missing values
-                    AnsiConsole.Markup("[grey].[/]");
-                }
-            }
-            // Newline after each row
-            AnsiConsole.WriteLine();
-        }
-    }
-
-    void Print(Dictionary<Complex, int> map)
-    {
-        var sb = new StringBuilder();
-        sb.AppendLine();
-
-        var maxX = map.Keys.Max(c => c.Real);
-        var maxY = map.Keys.Max(c => c.Imaginary);
-
-        for (var y = 0; y <= maxY; y++)
-        {
-            for (var x = 0; x <= maxX; x++)
-            {
-                var key = new Complex(x, y);
-                sb.Append(map.TryGetValue(key, out int value) ? value.ToString(CultureInfo.InvariantCulture) : '.');
-                sb.Append(' ');
-            }
-            sb.AppendLine();
-        }
-
-        _logger.LogInformation(sb.ToString());
     }
 
     ImmutableDictionary<Complex, int> Parse(string[] input)
@@ -192,7 +114,6 @@ public class SolutionService : ISolutionService
             if (map[pos] == 9)
             {
                 trails.Add(pos);
-                _count++;
             }
             else
             {
@@ -214,19 +135,11 @@ public class SolutionService : ISolutionService
             }
         }
 
-        // if (ctx != null && trails.Count != 0)
-        // {
-        //     ctx.UpdateTarget(PrintSpectre(map, visited));
-        //     AnsiConsole.WriteLine("Found trail heads: " + string.Join(", ", trails));
-        //     Thread.Sleep(50);
-        // }
-
         return trails;
     }
 
     Dictionary<Complex, List<Complex>> GetAllTrails(string[] input, LiveDisplayContext? ctx = null)
     {
-        _count = 0;
         var map = Parse(input);
         return GetTrailHeads(map).ToDictionary(t => t, t => GetTrailFrom(map, t, ctx));
     }
