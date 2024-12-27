@@ -1,81 +1,149 @@
-﻿# --- Day 1: Historian Hysteria ---
+﻿# --- Day 10: Hoof It ---
 
-The Chief Historian is always present for the big Christmas sleigh launch, but nobody has seen him in months! Last anyone heard, he was visiting locations that are historically significant to the North Pole; a group of Senior Historians has asked you to accompany them as they check the places they think he was most likely to visit.
+You all arrive at a Lava Production Facility on a floating island in the sky. As the others begin to search the massive industrial complex, you feel a small nose boop your leg and look down to discover a reindeer wearing a hard hat.
 
-As each location is checked, they will mark it on their list with a star. They figure the Chief Historian must be in one of the first fifty places they'll look, so in order to save Christmas, you need to help them get fifty stars on their list before Santa takes off on December 25th.
+The reindeer is holding a book titled "Lava Island Hiking Guide". However, when you open the book, you discover that most of it seems to have been scorched by lava! As you're about to ask how you can help, the reindeer brings you a blank topographic map of the surrounding area (your puzzle input) and looks up at you excitedly.
 
-Collect stars by solving puzzles. Two puzzles will be made available on each day in the Advent calendar; the second puzzle is unlocked when you complete the first. Each puzzle grants one star. Good luck!
+Perhaps you can help fill in the missing hiking trails?
 
-You haven't even left yet and the group of Elvish Senior Historians has already hit a problem: their list of locations to check is currently empty. Eventually, someone decides that the best place to check first would be the Chief Historian's office.
+The topographic map indicates the height at each position using a scale from 0 (lowest) to 9 (highest). For example:
 
-Upon pouring into the office, everyone confirms that the Chief Historian is indeed nowhere to be found. Instead, the Elves discover an assortment of notes and lists of historically significant locations! This seems to be the planning the Chief Historian was doing before he left. Perhaps these notes can be used to determine which locations to search?
-
-Throughout the Chief's office, the historically significant locations are listed not by name but by a unique number called the location ID. To make sure they don't miss anything, The Historians split into two groups, each searching the office and trying to create their own complete list of location IDs.
-
-There's just one problem: by holding the two lists up side by side (your puzzle input), it quickly becomes clear that the lists aren't very similar. Maybe you can help The Historians reconcile their lists?
-
-For example:
-
-```text
-3   4
-4   3
-2   5
-1   3
-3   9
-3   3
+```
+0123
+1234
+8765
+9876
 ```
 
-Maybe the lists are only off by a small amount! To find out, pair up the numbers and measure how far apart they are. Pair up the smallest number in the left list with the smallest number in the right list, then the second-smallest left number with the second-smallest right number, and so on.
+Based on un-scorched scraps of the book, you determine that a good hiking trail is as long as possible and has an even, gradual, uphill slope. For all practical purposes, this means that a hiking trail is any path that starts at height 0, ends at height 9, and always increases by a height of exactly 1 at each step. Hiking trails never include diagonal steps - only up, down, left, or right (from the perspective of the map).
 
-Within each pair, figure out how far apart the two numbers are; you'll need to add up all of those distances. For example, if you pair up a 3 from the left list with a 7 from the right list, the distance apart is 4; if you pair up a 9 with a 3, the distance apart is 6.
+You look up from the map and notice that the reindeer has helpfully begun to construct a small pile of pencils, markers, rulers, compasses, stickers, and other equipment you might need to update the map with hiking trails.
 
-In the example list above, the pairs and distances would be as follows:
+A trailhead is any position that starts one or more hiking trails - here, these positions will always have height 0. Assembling more fragments of pages, you establish that a trailhead's score is the number of 9-height positions reachable from that trailhead via a hiking trail. In the above example, the single trailhead in the top left corner has a score of 1 because it can reach a single 9 (the one in the bottom left).
 
-    The smallest number in the left list is 1, and the smallest number in the right list is 3. The distance between them is 2.
-    The second-smallest number in the left list is 2, and the second-smallest number in the right list is another 3. The distance between them is 1.
-    The third-smallest number in both lists is 3, so the distance between them is 0.
-    The next numbers to pair up are 3 and 4, a distance of 1.
-    The fifth-smallest numbers in each list are 3 and 5, a distance of 2.
-    Finally, the largest number in the left list is 4, while the largest number in the right list is 9; these are a distance 5 apart.
+This trailhead has a score of 2:
 
-To find the total distance between the left list and the right list, add up the distances between all of the pairs you found. In the example above, this is 2 + 1 + 0 + 1 + 2 + 5, a total distance of 11!
+```
+...0...
+...1...
+...2...
+6543456
+7.....7
+8.....8
+9.....9
+```
 
-Your actual left and right lists contain many location IDs. What is the total distance between your lists?
+(The positions marked . are impassable tiles to simplify these examples; they do not appear on your actual topographic map.)
 
-Your puzzle answer was 1530215.
+This trailhead has a score of 4 because every 9 is reachable via a hiking trail except the one immediately to the left of the trailhead:
+
+```
+..90..9
+...1.98
+...2..7
+6543456
+765.987
+876....
+987....
+```
+
+This topographic map contains two trailheads; the trailhead at the top has a score of 1, while the trailhead at the bottom has a score of 2:
+
+```
+10..9..
+2...8..
+3...7..
+4567654
+...8..3
+...9..2
+.....01
+```
+
+Here's a larger example:
+
+```
+89010123
+78121874
+87430965
+96549874
+45678903
+32019012
+01329801
+10456732
+```
+
+This larger example has 9 trailheads. Considering the trailheads in reading order, they have scores of 5, 6, 5, 3, 1, 3, 5, 3, and 5. Adding these scores together, the sum of the scores of all trailheads is 36.
+
+The reindeer gleefully carries over a protractor and adds it to the pile. What is the sum of the scores of all trailheads on your topographic map?
+
+Your puzzle answer was 694.
+
+The first half of this puzzle is complete! It provides one gold star: *
 
 # --- Part Two ---
 
-Your analysis only confirmed what everyone feared: the two lists of location IDs are indeed very different.
+The reindeer spends a few minutes reviewing your hiking trail map before realizing something, disappearing for a few minutes, and finally returning with yet another slightly-charred piece of paper.
 
-Or are they?
+The paper describes a second way to measure a trailhead called its rating. A trailhead's rating is the number of distinct hiking trails which begin at that trailhead. For example:
 
-The Historians can't agree on which group made the mistakes or how to read most of the Chief's handwriting, but in the commotion you notice an interesting detail: a lot of location IDs appear in both lists! Maybe the other numbers aren't location IDs at all but rather misinterpreted handwriting.
-
-This time, you'll need to figure out exactly how often each number from the left list appears in the right list. Calculate a total similarity score by adding up each number in the left list after multiplying it by the number of times that number appears in the right list.
-
-Here are the same example lists again:
-
-```text
-3   4
-4   3
-2   5
-1   3
-3   9
-3   3
+```
+.....0.
+..4321.
+..5..2.
+..6543.
+..7..4.
+..8765.
+..9....
 ```
 
-For these example lists, here is the process of finding the similarity score:
+The above map has a single trailhead; its rating is 3 because there are exactly three distinct hiking trails which begin at that position:
 
-    The first number in the left list is 3. It appears in the right list three times, so the similarity score increases by 3 * 3 = 9.
-    The second number in the left list is 4. It appears in the right list once, so the similarity score increases by 4 * 1 = 4.
-    The third number in the left list is 2. It does not appear in the right list, so the similarity score does not increase (2 * 0 = 0).
-    The fourth number, 1, also does not appear in the right list.
-    The fifth number, 3, appears in the right list three times; the similarity score increases by 9.
-    The last number, 3, appears in the right list three times; the similarity score again increases by 9.
+```
+.....0.   .....0.   .....0.
+..4321.   .....1.   .....1.
+..5....   .....2.   .....2.
+..6....   ..6543.   .....3.
+..7....   ..7....   .....4.
+..8....   ..8....   ..8765.
+..9....   ..9....   ..9....
+```
 
-So, for these example lists, the similarity score at the end of this process is 31 (9 + 4 + 0 + 0 + 9 + 9).
+Here is a map containing a single trailhead with rating 13:
 
-Once again consider your left and right lists. What is their similarity score?
+```
+..90..9
+...1.98
+...2..7
+6543456
+765.987
+876....
+987....
+```
 
-Your puzzle answer was 26800609.
+This map contains a single trailhead with rating 227 (because there are 121 distinct hiking trails that lead to the 9 on the right edge and 106 that lead to the 9 on the bottom edge):
+
+```
+012345
+123456
+234567
+345678
+4.6789
+56789.
+```
+
+Here's the larger example from before:
+
+```
+89010123
+78121874
+87430965
+96549874
+45678903
+32019012
+01329801
+10456732
+```
+
+Considering its trailheads in reading order, they have ratings of 20, 24, 10, 4, 1, 4, 5, 8, and 5. The sum of all trailhead ratings in this larger example topographic map is 81.
+
+You're not sure how, but the reindeer seems to have crafted some tiny flags out of toothpicks and bits of paper and is using them to mark trailheads on your topographic map. What is the sum of the ratings of all trailheads?

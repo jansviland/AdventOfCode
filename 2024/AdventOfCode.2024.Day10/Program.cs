@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Spectre.Console;
@@ -13,35 +12,19 @@ internal static class Program
         var stopWatch = new Stopwatch();
         stopWatch.Start();
 
-        var builder = new ConfigurationBuilder();
-
-        // Log.Logger = new LoggerConfiguration()
-        //     .ReadFrom.Configuration(BuildConfiguration(builder))
-        //     .Enrich.FromLogContext()
-        //     .CreateLogger();
-        
         var host = Host.CreateDefaultBuilder(args)
             .ConfigureServices(((_, collection) => { collection.AddTransient<ISolutionService, SolutionService>(); }))
-            // .UseSerilog()
             .Build();
 
-        // Log.Logger.Information("args: {AllArguments}", string.Join(", ", args));
         AnsiConsole.MarkupLine("[bold green]Arguments:[/] {0}", string.Join(", ", args));
 
         var svc = ActivatorUtilities.CreateInstance<SolutionService>(host.Services);
 
-        string[] input;
-        if (args.Length == 0)
-        {
-            input = File.ReadAllLines("Assets/input.txt");
-        }
-        else
-        {
-            input = File.ReadAllLines(args[0]);
-        }
+        var input = File.ReadAllLines("Assets/input.txt");
         
         // Run Part 1
-        var resultPart1 = svc.RunPart1(input);
+        var animate = args.Contains("animate");
+        var resultPart1 = svc.RunPart1(input, animate);
 
         // Log Part 1 result
         AnsiConsole.MarkupLine("[bold yellow]------------------------------------[/]");
@@ -59,18 +42,5 @@ internal static class Program
         // Log elapsed time
         stopWatch.Stop();
         AnsiConsole.MarkupLine("[bold green]Elapsed time:[/] {0} ms", stopWatch.ElapsedMilliseconds);
-    }
-
-    private static IConfiguration BuildConfiguration(IConfigurationBuilder builder)
-    {
-        builder
-            .SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-            .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production"}.json", optional: true)
-            .AddEnvironmentVariables();
-
-        var configuration = builder.Build();
-
-        return configuration;
     }
 }

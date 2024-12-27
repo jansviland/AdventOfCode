@@ -5,6 +5,13 @@ the puzzles.
 
 # Demo of some of the solutions
 
+## 2024 - Day 10 - Flood fill algorithm
+
+![gif](./wiki/2024-day10-solution.gif)
+
+- Basic flood fill algorithm with modifications
+- Using Spectre.Console to animate with the canvas feature
+
 ## 2023 - Day 22 - Demo
 
 For day 22 I used Unity to create a 3D model to illustrate the solution.

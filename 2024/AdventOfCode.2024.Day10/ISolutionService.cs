@@ -1,15 +1,12 @@
-using System.Collections;
 using System.Globalization;
-using System.Runtime.Intrinsics.X86;
-using Common;
 using Spectre.Console;
 
 namespace AdventOfCode._2024.Day10;
 
 public interface ISolutionService
 {
-    public long RunPart1(string[] input);
-    public long RunPart2(string[] input);
+    public long RunPart1(string[] input, bool animate = false);
+    public long RunPart2(string[] input, bool animate = false);
 }
 
 public static class CharExtentions
@@ -33,6 +30,7 @@ public class SolutionService : ISolutionService
 
     // Create a live display to update the grid
     private LiveDisplay _liveDisplay;
+    private int _count = 0;
 
     public SolutionService(ILogger<SolutionService> logger)
     {
@@ -187,50 +185,53 @@ public class SolutionService : ISolutionService
 
         while (positions.Any())
         {
-            // check if we are at a top 9
-            var currentPos = positions.Dequeue();
-            visited.Add(currentPos);
+            var pos = positions.Dequeue();
+            visited.Add(pos);
 
-            if (currentPos == 9)
+            // check if we are at a top (9)
+            if (map[pos] == 9)
             {
-                trails.Add(currentPos);
+                trails.Add(pos);
+                _count++;
             }
             else
             {
                 foreach (var dir in new List<Complex> { Up, Down, Right, Left })
                 {
                     // check all directions, make sure they exist in map and also, we can just increase by 1, so check if neigboor is current value + 1
-                    if (map.GetValueOrDefault(currentPos + dir) == map[currentPos] + 1)
+                    if (map.GetValueOrDefault(pos + dir) == map[pos] + 1)
                     {
-                        positions.Enqueue(currentPos + dir);
+                        positions.Enqueue(pos + dir);
                     }
                 }
             }
 
             if (ctx != null && visited.Count() > 3)
             {
+                // AnsiConsole.WriteLine($"Found {_count} trails");
                 ctx.UpdateTarget(PrintSpectre(map, visited));
-                Thread.Sleep(20);
+                Thread.Sleep(5);
             }
         }
 
-
-        if (ctx != null && trails.Count != 0)
-        {
-            ctx.UpdateTarget(PrintSpectre(map, visited));
-            AnsiConsole.WriteLine("Found trail heads: " + string.Join(", ", trails));
-            Thread.Sleep(200);
-        }
+        // if (ctx != null && trails.Count != 0)
+        // {
+        //     ctx.UpdateTarget(PrintSpectre(map, visited));
+        //     AnsiConsole.WriteLine("Found trail heads: " + string.Join(", ", trails));
+        //     Thread.Sleep(50);
+        // }
 
         return trails;
     }
-    
-    Dictionary<Complex, List<Complex>> GetAllTrails(string[] input, LiveDisplayContext? ctx = null) {
+
+    Dictionary<Complex, List<Complex>> GetAllTrails(string[] input, LiveDisplayContext? ctx = null)
+    {
+        _count = 0;
         var map = Parse(input);
         return GetTrailHeads(map).ToDictionary(t => t, t => GetTrailFrom(map, t, ctx));
     }
 
-    public long RunPart1(string[] input)
+    public long RunPart1(string[] input, bool animate = false)
     {
         _logger.LogInformation("Solving - {Year} - Day {Day} - Part 1", _helper.GetYear(), _helper.GetDay());
         _logger.LogInformation("Input contains {Input} values", input.Length);
@@ -239,23 +240,20 @@ public class SolutionService : ISolutionService
         var height = (int)map.Keys.Max(c => c.Imaginary);
         var width = (int)map.Keys.Max(c => c.Real);
 
-        var result = 0;
-        AnsiConsole.Live(new Canvas(width, height))
-            .Start(ctx =>
-            {
-                result = GetAllTrails(input, ctx).Sum(x => x.Value.Distinct().Count());
-            });
-        
-        return result;
-        
-        // return GetAllTrails(input).Sum(x => x.Value.Distinct().Count());
+        if (animate)
+        {
+            AnsiConsole.Live(new Canvas(width, height))
+                .Start(ctx => { GetAllTrails(input, ctx).Sum(x => x.Value.Distinct().Count()); });
+        }
+
+        return GetAllTrails(input).Sum(x => x.Value.Distinct().Count());
     }
 
-    public long RunPart2(string[] input)
+    public long RunPart2(string[] input, bool animate = false)
     {
         _logger.LogInformation("Solving - {Year} - Day {Day} - Part 2", _helper.GetYear(), _helper.GetDay());
         _logger.LogInformation("Input contains {Input} values", input.Length);
 
-        throw new NotImplementedException();
+        return GetAllTrails(input).Sum(x => x.Value.Count());
     }
 }
