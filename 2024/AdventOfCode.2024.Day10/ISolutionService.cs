@@ -26,12 +26,20 @@ public class SolutionService : ISolutionService
     private readonly ILogger<ISolutionService> _logger;
     private readonly Helper _helper = new();
 
+    private readonly Complex Up = -Complex.ImaginaryOne;
+    private readonly Complex Down = Complex.ImaginaryOne;
+    private readonly Complex Left = -Complex.One;
+    private readonly Complex Right = Complex.One;
+
+    // Create a live display to update the grid
+    private LiveDisplay _liveDisplay;
+
     public SolutionService(ILogger<SolutionService> logger)
     {
         _logger = logger;
     }
 
-    void PrintSpectre(Dictionary<Complex, int> map)
+    Canvas PrintSpectre(ImmutableDictionary<Complex, int> map, HashSet<Complex>? visited = null)
     {
         // Determine the boundaries of the map
         var maxX = (int)map.Keys.Max(c => c.Real);
@@ -70,10 +78,24 @@ public class SolutionService : ISolutionService
             canvas.SetPixel(x, y, adjustedColor);
         }
 
+        // Highlight visited nodes
+        if (visited != null)
+        {
+            foreach (var pos in visited)
+            {
+                canvas.SetPixel((int)pos.Real, (int)pos.Imaginary, Color.Red);
+            }
+        }
+
         // Render the canvas
-        AnsiConsole.Write(canvas);
+        // AnsiConsole.Write(canvas);
+
+        return canvas;
+
+        // Render the live display
+        // _liveDisplay.Update(canvas);
     }
-    
+
     void PrintBlock(Dictionary<Complex, int> map)
     {
         // Determine the boundaries of the map
@@ -142,15 +164,70 @@ public class SolutionService : ISolutionService
         _logger.LogInformation(sb.ToString());
     }
 
-    Dictionary<Complex, int> Parse(string[] input)
+    ImmutableDictionary<Complex, int> Parse(string[] input)
     {
         var map = (
             from y in Enumerable.Range(0, input.Length)
             from x in Enumerable.Range(0, input[0].Length)
             select new KeyValuePair<Complex, int>(Complex.ImaginaryOne * y + x, input[y][x].ConvertToInt())
-        ).ToDictionary();
+        ).ToImmutableDictionary();
 
         return map;
+    }
+
+    IEnumerable<Complex> GetTrailHeads(ImmutableDictionary<Complex, int> map) => map.Keys.Where(pos => map[pos] == 0);
+
+    List<Complex> GetTrailFrom(ImmutableDictionary<Complex, int> map, Complex start, LiveDisplayContext? ctx = null)
+    {
+        Queue<Complex> positions = new Queue<Complex>();
+        positions.Enqueue(start);
+
+        List<Complex> trails = new List<Complex>();
+        HashSet<Complex> visited = new HashSet<Complex>();
+
+        while (positions.Any())
+        {
+            // check if we are at a top 9
+            var currentPos = positions.Dequeue();
+            visited.Add(currentPos);
+
+            if (currentPos == 9)
+            {
+                trails.Add(currentPos);
+            }
+            else
+            {
+                foreach (var dir in new List<Complex> { Up, Down, Right, Left })
+                {
+                    // check all directions, make sure they exist in map and also, we can just increase by 1, so check if neigboor is current value + 1
+                    if (map.GetValueOrDefault(currentPos + dir) == map[currentPos] + 1)
+                    {
+                        positions.Enqueue(currentPos + dir);
+                    }
+                }
+            }
+
+            if (ctx != null && visited.Count() > 3)
+            {
+                ctx.UpdateTarget(PrintSpectre(map, visited));
+                Thread.Sleep(20);
+            }
+        }
+
+
+        if (ctx != null && trails.Count != 0)
+        {
+            ctx.UpdateTarget(PrintSpectre(map, visited));
+            AnsiConsole.WriteLine("Found trail heads: " + string.Join(", ", trails));
+            Thread.Sleep(200);
+        }
+
+        return trails;
+    }
+    
+    Dictionary<Complex, List<Complex>> GetAllTrails(string[] input, LiveDisplayContext? ctx = null) {
+        var map = Parse(input);
+        return GetTrailHeads(map).ToDictionary(t => t, t => GetTrailFrom(map, t, ctx));
     }
 
     public long RunPart1(string[] input)
@@ -159,11 +236,19 @@ public class SolutionService : ISolutionService
         _logger.LogInformation("Input contains {Input} values", input.Length);
 
         var map = Parse(input);
-        // Print(map);
-        PrintSpectre(map);
-        // PrintBlock(map);
+        var height = (int)map.Keys.Max(c => c.Imaginary);
+        var width = (int)map.Keys.Max(c => c.Real);
 
-        throw new NotImplementedException();
+        var result = 0;
+        AnsiConsole.Live(new Canvas(width, height))
+            .Start(ctx =>
+            {
+                result = GetAllTrails(input, ctx).Sum(x => x.Value.Distinct().Count());
+            });
+        
+        return result;
+        
+        // return GetAllTrails(input).Sum(x => x.Value.Distinct().Count());
     }
 
     public long RunPart2(string[] input)
