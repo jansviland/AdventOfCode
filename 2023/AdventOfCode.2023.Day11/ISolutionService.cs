@@ -1,5 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
-
 namespace AdventOfCode._2023.Day11;
 
 public interface ISolutionService

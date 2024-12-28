@@ -1,4 +1,3 @@
-using System.Globalization;
 using Spectre.Console;
 
 namespace AdventOfCode._2024.Day10;

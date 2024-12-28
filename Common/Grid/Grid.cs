@@ -1,6 +1,4 @@
-﻿using System.Text;
-
-namespace Common;
+﻿namespace Common;
 
 public enum Direction
 {

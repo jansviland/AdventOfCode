@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using UnityEngine;
 
 namespace AdventOfCode._2023.Day22.Unity.Common

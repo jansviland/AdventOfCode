@@ -1,5 +1,3 @@
-using Common;
-
 namespace AdventOfCode._2024.Day06;
 
 public interface ISolutionService

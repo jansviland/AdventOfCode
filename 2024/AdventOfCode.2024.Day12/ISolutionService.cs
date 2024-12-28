@@ -1,7 +1,3 @@
-using System.Collections;
-using System.Globalization;
-using System.Runtime.Intrinsics.X86;
-
 namespace AdventOfCode._2024.Day12;
 
 public interface ISolutionService

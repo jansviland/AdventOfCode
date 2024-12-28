@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using AdventOfCode._2022.Day12.Common.Models;
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Controls.Platform;
 using Avalonia.Controls.Shapes;
 using Avalonia.Input;
 using Avalonia.Layout;

@@ -1,6 +1,4 @@
-﻿using Common;
-
-namespace AdventOfCode._2023.Day16;
+﻿namespace AdventOfCode._2023.Day16;
 
 public class Tile
 {

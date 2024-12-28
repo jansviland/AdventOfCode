@@ -1,5 +1,3 @@
-using Microsoft.Extensions.Primitives;
-
 namespace AdventOfCode._2023.Day15;
 
 public interface ISolutionService

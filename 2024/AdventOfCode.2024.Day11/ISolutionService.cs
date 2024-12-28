@@ -1,7 +1,3 @@
-using System.Collections;
-using System.Globalization;
-using System.Runtime.Intrinsics.X86;
-
 namespace AdventOfCode._2024.Day11;
 
 public interface ISolutionService
@@ -38,12 +34,10 @@ public class SolutionService : ISolutionService
         _logger.LogInformation("Input contains {Input} values", input.Length);
 
         throw new NotImplementedException();
-
     }
 
     public List<uint> ApplyRules(uint stone)
     {
-
         var result = new List<uint>();
         if (stone == 0)
         {
@@ -64,7 +58,6 @@ public class SolutionService : ISolutionService
             {
                 result.Add(uint.Parse(right));
             }
-
         }
         else
         {
@@ -93,10 +86,4 @@ public class SolutionService : ISolutionService
 
         return current;
     }
-
-    private static IEnumerable<int> Column(string[] input, int column) =>
-        from line in input
-        let nums = line.Split("   ").Select(int.Parse).ToArray()
-        orderby nums[column]
-        select nums[column];
 }

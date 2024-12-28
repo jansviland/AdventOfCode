@@ -1,4 +1,3 @@
-using System.Drawing;
 using Pastel;
 
 namespace AdventOfCode._2023.Day18;
