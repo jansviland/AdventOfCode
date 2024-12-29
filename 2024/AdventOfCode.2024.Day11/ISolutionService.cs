@@ -13,6 +13,8 @@ public class SolutionService : ISolutionService
 {
     private readonly ILogger<ISolutionService> _logger;
     private readonly Helper _helper = new();
+    
+    // private long cacheHit = 0;
 
     public SolutionService(ILogger<SolutionService> logger)
     {
@@ -22,6 +24,17 @@ public class SolutionService : ISolutionService
     // add cache to improve preformance
     public long Blink(long n, int blinks, ConcurrentDictionary<(long n, int blinks), long> cache)
     {
+        // #if Debug
+        // if (cache.TryGetValue((n, blinks), out long result))
+        // {
+        //     cacheHit++;
+        //     if (cacheHit % 100 == 0)
+        //     {
+        //         _logger.LogDebug("Stone {N}, Blinks {Blinks}, Result {Result}, Cache hit {CacheHit} times", n, blinks, result, cacheHit);
+        //     }
+        // }
+        // #endif
+        
         // store result of each calculation, and check if it has been calculated already to avoid repeating the same calculation multiple times. 
         // example: 
         //
@@ -53,9 +66,6 @@ public class SolutionService : ISolutionService
 
     public long RunPart1(string[] input)
     {
-        _logger.LogInformation("Solving - {Year} - Day {Day} - Part 1", _helper.GetYear(), _helper.GetDay());
-        _logger.LogInformation("Input contains {Input} values", input.Length);
-
         // we use a concurrent dictionary type that is thread safe
         var cache = new ConcurrentDictionary<(long, int), long>();
 
@@ -64,9 +74,6 @@ public class SolutionService : ISolutionService
 
     public long RunPart2(string[] input)
     {
-        _logger.LogInformation("Solving - {Year} - Day {Day} - Part 2", _helper.GetYear(), _helper.GetDay());
-        _logger.LogInformation("Input contains {Input} values", input.Length);
-
         // we use a concurrent dictionary type that is thread safe
         var cache = new ConcurrentDictionary<(long, int), long>();
 
