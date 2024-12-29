@@ -14,6 +14,44 @@ public class Tests : TestBed<TestFixture>
         _solutionService = _fixture.GetService<ISolutionService>(_testOutputHelper)!;
         _input = File.ReadAllLines("Assets/test-input.txt");
     }
+    
+    
+    // The first stone, 0, becomes a stone marked 1.
+    // The second stone, 1, is multiplied by 2024 to become 2024.
+    // The third stone, 10, is split into a stone marked 1 followed by a stone marked 0.
+    // The fourth stone, 99, is split into two stones marked 9.
+    // The fifth stone, 999, is replaced by a stone marked 2021976.
+    [Theory]
+    [InlineData(0, 1)]
+    [InlineData(1, 2024)]
+    [InlineData(10, 11)]
+    [InlineData(99, 18)]
+    [InlineData(999, 2021976)]
+    public void Blink_Test(long n, long expected)
+    {
+        Assert.Equal(expected, _solutionService.Blink(n, 1));
+    }
+    
+    
+    /// <summary>
+    /// The first stone, 0, becomes a stone marked 1.
+    /// The second stone, 1, is multiplied by 2024 to become 2024.
+    /// The third stone, 10, is split into a stone marked 1 followed by a stone marked 0.
+    /// The fourth stone, 99, is split into two stones marked 9.
+    /// The fifth stone, 999, is replaced by a stone marked 2021976.
+    /// </summary>
+    /// <param name="n">stones engraved number</param>
+    /// <param name="expected">Number of stones produced</param>
+    [Theory]
+    [InlineData(0, 1)]
+    [InlineData(1, 1)]
+    [InlineData(10, 2)]
+    [InlineData(99, 2)]
+    [InlineData(999, 1)]
+    public void Blink_Recursive_Test(long n, long expected)
+    {
+        Assert.Equal(expected, _solutionService.Blink(n, 1));
+    }
 
     // After 1 blink:
     // 253000 1 7
@@ -110,6 +148,6 @@ public class Tests : TestBed<TestFixture>
         var result = _solutionService.RunPart2(_input);
 
         // assert
-        Assert.Equal(31, result);
+        Assert.Equal(55312, result);
     }
 }
