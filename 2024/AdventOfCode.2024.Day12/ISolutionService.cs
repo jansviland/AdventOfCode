@@ -79,13 +79,30 @@ public class SolutionService : ISolutionService
         // var canvas = CreateSpectreCanvas(garden, visited);
         var statusText = $"Region contains {visited?.Count() ?? 0} plots";
 
+        if (visited == null)
+        {
+            return canvas;
+        }
+
+        var minX = visited.Min(x => x.Real);
+        var minY = visited.Min(x => x.Imaginary);
+        
+        // var currentPiece = visited
+        //     .Select(x => new KeyValuePair<Complex, char>(x, 'A'))
+        //     .ToDictionary();
+
+        var currentPiece = visited.ToDictionary(
+            x => new Complex(x.Real - minX, x.Imaginary - minY),
+            x => 'A');
+
         return new Table()
             .AddColumn("Garden")
             .AddColumn("Status")
             .AddRow(
                 canvas,
                 new Rows(
-                    new Text(statusText.ToString())
+                    new Text(statusText + Environment.NewLine),
+                    CreateSpectreCanvas(currentPiece)
                 )
             );
 
@@ -137,8 +154,10 @@ public class SolutionService : ISolutionService
         if (ctx != null)
         {
             ctx.UpdateTarget(CreateSpectreCanvas(garden, visited));
-            Thread.Sleep(500);
+            Thread.Sleep(100);
         }
+        
+        // TODO: return the: total price of fencing all regions on your map, not the visited cells
 
         return visited;
     }
