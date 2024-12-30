@@ -5,6 +5,10 @@ the puzzles.
 
 # Demo of some of the solutions
 
+## 2024 - Day 12 - Flood fill and calc perimeter 
+
+![gif](./wiki/2024-day12-solution.gif)
+
 ## 2024 - Day 10 - Flood fill algorithm
 
 ![gif](./wiki/2024-day10-solution.gif)

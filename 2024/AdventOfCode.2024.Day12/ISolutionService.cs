@@ -53,7 +53,7 @@ public class SolutionService : ISolutionService
         return new Color((byte)(r * 255), (byte)(g * 255), (byte)(b * 255));
     }
 
-    IRenderable CreateSpectreCanvas(IDictionary<Complex, char> garden, HashSet<Complex> visited = null)
+    IRenderable CreateDisplay(IDictionary<Complex, char> garden, HashSet<Complex> visited = null, int perimeter = 0)
     {
         var maxX = (int)garden.Keys.Max(c => c.Real);
         var maxY = (int)garden.Keys.Max(c => c.Imaginary);
@@ -76,13 +76,14 @@ public class SolutionService : ISolutionService
             }
         }
 
-        // var canvas = CreateSpectreCanvas(garden, visited);
-        var statusText = $"Region contains {visited?.Count() ?? 0} plots";
-
         if (visited == null)
         {
             return canvas;
         }
+        
+        // var canvas = CreateDisplay(garden, visited);
+        var statusText = $"Region contains {visited?.Count() ?? 0} plots";
+        var priceText = $"perimeter: " + perimeter + Environment.NewLine + "price: " + visited?.Count + " * " + perimeter + " = " + visited?.Count * perimeter;
 
         var minX = visited.Min(x => x.Real);
         var minY = visited.Min(x => x.Imaginary);
@@ -102,7 +103,8 @@ public class SolutionService : ISolutionService
                 canvas,
                 new Rows(
                     new Text(statusText + Environment.NewLine),
-                    CreateSpectreCanvas(currentPiece)
+                    CreateDisplay(currentPiece),
+                    new Text(Environment.NewLine + priceText) 
                 )
             );
 
@@ -119,18 +121,18 @@ public class SolutionService : ISolutionService
         return map;
     }
 
-    IEnumerable<Complex> GetRegion(Dictionary<Complex, char> garden, Complex start, LiveDisplayContext? ctx = null)
+    (IEnumerable<Complex> region, long price) GetRegionPrice(Dictionary<Complex, char> garden, Complex start, LiveDisplayContext? ctx = null)
     {
         var queue = new Queue<Complex>();
         queue.Enqueue(start);
 
-        var visited = new HashSet<Complex>();
+        var region = new HashSet<Complex>();
 
         // flood fill algorithm
         while (queue.Any())
         {
             var pos = queue.Dequeue();
-            visited.Add(pos);
+            region.Add(pos);
 
             foreach (var dir in new List<Complex>() { Up, Down, Left, Right })
             {
@@ -138,7 +140,7 @@ public class SolutionService : ISolutionService
                 if (garden.TryGetValue(next, out var val)
                     && val == garden[start]
                     && !queue.Contains(next)
-                    && !visited.Contains(next))
+                    && !region.Contains(next))
                 {
                     queue.Enqueue(pos + dir);
                 }
@@ -146,73 +148,117 @@ public class SolutionService : ISolutionService
 
             // if (ctx != null)
             // {
-            //     ctx.UpdateTarget(CreateSpectreCanvas(garden, visited));
+            //     ctx.UpdateTarget(CreateDisplay(garden, visited));
             //     Thread.Sleep(1);
             // }
         }
 
+        var perimeter = CalcPerimeter(region);
+
         if (ctx != null)
         {
-            ctx.UpdateTarget(CreateSpectreCanvas(garden, visited));
+            ctx.UpdateTarget(CreateDisplay(garden, region, perimeter));
             Thread.Sleep(100);
         }
         
-        // TODO: return the: total price of fencing all regions on your map, not the visited cells
-
-        return visited;
+        return (region, region.Count * perimeter);
     }
 
-    List<IEnumerable<Complex>> GetRegions(Dictionary<Complex, char> garden, LiveDisplayContext? ctx = null)
+    int CalcPerimeter(IEnumerable<Complex> region)
+    {
+        var minX = region.Min(x => x.Real);
+        var minY = region.Min(x => x.Imaginary);
+        
+        var reducedRegion = region.Select(x => new Complex(x.Real - minX, x.Imaginary - minY));
+
+        var maxX = reducedRegion.Max(x => x.Real);
+        var maxY = reducedRegion.Max(x => x.Imaginary);
+
+        // calc left side: 
+        var left = 0;
+        var right = 0;
+        for (var x = 0; x <= maxX; x++)
+        {
+            // get all elements on x axis
+            var plots = reducedRegion
+                .Where(a => (int)a.Real == x)
+                .ToList();
+
+            foreach (var p in plots)
+            {
+                if (!reducedRegion.Contains(p + Left))
+                {
+                    left++;
+                }
+                if (!reducedRegion.Contains(p + Right))
+                {
+                    right++;
+                }
+            }
+        }
+
+        var top = 0;
+        var bottom = 0;
+        for (var y = 0; y <= maxY; y++)
+        {
+            // get all elements on y axis
+            var plots = reducedRegion
+                .Where(a => (int)a.Imaginary == y);
+
+            foreach (var p in plots)
+            {
+                if (!reducedRegion.Contains(p + Down))
+                {
+                    bottom++;
+                }
+                if (!reducedRegion.Contains(p + Up))
+                {
+                    top++;
+                }
+            }
+        }
+        
+        // AnsiConsole.MarkupLine($"left: {left}, right: {right}, top: {top}, bottom: {bottom}");
+        return left + right + top + bottom;
+    }
+
+    long GetRegions(Dictionary<Complex, char> garden, LiveDisplayContext? ctx = null)
     {
         // use a flood filling algorithm to move to similar plants and fill the regions
         var regions = new List<IEnumerable<Complex>>();
 
+        var total = 0L;
         foreach (var plot in garden)
         {
-            if (regions.Exists(x => x.Contains(plot.Key)))
+            if (!regions.Exists(x => x.Contains(plot.Key)))
             {
-                // do nothing
-            }
-            else
-            {
-                // TODO: seperate this into another methood
-                regions.Add(GetRegion(garden, plot.Key, ctx));
+                var (region, price) = GetRegionPrice(garden, plot.Key, ctx);
+
+                regions.Add(region);
+                total += price;
             }
         }
 
-        return regions;
+        return total;
     }
-
+    
     public long RunPart1(string[] input, bool animate = false)
     {
         var map = Parse(input);
-        var canvas = CreateSpectreCanvas(map);
-
-        // another flood fill algorithm? 
-        // 1. Start in one corner,
-        // 2. Check if we have already "filled" the area
-        // 3. if not, take the char, lets say 'A', and flood all neighboors that are A, 
-        // 4. now we have an area for a group of 'A's, add them all to a collection,
-        //      a collection for an area contains all the Complex posistions of the elements in that area
-
-        // 5. calc the value of this area, add to the sum, and move to the next element in the grid
-
-        // for each element, add a boolean "filled" or "not filled"
-
-        // AnsiConsole.Write(canvas);
-
-        var regions = GetRegions(map);
-
-        var height = (int)map.Keys.Max(c => c.Imaginary);
-        var width = (int)map.Keys.Max(c => c.Real);
-
         if (animate)
         {
+            var height = (int)map.Keys.Max(c => c.Imaginary);
+            var width = (int)map.Keys.Max(c => c.Real);
+            
             AnsiConsole.Live(new Canvas(width, height))
                 .Start(ctx => { GetRegions(map, ctx); });
-        }
 
-        throw new NotImplementedException();
+            return GetRegions(map);
+        }
+        else
+        {
+            return GetRegions(map);
+        }
     }
 
     public long RunPart2(string[] input)

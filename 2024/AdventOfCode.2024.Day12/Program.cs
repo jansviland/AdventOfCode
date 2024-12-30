@@ -18,6 +18,7 @@ internal static class Program
 
         var svc = ActivatorUtilities.CreateInstance<SolutionService>(host.Services);
         var input = File.ReadAllLines("Assets/input.txt");
+        // var input = File.ReadAllLines("Assets/test-input.txt");
         // var input = File.ReadAllLines("Assets/test-input-large.txt");
         
         var animate = args.Contains("animate");
