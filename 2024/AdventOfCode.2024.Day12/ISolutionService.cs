@@ -1,14 +1,13 @@
 using Spectre.Console;
+using Spectre.Console.Rendering;
 
 namespace AdventOfCode._2024.Day12;
 
 public interface ISolutionService
 {
-    public long RunPart1(string[] input);
+    public long RunPart1(string[] input, bool animate = false);
     public long RunPart2(string[] input);
 }
-
-record struct Plot(char plant, bool isFilled = false);
 
 public class SolutionService : ISolutionService
 {
@@ -54,7 +53,7 @@ public class SolutionService : ISolutionService
         return new Color((byte)(r * 255), (byte)(g * 255), (byte)(b * 255));
     }
 
-    Canvas CreateSpectreCanvas(IDictionary<Complex, Plot> garden)
+    IRenderable CreateSpectreCanvas(IDictionary<Complex, char> garden, HashSet<Complex> visited = null)
     {
         var maxX = (int)garden.Keys.Max(c => c.Real);
         var maxY = (int)garden.Keys.Max(c => c.Imaginary);
@@ -66,60 +65,106 @@ public class SolutionService : ISolutionService
             var x = (int)key.Real;
             var y = (int)key.Imaginary;
 
-            // A to Z = 65 - 90
-            canvas.SetPixel(x, y, _colors[90 - value.plant]);
+            if (visited != null && visited.Contains(key))
+            {
+                canvas.SetPixel(x, y, Color.White);
+            }
+            else
+            {
+                // A to Z = 65 - 90
+                canvas.SetPixel(x, y, _colors[90 - value]);
+            }
         }
 
-        return canvas;
+        // var canvas = CreateSpectreCanvas(garden, visited);
+        var statusText = $"Region contains {visited?.Count() ?? 0} plots";
+
+        return new Table()
+            .AddColumn("Garden")
+            .AddColumn("Status")
+            .AddRow(
+                canvas,
+                new Rows(
+                    new Text(statusText.ToString())
+                )
+            );
+
+        // return canvas;
     }
 
-    Dictionary<Complex, Plot> Parse(string[] input)
+    Dictionary<Complex, char> Parse(string[] input)
     {
         var map = (
             from y in Enumerable.Range(0, input.Length)
             from x in Enumerable.Range(0, input[0].Length)
-            select new KeyValuePair<Complex, Plot>(Complex.ImaginaryOne * y + x, new Plot(input[y][x]))).ToDictionary();
+            select new KeyValuePair<Complex, char>(Complex.ImaginaryOne * y + x, input[y][x])).ToDictionary();
 
         return map;
     }
 
-    List<List<Complex>> GetRegions(Dictionary<Complex, Plot> garden)
+    IEnumerable<Complex> GetRegion(Dictionary<Complex, char> garden, Complex start, LiveDisplayContext? ctx = null)
+    {
+        var queue = new Queue<Complex>();
+        queue.Enqueue(start);
+
+        var visited = new HashSet<Complex>();
+
+        // flood fill algorithm
+        while (queue.Any())
+        {
+            var pos = queue.Dequeue();
+            visited.Add(pos);
+
+            foreach (var dir in new List<Complex>() { Up, Down, Left, Right })
+            {
+                var next = pos + dir;
+                if (garden.TryGetValue(next, out var val)
+                    && val == garden[start]
+                    && !queue.Contains(next)
+                    && !visited.Contains(next))
+                {
+                    queue.Enqueue(pos + dir);
+                }
+            }
+
+            // if (ctx != null)
+            // {
+            //     ctx.UpdateTarget(CreateSpectreCanvas(garden, visited));
+            //     Thread.Sleep(1);
+            // }
+        }
+
+        if (ctx != null)
+        {
+            ctx.UpdateTarget(CreateSpectreCanvas(garden, visited));
+            Thread.Sleep(500);
+        }
+
+        return visited;
+    }
+
+    List<IEnumerable<Complex>> GetRegions(Dictionary<Complex, char> garden, LiveDisplayContext? ctx = null)
     {
         // use a flood filling algorithm to move to similar plants and fill the regions
-        var regions = new List<List<Complex>>();
+        var regions = new List<IEnumerable<Complex>>();
 
         foreach (var plot in garden)
         {
-            if (plot.Value.isFilled)
+            if (regions.Exists(x => x.Contains(plot.Key)))
             {
                 // do nothing
             }
             else
             {
                 // TODO: seperate this into another methood
-                
-                // fill
-                // positions to flood
-                var queue = new Queue<Complex>();
-                queue.Enqueue(plot.Key);
-
-                while (queue.Count > 0)
-                {
-                    foreach (var dir in new List<Complex>() { Up, Down, Left, Right })
-                    {
-                        if (garden.TryGetValue(plot.Key + dir, out Plot val) && val.plant == plot.Value.plant)
-                        {
-                            queue.Enqueue(plot.Key + dir);
-                        }
-
-                    }
-                }
+                regions.Add(GetRegion(garden, plot.Key, ctx));
             }
         }
 
+        return regions;
     }
 
-    public long RunPart1(string[] input)
+    public long RunPart1(string[] input, bool animate = false)
     {
         var map = Parse(input);
         var canvas = CreateSpectreCanvas(map);
@@ -135,7 +180,18 @@ public class SolutionService : ISolutionService
 
         // for each element, add a boolean "filled" or "not filled"
 
-        AnsiConsole.Write(canvas);
+        // AnsiConsole.Write(canvas);
+
+        var regions = GetRegions(map);
+
+        var height = (int)map.Keys.Max(c => c.Imaginary);
+        var width = (int)map.Keys.Max(c => c.Real);
+
+        if (animate)
+        {
+            AnsiConsole.Live(new Canvas(width, height))
+                .Start(ctx => { GetRegions(map, ctx); });
+        }
 
         throw new NotImplementedException();
     }

@@ -20,7 +20,8 @@ internal static class Program
         var input = File.ReadAllLines("Assets/input.txt");
         // var input = File.ReadAllLines("Assets/test-input-large.txt");
         
-        var resultPart1 = svc.RunPart1(input);
+        var animate = args.Contains("animate");
+        var resultPart1 = svc.RunPart1(input, animate);
         AnsiConsole.MarkupLine("[bold yellow]------------------------------------[/]");
         AnsiConsole.MarkupLine("[bold green]Part 1 Result:[/] {0}", resultPart1);
 
