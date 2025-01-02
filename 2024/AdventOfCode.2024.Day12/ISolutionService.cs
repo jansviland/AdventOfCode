@@ -53,7 +53,7 @@ public class SolutionService : ISolutionService
         return new Color((byte)(r * 255), (byte)(g * 255), (byte)(b * 255));
     }
 
-    IRenderable CreateDisplay(IDictionary<Complex, char> garden, HashSet<Complex> visited = null, int perimeter = 0)
+    IRenderable CreateDisplay(IDictionary<Complex, char> garden, HashSet<Complex>? visited = null, int perimeter = 0, int sides = 0)
     {
         var maxX = (int)garden.Keys.Max(c => c.Real);
         var maxY = (int)garden.Keys.Max(c => c.Imaginary);
@@ -80,19 +80,15 @@ public class SolutionService : ISolutionService
         {
             return canvas;
         }
-        
-        // var canvas = CreateDisplay(garden, visited);
+
         var statusText = $"Region contains {visited?.Count() ?? 0} plots";
-        var priceText = $"perimeter: " + perimeter + Environment.NewLine + "price: " + visited?.Count + " * " + perimeter + " = " + visited?.Count * perimeter;
+        var priceTextPerimeter = $"perimeter: " + perimeter + Environment.NewLine + "price: " + visited?.Count + " * " + perimeter + " = " + visited?.Count * perimeter + Environment.NewLine;
+        var priceTextSides = $"sides: " + sides + Environment.NewLine + "price: " + visited?.Count + " * " + sides + " = " + visited?.Count * sides;
 
-        var minX = visited.Min(x => x.Real);
-        var minY = visited.Min(x => x.Imaginary);
-        
-        // var currentPiece = visited
-        //     .Select(x => new KeyValuePair<Complex, char>(x, 'A'))
-        //     .ToDictionary();
+        var minX = visited!.Min(x => x.Real);
+        var minY = visited!.Min(x => x.Imaginary);
 
-        var currentPiece = visited.ToDictionary(
+        var currentPiece = visited?.ToDictionary(
             x => new Complex(x.Real - minX, x.Imaginary - minY),
             x => 'A');
 
@@ -103,12 +99,12 @@ public class SolutionService : ISolutionService
                 canvas,
                 new Rows(
                     new Text(statusText + Environment.NewLine),
-                    CreateDisplay(currentPiece),
-                    new Text(Environment.NewLine + priceText) 
+                    CreateDisplay(currentPiece!),
+                    new Text(Environment.NewLine + priceTextPerimeter),
+                    new Text(Environment.NewLine + priceTextSides)
+                    // new Canvas(maxX / 2, 1) // add an empty canvas that is half the width of the main display
                 )
             );
-
-        // return canvas;
     }
 
     Dictionary<Complex, char> Parse(string[] input)
@@ -121,11 +117,12 @@ public class SolutionService : ISolutionService
         return map;
     }
 
-    (IEnumerable<Complex> region, long price) GetRegionPrice(Dictionary<Complex, char> garden, Complex start, LiveDisplayContext? ctx = null)
+    (IEnumerable<Complex> region, int perimeter, int sides) GetRegionDetailsAtLocation(Dictionary<Complex, char> garden, Complex start, LiveDisplayContext? ctx = null)
     {
         var queue = new Queue<Complex>();
         queue.Enqueue(start);
 
+        // all visited positions
         var region = new HashSet<Complex>();
 
         // flood fill algorithm
@@ -138,37 +135,58 @@ public class SolutionService : ISolutionService
             {
                 var next = pos + dir;
                 if (garden.TryGetValue(next, out var val)
-                    && val == garden[start]
+                    && val == garden[start] // spread to equal plot type
                     && !queue.Contains(next)
                     && !region.Contains(next))
                 {
                     queue.Enqueue(pos + dir);
                 }
             }
-
-            // if (ctx != null)
-            // {
-            //     ctx.UpdateTarget(CreateDisplay(garden, visited));
-            //     Thread.Sleep(1);
-            // }
         }
 
-        var perimeter = CalcPerimeter(region);
+        var perimeter = GetPerimeter(region);
+        var sides = CountCorners(region);
 
         if (ctx != null)
         {
-            ctx.UpdateTarget(CreateDisplay(garden, region, perimeter));
-            Thread.Sleep(100);
+            ctx.UpdateTarget(CreateDisplay(garden, region, perimeter, sides));
+            Thread.Sleep(200);
         }
-        
-        return (region, region.Count * perimeter);
+
+        return (region, perimeter, sides);
     }
 
-    int CalcPerimeter(IEnumerable<Complex> region)
+    private int CountCorners(HashSet<Complex> region)
+    {
+        var count = 0;
+        foreach (var pos in region)
+        {
+
+            // we have four type of corners, top left, top right, bottom left, bottom right. 
+            // to check for top left corner, we can check if up and left is empty, bottom right, then down and right would be empty etc. 
+            foreach (var (du, dv) in new[] { (Up, Right), (Right, Down), (Down, Left), (Left, Up) })
+            {
+                // we have two types of corners, concave and convex corners 
+                if (!region.Contains(pos + du) && !region.Contains(pos + dv))
+                {
+                    count++;
+                }
+                
+                if (region.Contains(pos + du) && region.Contains(pos + dv) &&  !region.Contains(pos + dv + du))
+                {
+                    count++;
+                }
+            }
+        }
+
+        return count;
+    }
+
+    int GetPerimeter(IEnumerable<Complex> region)
     {
         var minX = region.Min(x => x.Real);
         var minY = region.Min(x => x.Imaginary);
-        
+
         var reducedRegion = region.Select(x => new Complex(x.Real - minX, x.Imaginary - minY));
 
         var maxX = reducedRegion.Max(x => x.Real);
@@ -217,12 +235,12 @@ public class SolutionService : ISolutionService
                 }
             }
         }
-        
+
         // AnsiConsole.MarkupLine($"left: {left}, right: {right}, top: {top}, bottom: {bottom}");
         return left + right + top + bottom;
     }
 
-    long GetRegions(Dictionary<Complex, char> garden, LiveDisplayContext? ctx = null)
+    long GetPriceOfAllRegions(Dictionary<Complex, char> garden, bool usePerimeter = true, LiveDisplayContext? ctx = null)
     {
         // use a flood filling algorithm to move to similar plants and fill the regions
         var regions = new List<IEnumerable<Complex>>();
@@ -232,16 +250,23 @@ public class SolutionService : ISolutionService
         {
             if (!regions.Exists(x => x.Contains(plot.Key)))
             {
-                var (region, price) = GetRegionPrice(garden, plot.Key, ctx);
-
+                var (region, perimeter, sides) = GetRegionDetailsAtLocation(garden, plot.Key, ctx);
                 regions.Add(region);
-                total += price;
+
+                if (usePerimeter)
+                {
+                    total += perimeter * region.Count();
+                }
+                else
+                {
+                    total += sides * region.Count();
+                }
             }
         }
 
         return total;
     }
-    
+
     public long RunPart1(string[] input, bool animate = false)
     {
         var map = Parse(input);
@@ -249,20 +274,21 @@ public class SolutionService : ISolutionService
         {
             var height = (int)map.Keys.Max(c => c.Imaginary);
             var width = (int)map.Keys.Max(c => c.Real);
-            
-            AnsiConsole.Live(new Canvas(width, height))
-                .Start(ctx => { GetRegions(map, ctx); });
 
-            return GetRegions(map);
+            AnsiConsole.Live(new Canvas(width, height))
+                .Start(ctx => { GetPriceOfAllRegions(map, true, ctx); });
+
+            return GetPriceOfAllRegions(map);
         }
         else
         {
-            return GetRegions(map);
+            return GetPriceOfAllRegions(map);
         }
     }
 
     public long RunPart2(string[] input)
     {
-        throw new NotImplementedException();
+        var map = Parse(input);
+        return GetPriceOfAllRegions(map, false);
     }
 }

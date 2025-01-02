@@ -52,6 +52,19 @@ public class Tests : TestBed<TestFixture>
         var result = _solutionService.RunPart2(_input);
 
         // assert
-        Assert.Equal(31, result);
+        Assert.Equal(80, result);
+    }
+    
+    [Fact]
+    public void Part2Test_Large()
+    {
+        // arrange
+        _testOutputHelper.WriteLine($"Running unit test - Part 2");
+
+        // act
+        var result = _solutionService.RunPart2(_inputLarge);
+
+        // assert
+        Assert.Equal(1206, result);
     }
 }

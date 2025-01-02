@@ -7,7 +7,10 @@ the puzzles.
 
 ## 2024 - Day 12 - Flood fill and calc perimeter 
 
-![gif](./wiki/2024-day12-solution.gif)
+![gif](./wiki/2024-day12-solution-part2.gif)
+
+- Reuse flood fill algorithm
+- capture different regions and calc sides/corners 
 
 ## 2024 - Day 10 - Flood fill algorithm
 
