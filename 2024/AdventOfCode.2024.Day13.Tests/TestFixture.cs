@@ -15,6 +15,6 @@ public class TestFixture : TestBedFixture
 
     protected override IEnumerable<TestAppSettings> GetTestAppSettings()
     {
-        yield return new TestAppSettings { Filename = "appsettings.json", IsOptional = false };
+        yield return new TestAppSettings { Filename = "appsettings.json", IsOptional = true };
     }
 }

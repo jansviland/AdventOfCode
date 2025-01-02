@@ -5,7 +5,6 @@ namespace AdventOfCodeAdventOfCode._2024.Day13.Tests;
 public class Tests : TestBed<TestFixture>
 {
     private readonly ISolutionService _solutionService;
-    private readonly Helper _helper = new();
 
     private readonly string[] _input;
 
@@ -19,20 +18,20 @@ public class Tests : TestBed<TestFixture>
     public void Part1Test()
     {
         // arrange
-        _testOutputHelper.WriteLine($"Running unit test - {_helper.GetYear()} - Day {_helper.GetDay()} - Part 1");
+        _testOutputHelper.WriteLine($"Running unit test - Part 1");
 
         // act
         var result = _solutionService.RunPart1(_input);
 
         // assert
-        Assert.Equal(11, result);
+        Assert.Equal(480, result);
     }
 
     [Fact]
     public void Part2Test()
     {
         // arrange
-        _testOutputHelper.WriteLine($"Running unit test - {_helper.GetYear()} - Day {_helper.GetDay()} - Part 2");
+        _testOutputHelper.WriteLine($"Running unit test - Part 2");
 
         // act
         var result = _solutionService.RunPart2(_input);
