@@ -24,13 +24,31 @@ public class SolutionService : ISolutionService
     // Calculates the determinant of two vectors a and b. This is used in Cramer's rule for solving the linear equation.
     long Det(Vec2 a, Vec2 b) => a.x * b.y - a.y * b.x;
 
+    // This task is essentally and linear equation problem. We can solve it using Cramer's rule.
+    //
     // https://en.wikipedia.org/wiki/Cramer%27s_rule
     // Example: 
-    // det =  (a1 * b2 - a2 * b1)
-    // detX = (c1 * b2 - c2 * b1)
-    // detY = (a1 * c2 - a2 * c1)
-    // x = detX / det
-    // y = detY / det
+    // 2x + 3y = 15
+    // 4x - 5y = -5
+    //
+    // Det(A) = |2 3| = 2 * 5 - 3 * 4 = -2
+    //          |4 -5|   4 * 3 - -5 * 2 = 23
+    //
+    // Det(Ax) = |15 3| = 15 * 5 - 3 * -5 = 90
+    //           |-5 -5|   -5 * 3 - -5 * 15 = 90
+    //
+    // Det(Ay) = |2 15| = 2 * -5 - 15 * 4 = -65
+    //           |4 -5|   4 * 15 - -5 * 2 = 65
+    //
+    // x = Det(Ax) / Det(A) = 90 / -2 = -45
+    // y = Det(Ay) / Det(A) = 65 / -2 = -32.5
+    //
+    // Since x is negative we know that the solution is invalid.
+    //
+    // The prize is calculated by the formula 3 * x + y.
+    // So the prize in this case would be 3 * -45 + -32.5 = -137.5
+    //
+    // The function returns 0 if the solution is invalid otherwise the prize.
     long CalculatePrice(Machine m)
     {
         var (a, b, p) = m;
