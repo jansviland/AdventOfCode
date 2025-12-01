@@ -14,7 +14,7 @@ public class Tests : TestBed<TestFixture>
     {
         _solutionService = _fixture.GetService<ISolutionService>(_testOutputHelper)!;
         _inputTest = File.ReadAllLines("Assets/test-input.txt");
-        _input = File.ReadAllLines("Assets/test.txt");
+        _input = File.ReadAllLines("Assets/input.txt");
     }
 
     [Fact]
@@ -50,7 +50,7 @@ public class Tests : TestBed<TestFixture>
         _testOutputHelper.WriteLine($"Running unit test - {_helper.GetYear()} - Day {_helper.GetDay()} - Part 2");
 
         // act
-        var result = _solutionService.RunPart2(_input);
+        var result = _solutionService.RunPart2(_inputTest);
 
         // assert
         Assert.Equal(6, result);
