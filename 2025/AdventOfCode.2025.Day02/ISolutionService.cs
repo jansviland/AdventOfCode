@@ -16,7 +16,10 @@ public class SolutionService : ISolutionService
         _logger = logger;
     }
 
-    bool IsValid(int val)
+    // TODO:
+    // https://en.wikipedia.org/wiki/Knuth–Morris–Pratt_algorith
+    // https://www.geeksforgeeks.org/dsa/kmp-algorithm-for-pattern-searching/
+    bool IsValid(long val)
     {
         if (val < 1)
         {
@@ -29,9 +32,10 @@ public class SolutionService : ISolutionService
         }
 
         var str = val.ToString();
-        var split = str.Substring(0, str.Length / 2);
+        var part1 = str[..(str.Length / 2)];
+        var part2 = str[(str.Length / 2)..];
 
-        if (split.Length > 2 && split[0] == split[1])
+        if (part1 == part2)
         {
             return false;
         }
@@ -39,12 +43,12 @@ public class SolutionService : ISolutionService
         return true;
     }
 
-    IEnumerable<int> FilterInvalid(IEnumerable<int[]> ranges)
+    IEnumerable<long> FilterInvalid(IEnumerable<long[]> ranges)
     {
-        foreach (int[] range in ranges)
+        foreach (long[] range in ranges)
         {
             // can not repeat twice, 55 has '5' and '5'
-            for (int i = range[0]; i < range[1]; i++)
+            for (long i = range[0]; i <= range[1]; i++)
             {
                 // for each value i
                 // split double digit into two and compare
@@ -61,12 +65,12 @@ public class SolutionService : ISolutionService
     }
 
 
-    IEnumerable<int[]> Parse1(string[] input) =>
+    IEnumerable<long[]> Parse1(string[] input) =>
         from range in input[0].Split(',')
         let pair = range.Split('-', StringSplitOptions.RemoveEmptyEntries)
         // from num in pair
-        let start = int.Parse(pair[0])
-        let end = int.Parse(pair[1])
+        let start = long.Parse(pair[0])
+        let end = long.Parse(pair[1])
         select new[] { start, end };
 
     public long RunPart1(string[] input)
@@ -75,13 +79,9 @@ public class SolutionService : ISolutionService
         _logger.LogInformation("Input contains {Input} values", input.Length);
 
         // 1. Parse
-        var parsed = Parse1(input);
-        
         // 2. Filter out all invalid 
-        var invalid = FilterInvalid(parsed);
         // 3. Sum
-
-        throw new NotImplementedException();
+        return FilterInvalid(Parse1(input)).Sum();
 
         // var result = from line in input
         //     let d = line[0] == 'R' ? 1 : -1
