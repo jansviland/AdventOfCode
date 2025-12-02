@@ -2,8 +2,8 @@ namespace AdventOfCode._2025.Day02;
 
 public interface ISolutionService
 {
-    public string RunPart1(string[] input);
-    public string RunPart2(string[] input);
+    public long RunPart1(string[] input);
+    public long RunPart2(string[] input);
 }
 
 public class SolutionService : ISolutionService
@@ -16,23 +16,73 @@ public class SolutionService : ISolutionService
         _logger = logger;
     }
 
-    IEnumerable<int> Dial(IEnumerable<int> rotations)
+    bool IsValid(int val)
     {
-        int pos = 50;
-        foreach (int rotation in rotations)
+        if (val < 1)
         {
-            pos = (pos + rotation) % 100;
-            yield return pos;
+            return false;
+        }
+
+        if (val < 9)
+        {
+            return true;
+        }
+
+        var str = val.ToString();
+        var split = str.Substring(0, str.Length / 2);
+
+        if (split.Length > 2 && split[0] == split[1])
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    IEnumerable<int> FilterInvalid(IEnumerable<int[]> ranges)
+    {
+        foreach (int[] range in ranges)
+        {
+            // can not repeat twice, 55 has '5' and '5'
+            for (int i = range[0]; i < range[1]; i++)
+            {
+                // for each value i
+                // split double digit into two and compare
+                // split 4 digit, into two 1212, is 12 compared to 12, 
+                // 6 digit like 123123, is split into 123 and 123, invalid
+
+                // if i is invalid
+                if (!IsValid(i))
+                {
+                    yield return i;
+                }
+            }
         }
     }
 
-    public string RunPart1(string[] input)
+
+    IEnumerable<int[]> Parse1(string[] input) =>
+        from range in input[0].Split(',')
+        let pair = range.Split('-', StringSplitOptions.RemoveEmptyEntries)
+        // from num in pair
+        let start = int.Parse(pair[0])
+        let end = int.Parse(pair[1])
+        select new[] { start, end };
+
+    public long RunPart1(string[] input)
     {
         _logger.LogInformation("Solving - {Year} - Day {Day} - Part 1", _helper.GetYear(), _helper.GetDay());
         _logger.LogInformation("Input contains {Input} values", input.Length);
 
-        throw new NotImplementedException();
+        // 1. Parse
+        var parsed = Parse1(input);
         
+        // 2. Filter out all invalid 
+        var invalid = FilterInvalid(parsed);
+        // 3. Sum
+
+        throw new NotImplementedException();
+
         // var result = from line in input
         //     let d = line[0] == 'R' ? 1 : -1
         //     let a = int.Parse(line.Substring(1))
@@ -41,13 +91,13 @@ public class SolutionService : ISolutionService
         // return Dial(result).Count(x => x == 0);
     }
 
-    public string RunPart2(string[] input)
+    public long RunPart2(string[] input)
     {
         _logger.LogInformation("Solving - {Year} - Day {Day} - Part 2", _helper.GetYear(), _helper.GetDay());
         _logger.LogInformation("Input contains {Input} values", input.Length);
 
         throw new NotImplementedException();
-        
+
         // var parsed = from line in input
         //     let d = line[0] == 'R' ? 1 : -1
         //     let a = int.Parse(line.Substring(1))

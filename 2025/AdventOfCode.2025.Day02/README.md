@@ -1,81 +1,40 @@
-﻿# --- Day 1: Historian Hysteria ---
+﻿# --- Day 2: Gift Shop ---
 
-The Chief Historian is always present for the big Christmas sleigh launch, but nobody has seen him in months! Last anyone heard, he was visiting locations that are historically significant to the North Pole; a group of Senior Historians has asked you to accompany them as they check the places they think he was most likely to visit.
+You get inside and take the elevator to its only other stop: the gift shop. "Thank you for visiting the North Pole!" gleefully exclaims a nearby sign. You aren't sure who is even allowed to visit the North Pole, but you know you can access the lobby through here, and from there you can access the rest of the North Pole base.
 
-As each location is checked, they will mark it on their list with a star. They figure the Chief Historian must be in one of the first fifty places they'll look, so in order to save Christmas, you need to help them get fifty stars on their list before Santa takes off on December 25th.
+As you make your way through the surprisingly extensive selection, one of the clerks recognizes you and asks for your help.
 
-Collect stars by solving puzzles. Two puzzles will be made available on each day in the Advent calendar; the second puzzle is unlocked when you complete the first. Each puzzle grants one star. Good luck!
+As it turns out, one of the younger Elves was playing on a gift shop computer and managed to add a whole bunch of invalid product IDs to their gift shop database! Surely, it would be no trouble for you to identify the invalid product IDs for them, right?
 
-You haven't even left yet and the group of Elvish Senior Historians has already hit a problem: their list of locations to check is currently empty. Eventually, someone decides that the best place to check first would be the Chief Historian's office.
+They've even checked most of the product ID ranges already; they only have a few product ID ranges (your puzzle input) that you'll need to check. For example:
 
-Upon pouring into the office, everyone confirms that the Chief Historian is indeed nowhere to be found. Instead, the Elves discover an assortment of notes and lists of historically significant locations! This seems to be the planning the Chief Historian was doing before he left. Perhaps these notes can be used to determine which locations to search?
-
-Throughout the Chief's office, the historically significant locations are listed not by name but by a unique number called the location ID. To make sure they don't miss anything, The Historians split into two groups, each searching the office and trying to create their own complete list of location IDs.
-
-There's just one problem: by holding the two lists up side by side (your puzzle input), it quickly becomes clear that the lists aren't very similar. Maybe you can help The Historians reconcile their lists?
-
-For example:
-
-```text
-3   4
-4   3
-2   5
-1   3
-3   9
-3   3
+```
+11-22,95-115,998-1012,1188511880-1188511890,222220-222224,
+1698522-1698528,446443-446449,38593856-38593862,565653-565659,
+824824821-824824827,2121212118-2121212124
 ```
 
-Maybe the lists are only off by a small amount! To find out, pair up the numbers and measure how far apart they are. Pair up the smallest number in the left list with the smallest number in the right list, then the second-smallest left number with the second-smallest right number, and so on.
+(The ID ranges are wrapped here for legibility; in your input, they appear on a single long line.)
 
-Within each pair, figure out how far apart the two numbers are; you'll need to add up all of those distances. For example, if you pair up a 3 from the left list with a 7 from the right list, the distance apart is 4; if you pair up a 9 with a 3, the distance apart is 6.
+The ranges are separated by commas (, ); each range gives its first ID and last ID separated by a dash (-).
 
-In the example list above, the pairs and distances would be as follows:
+Since the young Elf was just doing silly patterns, you can find the invalid IDs by looking for any ID which is made only of some sequence of digits repeated twice. So, 55 (5 twice), 6464 (64 twice), and 123123 (123 twice) would all be invalid IDs.
 
-    The smallest number in the left list is 1, and the smallest number in the right list is 3. The distance between them is 2.
-    The second-smallest number in the left list is 2, and the second-smallest number in the right list is another 3. The distance between them is 1.
-    The third-smallest number in both lists is 3, so the distance between them is 0.
-    The next numbers to pair up are 3 and 4, a distance of 1.
-    The fifth-smallest numbers in each list are 3 and 5, a distance of 2.
-    Finally, the largest number in the left list is 4, while the largest number in the right list is 9; these are a distance 5 apart.
+None of the numbers have leading zeroes; 0101 isn't an ID at all. (101 is a valid ID that you would ignore.)
 
-To find the total distance between the left list and the right list, add up the distances between all of the pairs you found. In the example above, this is 2 + 1 + 0 + 1 + 2 + 5, a total distance of 11!
+Your job is to find all of the invalid IDs that appear in the given ranges. In the above example:
 
-Your actual left and right lists contain many location IDs. What is the total distance between your lists?
-
-Your puzzle answer was 1530215.
-
-# --- Part Two ---
-
-Your analysis only confirmed what everyone feared: the two lists of location IDs are indeed very different.
-
-Or are they?
-
-The Historians can't agree on which group made the mistakes or how to read most of the Chief's handwriting, but in the commotion you notice an interesting detail: a lot of location IDs appear in both lists! Maybe the other numbers aren't location IDs at all but rather misinterpreted handwriting.
-
-This time, you'll need to figure out exactly how often each number from the left list appears in the right list. Calculate a total similarity score by adding up each number in the left list after multiplying it by the number of times that number appears in the right list.
-
-Here are the same example lists again:
-
-```text
-3   4
-4   3
-2   5
-1   3
-3   9
-3   3
 ```
+11-22 has two invalid IDs, 11 and 22.
+95-115 has one invalid ID, 99.
+998-1012 has one invalid ID, 1010.
+1188511880-1188511890 has one invalid ID, 1188511885.
+222220-222224 has one invalid ID, 222222.
+1698522-1698528 contains no invalid IDs.
+446443-446449 has one invalid ID, 446446.
+38593856-38593862 has one invalid ID, 38593859.
+```
+The rest of the ranges contain no invalid IDs.
+Adding up all the invalid IDs in this example produces 1227775554.
 
-For these example lists, here is the process of finding the similarity score:
-
-    The first number in the left list is 3. It appears in the right list three times, so the similarity score increases by 3 * 3 = 9.
-    The second number in the left list is 4. It appears in the right list once, so the similarity score increases by 4 * 1 = 4.
-    The third number in the left list is 2. It does not appear in the right list, so the similarity score does not increase (2 * 0 = 0).
-    The fourth number, 1, also does not appear in the right list.
-    The fifth number, 3, appears in the right list three times; the similarity score increases by 9.
-    The last number, 3, appears in the right list three times; the similarity score again increases by 9.
-
-So, for these example lists, the similarity score at the end of this process is 31 (9 + 4 + 0 + 0 + 9 + 9).
-
-Once again consider your left and right lists. What is their similarity score?
-
-Your puzzle answer was 26800609.
+What do you get if you add up all of the invalid IDs?
