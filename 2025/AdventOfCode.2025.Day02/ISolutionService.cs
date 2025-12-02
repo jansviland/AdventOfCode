@@ -16,22 +16,47 @@ public class SolutionService : ISolutionService
         _logger = logger;
     }
 
-    // TODO:
     // https://en.wikipedia.org/wiki/Knuth–Morris–Pratt_algorith
     // https://www.geeksforgeeks.org/dsa/kmp-algorithm-for-pattern-searching/
-    bool IsValid(long val)
+    // KMP Algorithm
+    // Create LPS table (Longest Prefix–Suffix table)
+    public static List<int> computeLPSArray(string pattern)
     {
-        if (val < 1)
+        int n = pattern.Length;
+        List<int> lps = new int[n].ToList();
+
+        // length of the previous longest prefix suffix
+        int len = 0;
+        int i = 1;
+
+        while (i < n)
         {
-            return false;
+            if (pattern[i] == pattern[len])
+            {
+                len++;
+                lps[i] = len;
+                i++;
+            }
+            else
+            {
+                if (len != 0)
+                {
+                    // fall back in the pattern
+                    len = lps[len - 1];
+                }
+                else
+                {
+                    lps[i] = 0;
+                    i++;
+                }
+            }
         }
 
-        if (val < 9)
-        {
-            return true;
-        }
+        return lps;
+    }
 
-        var str = val.ToString();
+    bool IsValid(string str)
+    {
         var part1 = str[..(str.Length / 2)];
         var part2 = str[(str.Length / 2)..];
 
@@ -47,16 +72,42 @@ public class SolutionService : ISolutionService
     {
         foreach (long[] range in ranges)
         {
-            // can not repeat twice, 55 has '5' and '5'
             for (long i = range[0]; i <= range[1]; i++)
             {
-                // for each value i
-                // split double digit into two and compare
-                // split 4 digit, into two 1212, is 12 compared to 12, 
-                // 6 digit like 123123, is split into 123 and 123, invalid
+                var str = i.ToString();
 
-                // if i is invalid
-                if (!IsValid(i))
+                if (!IsValid(str))
+                {
+                    yield return i;
+                }
+            }
+        }
+    }
+    
+    IEnumerable<long> Repeates(IEnumerable<long[]> ranges)
+    {
+        foreach (long[] range in ranges)
+        {
+            for (long i = range[0]; i <= range[1]; i++)
+            {
+                var str = i.ToString();
+
+                // Create
+                // LPS table (Longest Prefix–Suffix table)
+                // Example 
+                // index: 0 1 2 3 4 5
+                // char:  a b a b a b
+                // lps:   0 0 1 2 3 4
+                List<int> lps = computeLPSArray(str);
+
+                // Decide if it repeats:
+                int n = str.Length;     // from example: n = 6 
+                int last = lps[n - 1];  // 4
+                int period = n - last;  // 6 - 4 = 2
+
+                bool repeats = last > 0 && n % period == 0; // 6 % 2 = 0, so it repeats
+                
+                if (repeats)
                 {
                     yield return i;
                 }
@@ -64,11 +115,9 @@ public class SolutionService : ISolutionService
         }
     }
 
-
     IEnumerable<long[]> Parse1(string[] input) =>
         from range in input[0].Split(',')
         let pair = range.Split('-', StringSplitOptions.RemoveEmptyEntries)
-        // from num in pair
         let start = long.Parse(pair[0])
         let end = long.Parse(pair[1])
         select new[] { start, end };
@@ -78,17 +127,7 @@ public class SolutionService : ISolutionService
         _logger.LogInformation("Solving - {Year} - Day {Day} - Part 1", _helper.GetYear(), _helper.GetDay());
         _logger.LogInformation("Input contains {Input} values", input.Length);
 
-        // 1. Parse
-        // 2. Filter out all invalid 
-        // 3. Sum
         return FilterInvalid(Parse1(input)).Sum();
-
-        // var result = from line in input
-        //     let d = line[0] == 'R' ? 1 : -1
-        //     let a = int.Parse(line.Substring(1))
-        //     select a * d;
-        //
-        // return Dial(result).Count(x => x == 0);
     }
 
     public long RunPart2(string[] input)
@@ -96,20 +135,7 @@ public class SolutionService : ISolutionService
         _logger.LogInformation("Solving - {Year} - Day {Day} - Part 2", _helper.GetYear(), _helper.GetDay());
         _logger.LogInformation("Input contains {Input} values", input.Length);
 
-        throw new NotImplementedException();
-
-        // var parsed = from line in input
-        //     let d = line[0] == 'R' ? 1 : -1
-        //     let a = int.Parse(line.Substring(1))
-        //
-        //     // create a range of 1's for going Right, and a range of -1 For going left
-        //     // -10, becomes [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1]
-        //     from i in Enumerable.Range(0, a)
-        //     select d;
-        //
-        // // rotate and keep track of the current value
-        // // count each time we hit 0
-        // return Dial(parsed).Count(x => x == 0);
+        return Repeates(Parse1(input)).Sum();
     }
 
 }
