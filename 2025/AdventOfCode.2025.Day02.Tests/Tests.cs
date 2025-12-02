@@ -1,6 +1,6 @@
-using AdventOfCode._2025.Day01;
+using AdventOfCode._2025.Day02;
 
-namespace AdventOfCodeAdventOfCode._2025.Day01.Tests;
+namespace AdventOfCodeAdventOfCode._2025.Day02.Tests;
 
 public class Tests : TestBed<TestFixture>
 {
@@ -8,13 +8,11 @@ public class Tests : TestBed<TestFixture>
     private readonly Helper _helper = new();
 
     private readonly string[] _inputTest;
-    // private readonly string[] _input;
 
     public Tests(ITestOutputHelper testOutputHelper, TestFixture fixture) : base(testOutputHelper, fixture)
     {
         _solutionService = _fixture.GetService<ISolutionService>(_testOutputHelper)!;
         _inputTest = File.ReadAllLines("Assets/test-input.txt");
-        // _input = File.ReadAllLines("Assets/input.txt");
     }
 
     [Fact]
@@ -27,22 +25,9 @@ public class Tests : TestBed<TestFixture>
         var result = _solutionService.RunPart1(_inputTest);
 
         // assert
-        Assert.Equal(3, result);
+        Assert.Equal("1227775554", result);
     }
     
-    // [Fact]
-    // public void Part1Test2()
-    // {
-    //     // arrange
-    //     _testOutputHelper.WriteLine($"Running unit test - {_helper.GetYear()} - Day {_helper.GetDay()} - Part 1");
-    //
-    //     // act
-    //     var result = _solutionService.RunPart1(_input);
-    //
-    //     // assert
-    //     Assert.Equal(1011, result);
-    // }
-
     [Fact]
     public void Part2Test()
     {
@@ -53,6 +38,6 @@ public class Tests : TestBed<TestFixture>
         var result = _solutionService.RunPart2(_inputTest);
 
         // assert
-        Assert.Equal(6, result);
+        Assert.Equal("TODO", result);
     }
 }
