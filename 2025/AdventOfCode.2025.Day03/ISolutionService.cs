@@ -16,120 +16,46 @@ public class SolutionService : ISolutionService
         _logger = logger;
     }
 
-    // https://en.wikipedia.org/wiki/Knuth–Morris–Pratt_algorith
-    // https://www.geeksforgeeks.org/dsa/kmp-algorithm-for-pattern-searching/
-    // KMP Algorithm
-    // Create LPS table (Longest Prefix–Suffix table)
-    public static List<int> computeLPSArray(string pattern)
+    IEnumerable<int> Parse(string[] input) =>
+        from line in input
+        let result = highestValuePair(line)
+        select result;
+
+    public int highestValuePair(string str)
     {
-        int n = pattern.Length;
-        List<int> lps = new int[n].ToList();
-
-        // length of the previous longest prefix suffix
-        int len = 0;
-        int i = 1;
-
-        while (i < n)
+        var left = 0;
+        var leftIndex = 0;
+        for (int i = 0; i < str.Length - 1; i++) // we must have at least one value to the right in the end, so it can not be the last element
         {
-            if (pattern[i] == pattern[len])
+            var num = str[i] - '0'; // assuming value 0-9, this is the fastest way to get the int from char
+            if (num > left)
             {
-                len++;
-                lps[i] = len;
-                i++;
-            }
-            else
+                left = num;
+                leftIndex = i;
+            } 
+        }
+
+        var right = 0;
+        for (int i = leftIndex + 1; i < str.Length; i++) // start from left index + 1, can not have the same bank twice
+        {
+            var num = str[i] - '0';
+            if (num > right)
             {
-                if (len != 0)
-                {
-                    // fall back in the pattern
-                    len = lps[len - 1];
-                }
-                else
-                {
-                    lps[i] = 0;
-                    i++;
-                }
+                right = num;
             }
         }
 
-        return lps;
+        var result = left.ToString() + right.ToString();
+        
+        return int.Parse(result);
     }
-
-    bool IsValid(string str)
-    {
-        var part1 = str[..(str.Length / 2)];
-        var part2 = str[(str.Length / 2)..];
-
-        if (part1 == part2)
-        {
-            return false;
-        }
-
-        return true;
-    }
-
-    IEnumerable<long> FilterInvalid(IEnumerable<long[]> ranges)
-    {
-        foreach (long[] range in ranges)
-        {
-            for (long i = range[0]; i <= range[1]; i++)
-            {
-                var str = i.ToString();
-
-                if (!IsValid(str))
-                {
-                    yield return i;
-                }
-            }
-        }
-    }
-    
-    IEnumerable<long> Repeates(IEnumerable<long[]> ranges)
-    {
-        foreach (long[] range in ranges)
-        {
-            for (long i = range[0]; i <= range[1]; i++)
-            {
-                var str = i.ToString();
-
-                // Create
-                // LPS table (Longest Prefix–Suffix table)
-                // Example 
-                // index: 0 1 2 3 4 5
-                // char:  a b a b a b
-                // lps:   0 0 1 2 3 4
-                List<int> lps = computeLPSArray(str);
-
-                // Decide if it repeats:
-                int n = str.Length;     // from example: n = 6 
-                int last = lps[n - 1];  // 4
-                int period = n - last;  // 6 - 4 = 2
-
-                // 6 % 2 = 0, so it repeats
-                // and since 6 / 2 = 3, ab repeats three times!
-                bool repeats = last > 0 && n % period == 0; 
-                
-                if (repeats)
-                {
-                    yield return i;
-                }
-            }
-        }
-    }
-
-    IEnumerable<long[]> Parse1(string[] input) =>
-        from range in input[0].Split(',')
-        let pair = range.Split('-', StringSplitOptions.RemoveEmptyEntries)
-        let start = long.Parse(pair[0])
-        let end = long.Parse(pair[1])
-        select new[] { start, end };
 
     public long RunPart1(string[] input)
     {
         _logger.LogInformation("Solving - {Year} - Day {Day} - Part 1", _helper.GetYear(), _helper.GetDay());
         _logger.LogInformation("Input contains {Input} values", input.Length);
 
-        return FilterInvalid(Parse1(input)).Sum();
+        return Parse(input).Sum();
     }
 
     public long RunPart2(string[] input)
@@ -137,7 +63,8 @@ public class SolutionService : ISolutionService
         _logger.LogInformation("Solving - {Year} - Day {Day} - Part 2", _helper.GetYear(), _helper.GetDay());
         _logger.LogInformation("Input contains {Input} values", input.Length);
 
-        return Repeates(Parse1(input)).Sum();
+        // return Repeates(Parse1(input)).Sum();
+        throw new NotImplementedException();
     }
 
 }

@@ -44,6 +44,10 @@ internal static class Program
         Log.Logger.Information("------------------------------------");
         Log.Logger.Information("result: {Result}", resultPart1);
         Log.Logger.Information("------------------------------------");
+        Log.Logger.Information("Part 1 took: {Elapsed} ms", stopWatch.ElapsedMilliseconds);
+        Log.Logger.Information("");
+        
+        stopWatch.Restart();
 
         var resultPart2 = svc.RunPart2(input);
 
@@ -52,7 +56,7 @@ internal static class Program
         Log.Logger.Information("------------------------------------");
 
         stopWatch.Stop();
-        Log.Logger.Information("Elapsed time: {Elapsed} ms", stopWatch.ElapsedMilliseconds);
+        Log.Logger.Information("Part 2 took: {Elapsed} ms", stopWatch.ElapsedMilliseconds);
     }
 
     private static IConfiguration BuildConfiguration(IConfigurationBuilder builder)
