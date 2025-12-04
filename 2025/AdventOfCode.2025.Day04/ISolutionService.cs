@@ -4,7 +4,6 @@ public interface ISolutionService
 {
     public long RunPart1(string[] input);
     public long RunPart2(string[] input);
-    long HighestValueCombo(string str, int total);
 }
 
 public class SolutionService : ISolutionService
@@ -12,77 +11,45 @@ public class SolutionService : ISolutionService
     private readonly ILogger<ISolutionService> _logger;
     private readonly Helper _helper = new();
 
+    private static readonly Complex Up = -Complex.ImaginaryOne; // - new Complex(0.0, -1.0);
+    private static readonly Complex Down = Complex.ImaginaryOne; // new Complex(0.0, 1.0);
+    private static readonly Complex Left = -Complex.One; // new Complex(-1.0, 0.0);
+    private static readonly Complex Right = Complex.One; // new Complex(1.0, 0.0);
+    
+    // TODO: add the other four directions, TopLeft, TopRight 
+
     public SolutionService(ILogger<SolutionService> logger)
     {
         _logger = logger;
     }
 
-    // IEnumerable<int> Parse(string[] input) =>
-    //     from line in input
-    //     let result = highestValuePair(line)
-    //     select result;
+    Dictionary<Complex, char> Parse(string[] input) => (
+        from irow in Enumerable.Range(0, input.Length)
+        from icol in Enumerable.Range(0, input[0].Length)
+        let pos = new Complex(icol, irow)
+        let cell = input[irow][icol]
+        select new KeyValuePair<Complex, char>(pos, cell)).ToDictionary();
 
-    IEnumerable<long> Parse2(string[] input, int total) =>
-        from line in input
-        let result = HighestValueCombo(line, total)
-        select result;
-
-    // public int highestValuePair(string str)
-    // {
-    //     var left = 0;
-    //     var leftIndex = 0;
-    //     for (int i = 0; i < str.Length - 1; i++) // we must have at least one value to the right in the end, so it can not be the last element
-    //     {
-    //         var num = str[i] - '0'; // assuming value 0-9, this is the fastest way to get the int from char
-    //         if (num > left)
-    //         {
-    //             left = num;
-    //             leftIndex = i;
-    //         }
-    //     }
-    //
-    //     var right = 0;
-    //     for (int i = leftIndex + 1; i < str.Length; i++) // start from left index + 1, can not have the same bank twice
-    //     {
-    //         var num = str[i] - '0';
-    //         if (num > right)
-    //         {
-    //             right = num;
-    //         }
-    //     }
-    //
-    //     var result = left.ToString() + right.ToString();
-    //
-    //     return int.Parse(result);
-    // }
-
-    public long HighestValueCombo(string str, int total)
+    int NumberOfNeighboors(Dictionary<Complex, char> grid, Complex pos)
     {
-        var sb = new StringBuilder();
-        var currentBank = 0;
-        var nextIndex = 0;
-        
-        while (currentBank < total)
+        // go through all 8 possible adjacent posistions
+        var directions = new List<Complex> { Up, Down, Left, Right };
+
+        var count = 0;
+        foreach (var dir in directions)
         {
-            var curr = -1;
-            var remaining = total - currentBank;
-            
-            for (int i = nextIndex; i <= str.Length - remaining; i++) // we must have at least one value to the right in the end, so it can not be the last element
+            var checkPosition = pos + dir;
+            if (grid.TryGetValue(checkPosition, out char result))
             {
-                var num = str[i] - '0'; // assuming value 0-9, this is the fastest way to get the int from char
-                if (num > curr)
+                if (result == '@')
                 {
-                    curr = num;
-                    nextIndex = i;
+                    count++;
                 }
             }
-
-            sb.Append(str[nextIndex]);
-            currentBank++;
-            nextIndex++;
+            
         }
 
-        return long.Parse(sb.ToString());
+        return count;
     }
 
     public long RunPart1(string[] input)
@@ -90,8 +57,15 @@ public class SolutionService : ISolutionService
         _logger.LogInformation("Solving - {Year} - Day {Day} - Part 1", _helper.GetYear(), _helper.GetDay());
         _logger.LogInformation("Input contains {Input} values", input.Length);
 
-        // return Parse(input).Sum();
-        return Parse2(input, 2).Sum();
+        var grid = Parse(input);
+
+        foreach (var c in grid)
+        {
+            var count = NumberOfNeighboors(grid, c.Key);
+        }
+        
+
+        return 0;
     }
 
     public long RunPart2(string[] input)
@@ -99,7 +73,9 @@ public class SolutionService : ISolutionService
         _logger.LogInformation("Solving - {Year} - Day {Day} - Part 2", _helper.GetYear(), _helper.GetDay());
         _logger.LogInformation("Input contains {Input} values", input.Length);
 
-        return Parse2(input, 12).Sum();
+        var grid = Parse(input);
+
+        return 0;
     }
 
 }
