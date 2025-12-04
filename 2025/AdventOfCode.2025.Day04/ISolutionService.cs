@@ -31,7 +31,6 @@ public class SolutionService : ISolutionService
         from y in Enumerable.Range(0, input.Length)
         from x in Enumerable.Range(0, input[0].Length)
         let pos = new Complex(y, x)
-        // let pos = Complex.ImaginaryOne * y * x
         let cell = input[y][x]
         select new KeyValuePair<Complex, char>(pos, cell)).ToDictionary();
 
@@ -43,6 +42,13 @@ public class SolutionService : ISolutionService
         var count = 0;
         foreach (var dir in directions)
         {
+            // only check for @
+            var current = grid[pos];
+            if (current != '@')
+            {
+                return -1;
+            }
+            
             var checkPosition = pos + dir;
             if (grid.TryGetValue(checkPosition, out char result))
             {
@@ -61,6 +67,7 @@ public class SolutionService : ISolutionService
         from c in grid
         let amount = NumberOfNeighboors(grid, c.Key)
         select amount;
+        
 
     public void Print(Dictionary<Complex, char> grid)
     {
@@ -106,14 +113,10 @@ public class SolutionService : ISolutionService
         _logger.LogInformation("Solving - {Year} - Day {Day} - Part 1", _helper.GetYear(), _helper.GetDay());
         _logger.LogInformation("Input contains {Input} values", input.Length);
 
-        // TODO: print result, with x
-        var grid = Parse(input);
-        Print(grid);
+        // var grid = Parse(input);
+        // Print(grid);
         
-        // var neighbors = AllNodesNeighboorCount(Parse(input));
-
-        return AllNodesNeighboorCount(Parse(input).Where(x => x.Value == '@'))
-            .Count(x => x < 4);
+        return AllNodesNeighboorCount(Parse(input)).Count(x => x < 4 && x != -1);
     }
 
     public long RunPart2(string[] input)

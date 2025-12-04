@@ -28,14 +28,6 @@ public class Tests : TestBed<TestFixture>
         Assert.Equal(13, result);
     }
 
-    // [Theory]
-    // [InlineData("819", 2, 89)]
-    // [InlineData("1819", 3, 819)]
-    // public void HigestValueComboTest(string str, int total, long result)
-    // {
-    //     Assert.Equal(result, _solutionService.HighestValueCombo(str, total));
-    // }
-
     [Fact]
     public void Part2Test()
     {
@@ -46,6 +38,6 @@ public class Tests : TestBed<TestFixture>
         var result = _solutionService.RunPart2(_inputTest);
 
         // assert
-        Assert.Equal(3121910778619, result);
+        Assert.Equal(43, result);
     }
 }
