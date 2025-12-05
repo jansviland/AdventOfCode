@@ -15,7 +15,7 @@ public class SolutionService : ISolutionService
     private static readonly Complex Down = Complex.ImaginaryOne; // new Complex(0.0, 1.0);
     private static readonly Complex Left = -Complex.One; // new Complex(-1.0, 0.0);
     private static readonly Complex Right = Complex.One; // new Complex(1.0, 0.0);
-    
+
     // diagonals
     private static readonly Complex TopLeft = new Complex(-1.0, -1.0);
     private static readonly Complex TopRight = new Complex(1.0, -1.0);
@@ -48,7 +48,7 @@ public class SolutionService : ISolutionService
             {
                 return -1;
             }
-            
+
             var checkPosition = pos + dir;
             if (grid.TryGetValue(checkPosition, out char result))
             {
@@ -57,7 +57,6 @@ public class SolutionService : ISolutionService
                     count++;
                 }
             }
-            
         }
 
         return count;
@@ -67,16 +66,20 @@ public class SolutionService : ISolutionService
         from c in grid
         let amount = NumberOfNeighboors(grid, c.Key)
         select amount;
-        
 
-    public void Print(Dictionary<Complex, char> grid)
+
+    public (Dictionary<Complex, char> grid, int removed) PrintAndRemoveAccessiblePaper(Dictionary<Complex, char> grid)
     {
         var maxX = (int)grid.Keys.Max(c => c.Real);
         var maxY = (int)grid.Keys.Max(c => c.Imaginary);
         var sb = new StringBuilder();
 
+        var newGrid = new Dictionary<Complex, char>();
+
         sb.AppendLine();
 
+        var removedCount = 0;
+        
         for (var y = 0; y <= maxY + 1; y++)
         {
             for (var x = 0; x <= maxX; x++)
@@ -90,32 +93,41 @@ public class SolutionService : ISolutionService
 
                     if (grid[key] == '@' && num < 4)
                     {
+                        // remove a roll of paper
                         sb.Append('x');
+                        newGrid[key] = '.';
+                        removedCount++;
                     }
                     else
                     {
                         sb.Append(value);
+                        newGrid[key] = value;
                     }
                 }
                 else
                 {
                     sb.Append('.');
+                    newGrid[key] = '.';
                 }
+                // sb.Append(' ');
             }
             sb.AppendLine();
         }
-        
+
         _logger.LogInformation(sb.ToString());
+        _logger.LogInformation(sb.ToString());
+
+        return (newGrid, removedCount);
     }
-    
+
     public long RunPart1(string[] input)
     {
         _logger.LogInformation("Solving - {Year} - Day {Day} - Part 1", _helper.GetYear(), _helper.GetDay());
         _logger.LogInformation("Input contains {Input} values", input.Length);
 
-        // var grid = Parse(input);
-        // Print(grid);
-        
+        var grid = Parse(input);
+        PrintAndRemoveAccessiblePaper(grid);
+
         return AllNodesNeighboorCount(Parse(input)).Count(x => x < 4 && x != -1);
     }
 
@@ -125,8 +137,19 @@ public class SolutionService : ISolutionService
         _logger.LogInformation("Input contains {Input} values", input.Length);
 
         var grid = Parse(input);
+        
+        var n = 0;
+        var count = 0;
+        var removed = -1;
+        while (n < 1000 && removed != 0)
+        {
+            (grid, removed) = PrintAndRemoveAccessiblePaper(grid);
+            n++;
+            count += removed;
+            _logger.LogInformation("iteration: {0}", n);
+        }
 
-        return 0;
+        return count;
     }
 
 }
