@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <TargetFramework>net10.0</TargetFramework>
-        <RootNamespace>AdventOfCodeAdventOfCode._2025.Day04.Tests</RootNamespace>
+        <RootNamespace>AdventOfCodeAdventOfCode._2025.Day05.Tests</RootNamespace>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <IsPackable>false</IsPackable>
@@ -32,7 +32,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\AdventOfCode.2025.Day04\AdventOfCode.2025.Day04.csproj" />
+      <ProjectReference Include="..\AdventOfCode.2025.Day05\AdventOfCode.2025.Day05.csproj" />
     </ItemGroup>
 
 </Project>
